@@ -86,48 +86,50 @@ O vídeo a seguir mostra os resultados coletados pela equipe para a segunda ativ
 
 O esquema relacional segue a estrutura sugerida pelo professor, com cinco tabelas principais:
 
+- [Acesse o link para visualizar o diagrama detalhado no DBDiagram.io](https://dbdiagram.io/d/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade2-69e940f2d80a958d1cb60703)
+
 ```mermaid
 erDiagram
     modelos {
-        SERIAL id_modelo PK
-        VARCHAR nome_modelo
-        VARCHAR versao
-        VARCHAR parametro_precisao
+        int id_modelo PK
+        string nome_modelo
+        string versao
+        string parametro_precisao
     }
-
+ 
     datasets {
-        SERIAL id_dataset PK
-        VARCHAR nome_dataset
-        VARCHAR dominio
+        int id_dataset PK
+        string nome_dataset
+        string dominio
     }
-
+ 
     perguntas {
-        SERIAL id_pergunta PK
-        INTEGER id_dataset FK
-        TEXT enunciado
-        TEXT resposta_ouro
-        JSONB metadados
+        int id_pergunta PK
+        int id_dataset FK
+        text enunciado
+        text resposta_ouro
+        json metadados
     }
-
+ 
     respostas_atividade_1 {
-        SERIAL id_resposta PK
-        INTEGER id_pergunta FK
-        INTEGER id_modelo FK
-        TEXT texto_resposta
-        FLOAT tempo_inferencia_ms
-        TIMESTAMP data_geracao
+        int id_resposta PK
+        int id_pergunta FK
+        int id_modelo FK
+        text texto_resposta
+        float tempo_inferencia_ms
+        timestamp data_geracao
     }
-
+ 
     avaliacoes_juiz {
-        SERIAL id_avaliacao PK
-        INTEGER id_resposta_ativa1 FK
-        INTEGER id_modelo_juiz FK
-        INTEGER nota_atribuida
-        TEXT chain_of_thought
-        TIMESTAMP data_avaliacao
+        int id_avaliacao PK
+        int id_resposta_ativa1 FK
+        int id_modelo_juiz FK
+        int nota_atribuida
+        text chain_of_thought
+        timestamp data_avaliacao
     }
-
-    datasets ||--o{ perguntas : "contém"
+ 
+    datasets ||--o{ perguntas : "contem"
     perguntas ||--o{ respostas_atividade_1 : "respondida por"
     modelos ||--o{ respostas_atividade_1 : "gerada por"
     respostas_atividade_1 ||--o{ avaliacoes_juiz : "avaliada por"
