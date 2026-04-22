@@ -1,0 +1,38 @@
+{
+	"folders": {},
+	"connections": {
+		"postgres-jud-db": {
+			"provider": "postgresql",
+			"driver": "postgres-jdbc",
+			"name": "jud_db",
+			"save-password": true,
+			"configuration": {
+				"host": "db",
+				"port": "5432",
+				"database": "jud_db",
+				"url": "jdbc:postgresql://db:5432/jud_db",
+				"configurationType": "MANUAL",
+				"type": "dev",
+				"auth-model": "native",
+				"auth-properties": {
+					"user": "admin",
+					"password": "adminpassword"
+				}
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Development",
+			"color": "255,255,255",
+			"description": "Regular development database",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false,
+			"smart-commit": false,
+			"smart-commit-recover": false,
+			"auto-close-transactions": true,
+			"close-transactions-period": 1800
+		}
+	}
+}
