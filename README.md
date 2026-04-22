@@ -38,7 +38,9 @@ Português | [English](./README-EN.md)
 - [Arquitetura do banco de dados](#arquitetura-do-banco-de-dados)
 - [Instruções de execução](#instruções-de-execução)
   - [Pré-requisitos](#pré-requisitos)
-  - [Restore do banco de dados](#restore-do-banco-de-dados)
+  - [Subindo o ambiente com Docker](#subindo-o-ambiente-com-docker)
+  - [Acessando o CloudBeaver](#acessando-o-cloudbeaver)
+  - [Executando consultas SQL no navegador](#executando-consultas-sql-no-navegador)
 - [Contribuições](#contribuições)
 - [Licença](#licença)
 - [Referências](#referências)
@@ -99,16 +101,64 @@ O esquema relacional segue a estrutura sugerida pelo professor, com cinco tabela
 | Requisito | Versão mínima | Descrição |
 |-----------|---------------|-----------|
 | [Python](https://www.python.org/downloads/) | 3.12+ | Linguagem principal do projeto |
-| [PostgreSQL](https://www.postgresql.org/download/) | 15+ | Banco de dados relacional |
+| [Docker](https://docs.docker.com/get-docker/) | 24+ | Containerização dos serviços (PostgreSQL e CloudBeaver) |
+| [Docker Compose](https://docs.docker.com/compose/install/) | 2.x | Orquestração dos contêineres |
 | [Git](https://git-scm.com/install) | 2.x | Controle de versão |
 
-### Restore do banco de dados
+> **Nota:** O PostgreSQL 17 já é provisionado automaticamente via Docker, não sendo necessário instalá-lo separadamente.
 
-Para recriar o ambiente de dados localmente a partir do backup:
+### Subindo o ambiente com Docker
+
+Com o Docker instalado e em execução, basta rodar o comando abaixo na raiz do projeto:
 
 ```bash
-TODO: Instruções detalhadas de restore serão incluídas
+docker compose up -d
 ```
+
+Isso irá provisionar automaticamente dois serviços:
+
+| Serviço           | Porta  | Descrição                                        |
+|-------------------|--------|--------------------------------------------------|
+| **PostgreSQL 17** | `5432` | Banco de dados relacional do projeto             |
+| **CloudBeaver**   | `8978` | Interface web para gerenciar e consultar o banco |
+
+Para verificar se os contêineres estão rodando corretamente:
+
+```bash
+docker compose ps
+```
+
+Para parar o ambiente:
+
+```bash
+docker compose down
+```
+
+### Acessando o CloudBeaver
+
+O [CloudBeaver](https://dbeaver.com/docs/cloudbeaver/) é uma ferramenta web de administração de bancos de dados. Ela já vem configurada automaticamente com a conexão ao PostgreSQL do projeto.
+
+1. Abra o navegador e acesse: [http://localhost:8978](http://localhost:8978)
+2. O acesso anônimo já está habilitado, então **não é necessário fazer login**.
+3. No painel lateral esquerdo, você verá a conexão **jud_db** já disponível.
+4. Clique na conexão para expandir e visualizar as tabelas do banco.
+
+> **Acesso administrativo:** Caso precise de permissões de administrador, utilize as credenciais `cbadmin` / `Admin123`.
+
+### Executando consultas SQL no navegador
+
+Para executar consultas SQL diretamente pelo CloudBeaver:
+
+1. No painel lateral, clique na conexão **jud_db** para selecioná-la.
+2. Clique no botão **SQL** na barra superior (ou pressione `Ctrl + Enter` após abrir o editor).
+3. No editor SQL que será aberto, digite a sua consulta. Por exemplo:
+
+```sql
+SELECT * FROM modelos;
+```
+
+4. Clique no botão **▶ Executar** (ou pressione `Ctrl + Enter`) para rodar a consulta.
+5. Os resultados serão exibidos na parte inferior do editor em formato de tabela.
 
 ---
 
