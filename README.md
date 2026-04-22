@@ -160,6 +160,10 @@ SELECT * FROM modelos;
 4. Clique no botão **▶ Executar** (ou pressione `Ctrl + Enter`) para rodar a consulta.
 5. Os resultados serão exibidos na parte inferior do editor em formato de tabela.
 
+Veja o exemplo da imagem abaixo:
+
+![Exemplo de execução de consulta SQL no CloudBeaver](docs/assets/executando-consultas-sql-no-navegador.png)
+
 ---
 
 ## Contribuições
