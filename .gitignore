@@ -125,3 +125,4 @@ plot_convergencia.png
 dist/
 .complexipy_cache
 complexipy_results_*
+.env
