@@ -134,6 +134,25 @@ Para parar o ambiente:
 docker compose down
 ```
 
+### Instalação e execução
+
+Para executar o projeto de forma local, siga os passos:
+
+```bash
+# (Opcional) Criar e ativar um ambiente virtual
+python -m venv .venv
+
+# Ativação no Linux/macOS
+source .venv/bin/activate
+
+# Ativação no Windows (PowerShell)
+# .venv\Scripts\activate
+
+# Instalar as dependências
+uv sync
+
+```
+
 ### Acessando o CloudBeaver
 
 O [CloudBeaver](https://dbeaver.com/docs/cloudbeaver/) é uma ferramenta web de administração de bancos de dados. Ela já vem configurada automaticamente com a conexão ao PostgreSQL do projeto.
