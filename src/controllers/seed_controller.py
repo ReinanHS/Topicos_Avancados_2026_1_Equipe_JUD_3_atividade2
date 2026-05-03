@@ -2,6 +2,7 @@ from src.repositories import CategoriaRepository, DatasetRepository, PerguntaRep
 from src.services.extractors.reinan_extractor import ReinanExtractor
 from src.services.extractors.ericles_extractor import EclerkExtractor
 from src.services.extractors.fernanda_extractor import FernandaExtractor
+from src.services.extractors.victor_extractor import VictorExtractor
 
 
 class SeedController:
@@ -49,24 +50,28 @@ class SeedController:
             "Direito Administrativo",
             "Direito Ambiental",
             "Direito Civil",
+            "Direito Constitucional Tributário",
             "Direito Constitucional",
-            "Direito da Criança e do Adolescente",
-            "Direito do Consumidor",
-            "Direito do Trabalho",
+            "Direito Disciplinar",
             "Direito Empresarial",
             "Direito Internacional",
             "Direito Penal",
-            "Direito Processual Civil",
-            "Direito Processual do Trabalho",
-            "Direito Processual Penal",
-            "Direito Tributário",
-            "Direitos Humanos",
-            "Ética Profissional e Estatuto da OAB",
-            "Filosofia do Direito",
-            "Direito Trabalhista",
             "Direito Previdenciário",
+            "Direito Processual Civil",
+            "Direito Processual Penal",
+            "Direito Processual Tributário",
+            "Direito Processual do Trabalho",
+            "Direito Trabalhista",
+            "Direito Tributário",
+            "Direito da Criança e do Adolescente",
+            "Direito da Criança",
+            "Direito do Consumidor",
+            "Direito do Trabalho",
+            "Direitos Humanos",
             "Estatuto da OAB",
-            "Direito Disciplinar",
+            "Filosofia do Direito",
+            "Ética Profissional e Estatuto da OAB",
+            "Ética Profissional",
         ]
 
         try:
@@ -82,12 +87,14 @@ class SeedController:
         reinan_extractor = ReinanExtractor()
         ericles_extractor = EclerkExtractor()
         fernanda_extractor = FernandaExtractor()
+        victor_extractor = VictorExtractor()
         pergunta_repo = PerguntaRepository()
 
         perguntas = []
         perguntas.extend(reinan_extractor.extract_questions())
         perguntas.extend(ericles_extractor.extract_questions())
         perguntas.extend(fernanda_extractor.extract_questions())
+        perguntas.extend(victor_extractor.extract_questions())
 
         for pergunta in perguntas:
             pergunta_repo.create(**pergunta)

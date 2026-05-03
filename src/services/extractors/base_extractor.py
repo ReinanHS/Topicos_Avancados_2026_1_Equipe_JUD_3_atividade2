@@ -1,3 +1,5 @@
+import csv
+import io
 import requests
 from abc import ABC, abstractmethod
 from src.services.datasets.loader_factory import DatasetLoaderFactory
@@ -28,6 +30,30 @@ class BaseExtractor(ABC):
             return response.json()
         except Exception as e:
             print(f"Erro ao buscar o JSON na URL '{raw_url}': {e}")
+            raise e
+
+    def fetch_csv_to_dict(self, raw_url: str) -> list[dict]:
+        """
+        Faz o download de um arquivo CSV a partir de uma URL RAW e
+        retorna uma lista de dicionários.
+        """
+        try:
+            response = requests.get(raw_url)
+            response.raise_for_status()
+
+            # Decode the response content to string, handling common encodings
+            # Some files might be latin-1 or utf-8 with BOM
+            response.encoding = response.apparent_encoding or "utf-8"
+            content = response.text
+
+            csv_file = io.StringIO(content)
+            # Use a semicolon separator if comma is not found
+            # DictReader will map the first row to dictionary keys
+            reader = csv.DictReader(csv_file)
+
+            return list(reader)
+        except Exception as e:
+            print(f"Erro ao buscar o CSV na URL '{raw_url}': {e}")
             raise e
 
     @abstractmethod
