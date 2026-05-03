@@ -39,6 +39,13 @@ def seed_dataset():
     controller.seed_datasets()
 
 
+@seed_app.command("categorias")
+def seed_categorias():
+    """Insere as categorias de direito no banco de dados."""
+    controller = SeedController()
+    controller.seed_categorias()
+
+
 @app.callback()
 def main_callback():
     """

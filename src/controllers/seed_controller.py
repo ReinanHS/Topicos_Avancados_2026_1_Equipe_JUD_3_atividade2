@@ -1,4 +1,4 @@
-from src.repositories import DatasetRepository
+from src.repositories import CategoriaRepository, DatasetRepository
 
 
 class SeedController:
@@ -37,3 +37,35 @@ class SeedController:
             print("Datasets semeados com sucesso!")
         except Exception as e:
             print(f"Erro ao semear datasets: {e}")
+
+    def seed_categorias(self):
+        """Insere as categorias de direito no banco de dados."""
+        repo = CategoriaRepository()
+
+        categorias = [
+            "Direito Administrativo",
+            "Direito Ambiental",
+            "Direito Civil",
+            "Direito Constitucional",
+            "Direito da Criança e do Adolescente",
+            "Direito do Consumidor",
+            "Direito do Trabalho",
+            "Direito Empresarial",
+            "Direito Internacional",
+            "Direito Penal",
+            "Direito Processual Civil",
+            "Direito Processual do Trabalho",
+            "Direito Processual Penal",
+            "Direito Tributário",
+            "Direitos Humanos",
+            "Ética Profissional e Estatuto da OAB",
+            "Filosofia do Direito",
+        ]
+
+        try:
+            for cat in categorias:
+                repo.create(cat)
+
+            print("Categorias semeadas com sucesso!")
+        except Exception as e:
+            print(f"Erro ao semear categorias: {e}")
