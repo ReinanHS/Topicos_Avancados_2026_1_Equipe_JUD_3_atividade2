@@ -3,29 +3,24 @@ Módulo CLI principal — interface de linha de comando baseada em Typer.
 """
 
 import typer
-from yoyo import read_migrations
 
-from src.database import DatabaseManager
+from src.controllers import DatabaseController
 
 app = typer.Typer(no_args_is_help=True)
 db_app = typer.Typer(no_args_is_help=True, help="Gerenciamento do banco de dados.")
 app.add_typer(db_app, name="db")
 
-
-def _get_backend():
-    """Retorna o backend do yoyo-migrations utilizando o DatabaseManager."""
-    db_manager = DatabaseManager()
-    return db_manager.get_yoyo_backend()
+seed_app = typer.Typer(
+    no_args_is_help=True, help="Semeia dados iniciais no banco de dados."
+)
+db_app.add_typer(seed_app, name="seed")
 
 
 @db_app.command("migrate")
 def db_migrate():
     """Aplica todas as migrações pendentes no banco de dados."""
-    backend = _get_backend()
-    migrations = read_migrations("database/migrations")
-    with backend.lock():
-        backend.apply_migrations(backend.to_apply(migrations))
-    print("Migracoes aplicadas com sucesso.")
+    controller = DatabaseController()
+    controller.migrate()
 
 
 @db_app.command("rollback")
@@ -33,23 +28,15 @@ def db_rollback(
     all: bool = typer.Option(True, help="Reverter todas as migrações (padrão)."),
 ):
     """Reverte as migrações aplicadas no banco de dados."""
-    backend = _get_backend()
-    migrations = read_migrations("database/migrations")
-    with backend.lock():
-        to_rollback = backend.to_rollback(migrations)
-        if not to_rollback:
-            print("Nenhuma migracao para reverter.")
-            return
+    controller = DatabaseController()
+    controller.rollback(all_migrations=all)
 
-        if not all:
-            to_rollback = [to_rollback[0]]
 
-        backend.rollback_migrations(to_rollback)
-
-    if all:
-        print("Rollback completo: todas as migracoes foram revertidas.")
-    else:
-        print("Rollback: ultima migracao revertida com sucesso.")
+@seed_app.command("dataset")
+def seed_dataset():
+    """Insere as informações dos datasets no banco de dados."""
+    controller = DatabaseController()
+    controller.seed_datasets()
 
 
 @app.callback()

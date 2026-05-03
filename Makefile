@@ -1,6 +1,6 @@
 check:
-	uv run ruff check
 	uv run ruff format
+	uv run ruff check
 	uv run complexipy src
 install:
 	uv sync
