@@ -81,8 +81,9 @@ class VictorExtractor(BaseExtractor):
                 "Subdomínio: ", " "
             )
             subdominios = subdominio.split(" e ")
+            category_name = subdominios[0].strip()
 
-            category_id = self.find_category_id(subdominios[0].strip())
+            category_id = self.find_category_id(category_name)
             match curatorship["Complexidade_Raciocinio_LLM"]:
                 case "Hermenêutica Jurídica Complexa":
                     difficulty = 3

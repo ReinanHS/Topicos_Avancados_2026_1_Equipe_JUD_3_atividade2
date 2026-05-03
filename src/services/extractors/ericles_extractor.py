@@ -70,9 +70,6 @@ class EclerkExtractor(BaseExtractor):
                 question_id, data_curatorship
             )
 
-            if not curatorship:
-                continue
-
             category_id = self.find_category_id(curatorship["subdominio_semantico"])
             difficulty = curatorship["dificuldade"]
             if difficulty is None:

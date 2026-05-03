@@ -63,14 +63,12 @@ class SeedController:
             "Direito Processual do Trabalho",
             "Direito Trabalhista",
             "Direito Tributário",
-            "Direito da Criança e do Adolescente",
             "Direito da Criança",
             "Direito do Consumidor",
             "Direito do Trabalho",
             "Direitos Humanos",
             "Estatuto da OAB",
             "Filosofia do Direito",
-            "Ética Profissional e Estatuto da OAB",
             "Ética Profissional",
         ]
 

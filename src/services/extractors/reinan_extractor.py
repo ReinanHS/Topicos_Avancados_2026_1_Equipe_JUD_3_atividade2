@@ -70,12 +70,9 @@ class ReinanExtractor(BaseExtractor):
                 question_id, data_curatorship
             )
 
-            if not curatorship:
-                continue
-
-            category_id = self.find_category_id(
-                curatorship["curatorship"]["area_expertise"]
-            )
+            category_text = curatorship["curatorship"]["area_expertise"]
+            category_name = category_text.split(" e ")[0].strip()
+            category_id = self.find_category_id(category_name)
             difficulty = curatorship["curatorship"]["difficulty_question"]
 
             data.append(
