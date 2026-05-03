@@ -1,4 +1,4 @@
-from src.repositories import CategoriaRepository, DatasetRepository
+from src.repositories import CategoriaRepository, DatasetRepository, PerguntaRepository
 
 
 class SeedController:
@@ -69,3 +69,35 @@ class SeedController:
             print("Categorias semeadas com sucesso!")
         except Exception as e:
             print(f"Erro ao semear categorias: {e}")
+
+    def seed_perguntas(self):
+        """Insere as perguntas no banco de dados."""
+        dataset_repo = DatasetRepository()
+        categoria_repo = CategoriaRepository()
+        pergunta_repo = PerguntaRepository()
+
+        dataset = dataset_repo.get_by_name("oab_exams")
+        categoria = categoria_repo.get_by_name("Direito Penal")
+
+        if not dataset or not categoria:
+            print(
+                "Erro: Dataset 'oab_exams' ou Categoria 'Direito Penal' não encontrados. Rode 'db seed dataset' e 'db seed categorias' primeiro."
+            )
+            return
+
+        pergunta_exemplo = {
+            "id_dataset": dataset["id_dataset"],
+            "id_categoria": categoria["id_categoria"],
+            "id_externo": "exemplo_123",
+            "tipo_pergunta": "multipla_escolha",
+            "enunciado": "Qual das alternativas abaixo caracteriza crime de furto privilegiado?",
+            "nivel_dificuldade": "Nivel 1",
+            "legislacao_basica": "Art. 155, § 2º, CP",
+            "metadados": {"fonte": "Exame OAB 2023"},
+        }
+
+        try:
+            pergunta_repo.create(**pergunta_exemplo)
+            print("Pergunta de exemplo semeada com sucesso!")
+        except Exception as e:
+            print(f"Erro ao semear pergunta: {e}")

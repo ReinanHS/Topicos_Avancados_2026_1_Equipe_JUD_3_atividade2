@@ -46,6 +46,13 @@ def seed_categorias():
     controller.seed_categorias()
 
 
+@seed_app.command("perguntas")
+def seed_perguntas():
+    """Insere as perguntas no banco de dados."""
+    controller = SeedController()
+    controller.seed_perguntas()
+
+
 @app.callback()
 def main_callback():
     """
