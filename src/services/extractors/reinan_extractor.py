@@ -13,12 +13,12 @@ class ReinanExtractor(BaseExtractor):
 
     def extract_questions(self) -> list:
         """
-        Extrai as perguntas.
+        Extrai as perguntas de todos os datasets suportados.
         """
-
-        questions_oab_bench = self.extract_questions_oab_bench()
-
-        return questions_oab_bench
+        questions = []
+        questions.extend(self.extract_questions_oab_bench())
+        questions.extend(self.extract_questions_oab_exams())
+        return questions
 
     def find_curatorship_by_question_id(
         self, question_id: str, data_curatorship: dict
@@ -28,37 +28,44 @@ class ReinanExtractor(BaseExtractor):
                 return item
         return None
 
-    def extract_questions_oab_bench(self) -> list:
+    def _process_dataset_questions(
+        self,
+        dataset_name: str,
+        slice_start: int,
+        slice_end: int,
+        question_id_field: str,
+        statement_field: str,
+        tipo_pergunta: str,
+        extract_metadados: callable,
+    ) -> list:
         """
-        Extrai as perguntas e respostas do arquivo JSON como exemplo.
+        Método genérico para processar e extrair perguntas de um determinado dataset.
         """
+        print(f"[{self.__class__.__name__}] Processando dataset: {dataset_name}")
 
-        url = (
-            f"{self.base_raw_url}/results/oab_bench/model_curatorship/gpt-4o-mini.json"
-        )
-
-        print(f"[{self.__class__.__name__}] Baixando dados de: {url}")
+        url = f"{self.base_raw_url}/results/{dataset_name}/model_curatorship/gpt-4o-mini.json"
         data_curatorship = self.fetch_json(url)
 
-        dataset_name = "oab_bench"
-
-        oab_bench_dataset = self.dataset_loader.create(dataset_name)
-        questions_data = oab_bench_dataset.load_questions(
-            slice_start=176, slice_end=188
+        dataset = self.dataset_loader.create(dataset_name)
+        questions_data = dataset.load_questions(
+            slice_start=slice_start, slice_end=slice_end
         )
         dataset_id = self.find_dataset_id(dataset_name)
 
         data = []
 
         for question in questions_data:
-            question_id = str(question["question_id"])
+            question_id = str(question[question_id_field])
             curatorship = self.find_curatorship_by_question_id(
                 question_id, data_curatorship
             )
+
+            if not curatorship:
+                continue
+
             category_id = self.find_category_id(
                 curatorship["curatorship"]["area_expertise"]
             )
-
             difficulty = curatorship["curatorship"]["difficulty_question"]
 
             data.append(
@@ -66,16 +73,48 @@ class ReinanExtractor(BaseExtractor):
                     "id_dataset": dataset_id,
                     "id_categoria": category_id,
                     "id_externo": question_id,
-                    "tipo_pergunta": "discursiva",
-                    "enunciado": question["statement"],
+                    "tipo_pergunta": tipo_pergunta,
+                    "enunciado": question[statement_field],
                     "nivel_dificuldade": f"Nivel {difficulty}",
                     "legislacao_basica": curatorship["curatorship"][
                         "basic_legislation"
                     ],
-                    "metadados": {
-                        "values": question["values"],
-                    },
+                    "metadados": extract_metadados(question),
                 }
             )
 
         return data
+
+    def extract_questions_oab_bench(self) -> list:
+        """
+        Extrai as perguntas do OAB Bench.
+        """
+        return self._process_dataset_questions(
+            dataset_name="oab_bench",
+            slice_start=176,
+            slice_end=188,
+            question_id_field="question_id",
+            statement_field="statement",
+            tipo_pergunta="discursiva",
+            extract_metadados=lambda q: {"values": q.get("values")},
+        )
+
+    def extract_questions_oab_exams(self) -> list:
+        """
+        Extrai as perguntas do OAB Exams.
+        """
+        return self._process_dataset_questions(
+            dataset_name="oab_exams",
+            slice_start=1845,
+            slice_end=1967,
+            question_id_field="id",
+            statement_field="question",
+            tipo_pergunta="multipla_escolha",
+            extract_metadados=lambda q: {
+                "question_number": q.get("question_number"),
+                "exam_id": q.get("exam_id"),
+                "exam_year": q.get("exam_year"),
+                "question_type": q.get("question_type"),
+                "nullified": q.get("nullified"),
+            },
+        )

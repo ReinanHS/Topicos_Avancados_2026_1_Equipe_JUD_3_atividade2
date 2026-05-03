@@ -39,12 +39,14 @@ class BaseExtractor(ABC):
         pass
 
     def find_dataset_id(self, dataset_name: str) -> int:
+        dataset_name = dataset_name.strip()
         dataset = self.dataset_repo.get_by_name(dataset_name)
         if dataset:
             return dataset["id_dataset"]
         raise ValueError(f"Dataset '{dataset_name}' não encontrado no banco de dados.")
 
     def find_category_id(self, category_name: str) -> int:
+        category_name = category_name.strip()
         category = self.categoria_repo.get_by_name(category_name)
         if category:
             return category["id_categoria"]
