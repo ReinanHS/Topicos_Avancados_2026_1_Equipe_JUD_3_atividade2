@@ -4,7 +4,7 @@ Módulo CLI principal — interface de linha de comando baseada em Typer.
 
 import typer
 
-from src.controllers import DatabaseController
+from src.controllers import MigrationController, SeedController
 
 app = typer.Typer(no_args_is_help=True)
 db_app = typer.Typer(no_args_is_help=True, help="Gerenciamento do banco de dados.")
@@ -19,7 +19,7 @@ db_app.add_typer(seed_app, name="seed")
 @db_app.command("migrate")
 def db_migrate():
     """Aplica todas as migrações pendentes no banco de dados."""
-    controller = DatabaseController()
+    controller = MigrationController()
     controller.migrate()
 
 
@@ -28,14 +28,14 @@ def db_rollback(
     all: bool = typer.Option(True, help="Reverter todas as migrações (padrão)."),
 ):
     """Reverte as migrações aplicadas no banco de dados."""
-    controller = DatabaseController()
+    controller = MigrationController()
     controller.rollback(all_migrations=all)
 
 
 @seed_app.command("dataset")
 def seed_dataset():
     """Insere as informações dos datasets no banco de dados."""
-    controller = DatabaseController()
+    controller = SeedController()
     controller.seed_datasets()
 
 
