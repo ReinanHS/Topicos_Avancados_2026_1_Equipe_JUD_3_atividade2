@@ -6,10 +6,15 @@ CREATE TABLE perguntas (
     id_externo VARCHAR(150) NOT NULL,
     tipo_pergunta VARCHAR(30) NOT NULL,
     enunciado TEXT NOT NULL,
+    nivel_dificuldade VARCHAR(30) NOT NULL,
+    legislacao_basica TEXT,
     metadados JSONB,
-    created_at timestamptz NOT NULL DEFAULT now (),
+    created_at TIMESTAMP NOT NULL DEFAULT now (),
     CONSTRAINT ck_tipo_pergunta_p CHECK (
         tipo_pergunta IN ('discursiva', 'multipla_escolha')
+    ),
+    CONSTRAINT ck_nivel_dificuldade CHECK (
+        nivel_dificuldade IN ('Nivel 1', 'Nivel 2', 'Nivel 3')
     ),
     CONSTRAINT uq_pergunta_dataset UNIQUE (id_dataset, id_externo)
 );
