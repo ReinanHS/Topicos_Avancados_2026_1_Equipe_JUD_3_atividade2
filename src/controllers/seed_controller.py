@@ -1,6 +1,7 @@
 from src.repositories import CategoriaRepository, DatasetRepository, PerguntaRepository
 from src.services.extractors.reinan_extractor import ReinanExtractor
 from src.services.extractors.ericles_extractor import EclerkExtractor
+from src.services.extractors.fernanda_extractor import FernandaExtractor
 
 
 class SeedController:
@@ -80,11 +81,13 @@ class SeedController:
         """Insere as perguntas no banco de dados."""
         reinan_extractor = ReinanExtractor()
         ericles_extractor = EclerkExtractor()
+        fernanda_extractor = FernandaExtractor()
         pergunta_repo = PerguntaRepository()
 
         perguntas = []
         perguntas.extend(reinan_extractor.extract_questions())
         perguntas.extend(ericles_extractor.extract_questions())
+        perguntas.extend(fernanda_extractor.extract_questions())
 
         for pergunta in perguntas:
             pergunta_repo.create(**pergunta)
