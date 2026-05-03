@@ -1,5 +1,6 @@
 from src.repositories import CategoriaRepository, DatasetRepository, PerguntaRepository
 from src.services.extractors.reinan_extractor import ReinanExtractor
+from src.services.extractors.ericles_extractor import EclerkExtractor
 
 
 class SeedController:
@@ -61,6 +62,10 @@ class SeedController:
             "Direitos Humanos",
             "Ética Profissional e Estatuto da OAB",
             "Filosofia do Direito",
+            "Direito Trabalhista",
+            "Direito Previdenciário",
+            "Estatuto da OAB",
+            "Direito Disciplinar",
         ]
 
         try:
@@ -74,10 +79,12 @@ class SeedController:
     def seed_perguntas(self):
         """Insere as perguntas no banco de dados."""
         reinan_extractor = ReinanExtractor()
+        ericles_extractor = EclerkExtractor()
         pergunta_repo = PerguntaRepository()
 
         perguntas = []
         perguntas.extend(reinan_extractor.extract_questions())
+        perguntas.extend(ericles_extractor.extract_questions())
 
         for pergunta in perguntas:
             pergunta_repo.create(**pergunta)
