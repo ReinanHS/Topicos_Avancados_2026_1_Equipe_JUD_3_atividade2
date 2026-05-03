@@ -10,6 +10,16 @@ class EclerkExtractor(BaseExtractor):
     def __init__(self):
         super().__init__()
         self.base_raw_url = "https://raw.githubusercontent.com/Ericles-Porty/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/refs/heads/main"
+        self.dataset_range = {
+            "oab_bench": {
+                "slice_start": 153,
+                "slice_end": 165,
+            },
+            "oab_exams": {
+                "slice_start": 1600,
+                "slice_end": 1723,
+            },
+        }
 
     def extract_questions(self) -> list:
         """
@@ -89,8 +99,8 @@ class EclerkExtractor(BaseExtractor):
         """
         return self._process_dataset_questions(
             dataset_name="oab_bench",
-            slice_start=153,
-            slice_end=165,
+            slice_start=self.dataset_range["oab_bench"]["slice_start"],
+            slice_end=self.dataset_range["oab_bench"]["slice_end"],
             question_id_field="question_id",
             statement_field="statement",
             tipo_pergunta="discursiva",
@@ -103,8 +113,8 @@ class EclerkExtractor(BaseExtractor):
         """
         return self._process_dataset_questions(
             dataset_name="oab_exams",
-            slice_start=1600,
-            slice_end=1723,
+            slice_start=self.dataset_range["oab_exams"]["slice_start"],
+            slice_end=self.dataset_range["oab_exams"]["slice_end"],
             question_id_field="id",
             statement_field="question",
             tipo_pergunta="multipla_escolha",

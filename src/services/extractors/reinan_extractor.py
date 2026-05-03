@@ -10,6 +10,16 @@ class ReinanExtractor(BaseExtractor):
     def __init__(self):
         super().__init__()
         self.base_raw_url = "https://raw.githubusercontent.com/ReinanHS/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/refs/heads/results"
+        self.dataset_range = {
+            "oab_bench": {
+                "slice_start": 176,
+                "slice_end": 188,
+            },
+            "oab_exams": {
+                "slice_start": 1845,
+                "slice_end": 1967,
+            },
+        }
 
     def extract_questions(self) -> list:
         """
@@ -91,8 +101,8 @@ class ReinanExtractor(BaseExtractor):
         """
         return self._process_dataset_questions(
             dataset_name="oab_bench",
-            slice_start=176,
-            slice_end=188,
+            slice_start=self.dataset_range["oab_bench"]["slice_start"],
+            slice_end=self.dataset_range["oab_bench"]["slice_end"],
             question_id_field="question_id",
             statement_field="statement",
             tipo_pergunta="discursiva",
@@ -105,8 +115,8 @@ class ReinanExtractor(BaseExtractor):
         """
         return self._process_dataset_questions(
             dataset_name="oab_exams",
-            slice_start=1845,
-            slice_end=1967,
+            slice_start=self.dataset_range["oab_exams"]["slice_start"],
+            slice_end=self.dataset_range["oab_exams"]["slice_end"],
             question_id_field="id",
             statement_field="question",
             tipo_pergunta="multipla_escolha",
