@@ -1,0 +1,5 @@
+{
+    "dbcode.ai.inlineCompletion": false,
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+    "python.terminal.activateEnvironment": true
+}
