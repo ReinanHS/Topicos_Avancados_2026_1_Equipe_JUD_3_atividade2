@@ -1,4 +1,9 @@
-from src.repositories import CategoriaRepository, DatasetRepository, PerguntaRepository
+from src.repositories import (
+    CategoriaRepository,
+    DatasetRepository,
+    PerguntaRepository,
+    ModeloRepository,
+)
 from src.services.extractors.reinan_extractor import ReinanExtractor
 from src.services.extractors.ericles_extractor import EclerkExtractor
 from src.services.extractors.fernanda_extractor import FernandaExtractor
@@ -98,3 +103,60 @@ class SeedController:
             pergunta_repo.create(**pergunta)
 
         print("Perguntas semeadas com sucesso!")
+
+    def seed_modelos(self):
+        """Insere as informações de modelos iniciais no banco de dados."""
+        repo = ModeloRepository()
+
+        modelos = [
+            {
+                "nome_modelo": "Llama 3.2",
+                "versao": "3B",
+                "provedor": "Meta",
+                "familia": "Llama",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "Gemma 2",
+                "versao": "2B",
+                "provedor": "Google",
+                "familia": "Gemma",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "Qwen 2.5",
+                "versao": "3B",
+                "provedor": "Alibaba",
+                "familia": "Qwen",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "Llama 3.1",
+                "versao": "8B",
+                "provedor": "Meta",
+                "familia": "Llama",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "Mistral",
+                "versao": "7B",
+                "provedor": "Mistral AI",
+                "familia": "Mistral",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "DeepSeek-R1",
+                "versao": "8B",
+                "provedor": "DeepSeek",
+                "familia": "DeepSeek",
+                "parametro_precisao": "N/A",
+            },
+        ]
+
+        try:
+            for mod in modelos:
+                repo.create(**mod)
+
+            print("Modelos semeados com sucesso!")
+        except Exception as e:
+            print(f"Erro ao semear modelos: {e}")

@@ -153,7 +153,8 @@ class BaseExtractor(ABC):
                     "enunciado": question[statement_field],
                     "nivel_dificuldade": f"Nivel {difficulty}",
                     "legislacao_basica": parsed_curatorship["legislation"],
-                    "metadados": extract_metadados(question) | {"source_file": self.__class__.__name__},
+                    "metadados": extract_metadados(question)
+                    | {"source_file": self.__class__.__name__},
                 }
             )
 

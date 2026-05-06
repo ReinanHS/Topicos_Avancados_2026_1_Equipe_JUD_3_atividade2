@@ -53,6 +53,13 @@ def seed_perguntas():
     controller.seed_perguntas()
 
 
+@seed_app.command("modelos")
+def seed_modelos():
+    """Insere as informações de modelos no banco de dados."""
+    controller = SeedController()
+    controller.seed_modelos()
+
+
 @app.callback()
 def main_callback():
     """
