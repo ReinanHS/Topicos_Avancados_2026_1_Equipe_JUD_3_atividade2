@@ -150,7 +150,23 @@ source .venv/bin/activate
 
 # Instalar as dependências
 uv sync
+```
 
+## Migrations
+
+```bash
+uv run python main.py db rollback
+uv run python main.py db migrate
+```
+
+## Seeders
+
+```bash
+uv run python main.py db seed modelos
+uv run python main.py db seed categorias
+uv run python main.py db seed dataset
+uv run python main.py db seed perguntas
+uv run python main.py db seed respostas
 ```
 
 ### Acessando o CloudBeaver

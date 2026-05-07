@@ -160,3 +160,33 @@ class SeedController:
             print("Modelos semeados com sucesso!")
         except Exception as e:
             print(f"Erro ao semear modelos: {e}")
+
+    def seed_respostas(self):
+        """Insere as respostas dos modelos no banco de dados."""
+        from src.repositories.resposta_repository import RespostaRepository
+
+        reinan_extractor = ReinanExtractor()
+        ericles_extractor = EclerkExtractor()
+        fernanda_extractor = FernandaExtractor()
+        victor_extractor = VictorExtractor()
+
+        resposta_repo = RespostaRepository()
+
+        respostas = []
+        respostas.extend(reinan_extractor.extract_answers())
+        respostas.extend(ericles_extractor.extract_answers())
+        respostas.extend(fernanda_extractor.extract_answers())
+        respostas.extend(victor_extractor.extract_answers())
+
+        for resposta in respostas:
+            if resposta.get("id_modelo") and resposta.get("id_pergunta"):
+                resposta_repo.create(
+                    id_pergunta=resposta["id_pergunta"],
+                    id_modelo=resposta["id_modelo"],
+                    texto_resposta=resposta["texto_resposta"],
+                    tempo_inferencia_ms=resposta["tempo_inferencia_ms"],
+                )
+            else:
+                print(f"Não foi possível semear a resposta: {resposta}")
+
+        print("Respostas semeadas com sucesso!")

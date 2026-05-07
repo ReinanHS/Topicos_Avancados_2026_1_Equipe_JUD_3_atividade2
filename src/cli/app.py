@@ -60,6 +60,13 @@ def seed_modelos():
     controller.seed_modelos()
 
 
+@seed_app.command("respostas")
+def seed_respostas():
+    """Insere as respostas dos modelos no banco de dados."""
+    controller = SeedController()
+    controller.seed_respostas()
+
+
 @app.callback()
 def main_callback():
     """
