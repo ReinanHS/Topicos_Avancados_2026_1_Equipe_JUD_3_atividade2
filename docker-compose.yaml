@@ -34,6 +34,29 @@ services:
     depends_on:
       - db
 
+  grafana:
+    image: grafana/grafana:11.6.0
+    container_name: grafana_jud
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_SERVER_HTTP_PORT: 3000
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/jud_dashboard.json
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      TZ: America/Sao_Paulo
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./.docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./.docker/grafana/dashboards:/var/lib/grafana/dashboards
+    restart: unless-stopped
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
   cloudbeaver_data:
+  grafana_data:

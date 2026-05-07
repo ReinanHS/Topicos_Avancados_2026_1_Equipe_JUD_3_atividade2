@@ -201,6 +201,21 @@ Veja o exemplo da imagem abaixo:
 
 ---
 
+### Acessando o Grafana
+
+O [Grafana](https://grafana.com/docs/grafana/latest/) é uma ferramenta de visualização de dados. Ela já vem configurada automaticamente com a conexão ao PostgreSQL do projeto.
+
+1. Abra o navegador e acesse: [http://localhost:3000](http://localhost:3000)
+2. O acesso anônimo já está habilitado, então **não é necessário fazer login**.
+3. No painel lateral esquerdo, você verá a conexão **jud_db** já disponível.
+4. Clique na conexão para expandir e visualizar as tabelas do banco.
+
+> **Acesso administrativo:** Caso precise de permissões de administrador, utilize as credenciais `admin` / `admin`.
+
+![Exemplo de dashboard no Grafana](docs/assets/dashboard-no-grafana.png)
+
+---
+
 ## Contribuições
 
 Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md).
