@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from src.services.datasets.loader_factory import DatasetLoaderFactory
 from src.repositories.dataset_repository import DatasetRepository
 from src.repositories.categoria_repository import CategoriaRepository
+from src.repositories.pergunta_repository import PerguntaRepository
+from src.repositories.modelo_repository import ModeloRepository
 
 
 class BaseExtractor(ABC):
@@ -18,6 +20,8 @@ class BaseExtractor(ABC):
         self.dataset_loader = DatasetLoaderFactory()
         self.dataset_repo = DatasetRepository()
         self.categoria_repo = CategoriaRepository()
+        self.pergunta_repo = PerguntaRepository()
+        self.modelo_repo = ModeloRepository()
         self.dataset_range = {
             "oab_bench": {
                 "slice_start": 0,
@@ -132,7 +136,7 @@ class BaseExtractor(ABC):
         data = []
 
         for question in questions_data:
-            question_id = str(question[question_id_field])
+            question_id = str(question.get(question_id_field) or question.get("id"))
             curatorship = self.find_curatorship_by_question_id(
                 question_id, data_curatorship, id_field=question_id_field
             )
@@ -182,7 +186,7 @@ class BaseExtractor(ABC):
             dataset_name="oab_exams",
             slice_start=self.dataset_range["oab_exams"]["slice_start"],
             slice_end=self.dataset_range["oab_exams"]["slice_end"],
-            question_id_field="id",
+            question_id_field="question_id",
             statement_field="question",
             tipo_pergunta="multipla_escolha",
             extract_metadados=lambda q: {
@@ -202,3 +206,29 @@ class BaseExtractor(ABC):
         questions.extend(self.extract_questions_oab_bench())
         questions.extend(self.extract_questions_oab_exams())
         return questions
+
+    def get_db_model_name(self, raw_model_name: str) -> str:
+        """
+        Mapeia os nomes dos modelos nos arquivos JSON para os nomes dos modelos no banco de dados.
+        """
+        name = raw_model_name.lower().replace(":", "-")
+        if "llama3.2" in name or "llama-3.2" in name:
+            return "Llama 3.2"
+        if "llama3.1" in name or "llama-3.1" in name:
+            return "Llama 3.1"
+        if "gemma2" in name or "gemma-2" in name:
+            return "Gemma 2"
+        if "qwen" in name:
+            return "Qwen 2.5"
+        if "mistral" in name:
+            return "Mistral"
+        if "deepseek" in name:
+            return "DeepSeek-R1"
+        return raw_model_name
+
+    def extract_answers(self) -> list:
+        """
+        Extrai as respostas de todos os datasets suportados.
+        Pode ser sobrescrito nas classes filhas.
+        """
+        return []

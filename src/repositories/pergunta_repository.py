@@ -58,3 +58,26 @@ class PerguntaRepository:
         except Exception as e:
             print(f"Erro ao inserir pergunta '{id_externo}': {e}")
             raise e
+
+    def get_id(self, id_externo: str, id_dataset: int) -> int | None:
+        """
+        Recupera o ID da pergunta a partir de seu id_externo e id_dataset.
+        """
+        try:
+            with self._get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        SELECT id_pergunta
+                        FROM perguntas
+                        WHERE id_externo = %s AND id_dataset = %s;
+                        """,
+                        (id_externo, id_dataset),
+                    )
+                    row = cur.fetchone()
+                    if row:
+                        return row[0]
+                    return None
+        except Exception as e:
+            print(f"Erro ao recuperar ID da pergunta '{id_externo}': {e}")
+            raise e

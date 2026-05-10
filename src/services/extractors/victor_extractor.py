@@ -51,3 +51,23 @@ class VictorExtractor(BaseExtractor):
             "difficulty": difficulty,
             "legislation": legislation,
         }
+
+    def extract_questions_oab_exams(self) -> list:
+        """
+        Extrai as perguntas do OAB Exams.
+        """
+        return self._process_dataset_questions(
+            dataset_name="oab_exams",
+            slice_start=self.dataset_range["oab_exams"]["slice_start"],
+            slice_end=self.dataset_range["oab_exams"]["slice_end"],
+            question_id_field="id",
+            statement_field="question",
+            tipo_pergunta="multipla_escolha",
+            extract_metadados=lambda q: {
+                "question_number": q.get("question_number"),
+                "exam_id": q.get("exam_id"),
+                "exam_year": q.get("exam_year"),
+                "question_type": q.get("question_type"),
+                "nullified": q.get("nullified"),
+            },
+        )

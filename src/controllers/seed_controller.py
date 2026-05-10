@@ -3,7 +3,6 @@ from src.repositories import (
     DatasetRepository,
     PerguntaRepository,
     ModeloRepository,
-    RespostaRepository,
 )
 from src.services.extractors.reinan_extractor import ReinanExtractor
 from src.services.extractors.ericles_extractor import EclerkExtractor
@@ -11,7 +10,6 @@ from src.services.extractors.fernanda_extractor import FernandaExtractor
 from src.services.extractors.victor_extractor import VictorExtractor
 from src.services.extractors.julia_extractor import JuliaExtractor
 from src.services.extractors.mikaela_extractor import MikaelaExtractor
-from src.services.respostas.atividade1_importer import Atividade1Importer
 
 
 class SeedController:
@@ -79,6 +77,7 @@ class SeedController:
             "Estatuto da OAB",
             "Filosofia do Direito",
             "Ética Profissional",
+            "Direito Eleitoral",
         ]
 
         try:
@@ -169,39 +168,36 @@ class SeedController:
         except Exception as e:
             print(f"Erro ao semear modelos: {e}")
 
-    def seed_respostas_atividade_1(self):
-        """
-        Importa as respostas geradas no repositório da Atividade 1 do Ericles
-        (cobre Ericles + Júlia + Mikaela) e popula a tabela
-        `respostas_atividade_1`.
+    def seed_respostas(self):
+        """Insere as respostas dos modelos no banco de dados."""
+        from src.repositories.resposta_repository import RespostaRepository
 
-        Pré-requisitos: `seed_modelos` e `seed_perguntas` já executados.
-        """
-        importer = Atividade1Importer()
-        repo = RespostaRepository()
+        reinan_extractor = ReinanExtractor()
+        ericles_extractor = EclerkExtractor()
+        fernanda_extractor = FernandaExtractor()
+        victor_extractor = VictorExtractor()
+        julia_extractor = JuliaExtractor()
+        mikaela_extractor = MikaelaExtractor()
 
-        print("Baixando respostas da Atividade 1...")
-        respostas = importer.extract_respostas()
-        print(f"Total de respostas canônicas: {len(respostas)}")
+        resposta_repo = RespostaRepository()
 
-        inseridas = 0
-        pendentes = 0
-        for r in respostas:
-            ok = repo.create(
-                id_externo=r["id_externo"],
-                nome_modelo=r["nome_modelo"],
-                versao_modelo=r["versao_modelo"],
-                texto_resposta=r["texto_resposta"],
-                tempo_inferencia_ms=r["tempo_inferencia_ms"],
-            )
-            if ok:
-                inseridas += 1
+        respostas = []
+        respostas.extend(reinan_extractor.extract_answers())
+        respostas.extend(ericles_extractor.extract_answers())
+        respostas.extend(fernanda_extractor.extract_answers())
+        respostas.extend(victor_extractor.extract_answers())
+        respostas.extend(julia_extractor.extract_answers())
+        respostas.extend(mikaela_extractor.extract_answers())
+
+        for resposta in respostas:
+            if resposta.get("id_modelo") and resposta.get("id_pergunta"):
+                resposta_repo.create(
+                    id_pergunta=resposta["id_pergunta"],
+                    id_modelo=resposta["id_modelo"],
+                    texto_resposta=resposta["texto_resposta"],
+                    tempo_inferencia_ms=resposta["tempo_inferencia_ms"],
+                )
             else:
-                pendentes += 1
+                print(f"Não foi possível semear a resposta: {resposta}")
 
-        print(f"Respostas inseridas: {inseridas}")
-        if pendentes:
-            print(
-                f"[aviso] {pendentes} respostas sem pergunta/modelo "
-                "correspondente — rode `db seed perguntas` e `db seed modelos` antes."
-            )
+        print("Respostas semeadas com sucesso!")

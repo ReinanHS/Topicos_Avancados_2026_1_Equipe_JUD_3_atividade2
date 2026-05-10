@@ -60,11 +60,11 @@ def seed_modelos():
     controller.seed_modelos()
 
 
-@seed_app.command("respostas-atividade-1")
-def seed_respostas_atividade_1():
-    """Importa e insere as respostas dos modelos da Atividade 1 (Ericles + Júlia + Mikaela)."""
+@seed_app.command("respostas")
+def seed_respostas():
+    """Insere as respostas dos modelos no banco de dados."""
     controller = SeedController()
-    controller.seed_respostas_atividade_1()
+    controller.seed_respostas()
 
 
 @app.callback()

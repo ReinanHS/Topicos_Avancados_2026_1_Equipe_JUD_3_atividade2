@@ -1,0 +1,20 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL — JUD DB
+    type: postgres
+    uid: postgres-jud-db
+    url: db:5432
+    user: admin
+    secureJsonData:
+      password: adminpassword
+    jsonData:
+      database: jud_db
+      sslmode: disable
+      maxOpenConns: 10
+      maxIdleConns: 5
+      connMaxLifetime: 14400
+      postgresVersion: 1700
+      timescaledb: false
+    isDefault: true
+    editable: true
