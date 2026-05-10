@@ -8,6 +8,8 @@ from src.services.extractors.reinan_extractor import ReinanExtractor
 from src.services.extractors.ericles_extractor import EclerkExtractor
 from src.services.extractors.fernanda_extractor import FernandaExtractor
 from src.services.extractors.victor_extractor import VictorExtractor
+from src.services.extractors.julia_extractor import JuliaExtractor
+from src.services.extractors.mikaela_extractor import MikaelaExtractor
 
 
 class SeedController:
@@ -75,6 +77,7 @@ class SeedController:
             "Estatuto da OAB",
             "Filosofia do Direito",
             "Ética Profissional",
+            "Direito Eleitoral",
         ]
 
         try:
@@ -91,6 +94,8 @@ class SeedController:
         ericles_extractor = EclerkExtractor()
         fernanda_extractor = FernandaExtractor()
         victor_extractor = VictorExtractor()
+        julia_extractor = JuliaExtractor()
+        mikaela_extractor = MikaelaExtractor()
         pergunta_repo = PerguntaRepository()
 
         perguntas = []
@@ -98,6 +103,8 @@ class SeedController:
         perguntas.extend(ericles_extractor.extract_questions())
         perguntas.extend(fernanda_extractor.extract_questions())
         perguntas.extend(victor_extractor.extract_questions())
+        perguntas.extend(julia_extractor.extract_questions())
+        perguntas.extend(mikaela_extractor.extract_questions())
 
         for pergunta in perguntas:
             pergunta_repo.create(**pergunta)
@@ -169,6 +176,8 @@ class SeedController:
         ericles_extractor = EclerkExtractor()
         fernanda_extractor = FernandaExtractor()
         victor_extractor = VictorExtractor()
+        julia_extractor = JuliaExtractor()
+        mikaela_extractor = MikaelaExtractor()
 
         resposta_repo = RespostaRepository()
 
@@ -177,6 +186,8 @@ class SeedController:
         respostas.extend(ericles_extractor.extract_answers())
         respostas.extend(fernanda_extractor.extract_answers())
         respostas.extend(victor_extractor.extract_answers())
+        respostas.extend(julia_extractor.extract_answers())
+        respostas.extend(mikaela_extractor.extract_answers())
 
         for resposta in respostas:
             if resposta.get("id_modelo") and resposta.get("id_pergunta"):

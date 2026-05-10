@@ -31,8 +31,11 @@ class EclerkExtractor(BaseExtractor):
         if difficulty is None:
             difficulty = 3
 
+        subdomains = curatorship["subdominio_semantico"].split(" e ")
+        category_name = subdomains[0].strip()
+
         return {
-            "category": curatorship["subdominio_semantico"],
+            "category": category_name,
             "difficulty": difficulty,
             "legislation": curatorship["corpus_referencia"],
         }
