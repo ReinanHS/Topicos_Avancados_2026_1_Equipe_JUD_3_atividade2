@@ -85,7 +85,7 @@ class PerguntaRepository:
             print(f"Erro ao recuperar ID da pergunta '{id_externo}': {e}")
             raise e
         #victor
-        def get_by_id(self, id_pergunta: int) -> dict | None:
+    def get_by_id(self, id_pergunta: int) -> dict | None:
         """
         Recupera uma pergunta completa pelo ID interno do banco.
         """
