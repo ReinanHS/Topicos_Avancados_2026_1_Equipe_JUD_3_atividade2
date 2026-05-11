@@ -23,6 +23,7 @@ class PerguntaRepository:
         id_externo: str,
         tipo_pergunta: str,
         enunciado: str,
+        resposta_ouro: str,
         nivel_dificuldade: str,
         legislacao_basica: str = None,
         metadados: dict = None,
@@ -38,9 +39,10 @@ class PerguntaRepository:
                         """
                         INSERT INTO perguntas (
                             id_dataset, id_categoria, id_externo, tipo_pergunta, 
-                            enunciado, nivel_dificuldade, legislacao_basica, metadados
+                            enunciado, resposta_ouro, nivel_dificuldade,
+                            legislacao_basica, metadados
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT (id_dataset, id_externo) DO NOTHING;
                         """,
                         (
@@ -49,6 +51,7 @@ class PerguntaRepository:
                             id_externo,
                             tipo_pergunta,
                             enunciado,
+                            resposta_ouro,
                             nivel_dificuldade,
                             legislacao_basica,
                             json.dumps(metadados) if metadados else None,

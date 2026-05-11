@@ -110,6 +110,33 @@ class BaseExtractor(ABC):
                 return item
         return None
 
+    def _build_ref_map(
+        self,
+        dataset,
+        dataset_name: str,
+        slice_start: int,
+        slice_end: int,
+        question_id_field: str,
+        extract_resposta_ouro: callable,
+    ) -> dict:
+        """
+        Constrói um mapa {question_id: resposta_ouro} a partir das referências do dataset.
+        """
+        ref_map = {}
+
+        if not hasattr(dataset, "load_references"):
+            return ref_map
+
+        references = dataset.load_references(
+            slice_start=slice_start, slice_end=slice_end
+        )
+
+        for ref in references:
+            qid = str(ref.get(question_id_field) or ref.get("id"))
+            ref_map[qid] = extract_resposta_ouro(ref)
+
+        return ref_map
+
     def _process_dataset_questions(
         self,
         dataset_name: str,
@@ -119,6 +146,7 @@ class BaseExtractor(ABC):
         statement_field: str,
         tipo_pergunta: str,
         extract_metadados: callable,
+        extract_resposta_ouro: callable = None,
     ) -> list:
         """
         Método genérico para processar e extrair perguntas de um determinado dataset.
@@ -132,6 +160,15 @@ class BaseExtractor(ABC):
             slice_start=slice_start, slice_end=slice_end
         )
         dataset_id = self.find_dataset_id(dataset_name)
+
+        ref_map = self._build_ref_map(
+            dataset,
+            dataset_name,
+            slice_start,
+            slice_end,
+            question_id_field,
+            extract_resposta_ouro or (lambda q: ""),
+        )
 
         data = []
 
@@ -148,6 +185,10 @@ class BaseExtractor(ABC):
             category_id = self.find_category_id(parsed_curatorship["category"])
             difficulty = parsed_curatorship["difficulty"]
 
+            resposta_ouro = ref_map.get(question_id, "")
+            if extract_resposta_ouro and not resposta_ouro:
+                resposta_ouro = extract_resposta_ouro(question)
+
             data.append(
                 {
                     "id_dataset": dataset_id,
@@ -155,6 +196,7 @@ class BaseExtractor(ABC):
                     "id_externo": question_id,
                     "tipo_pergunta": tipo_pergunta,
                     "enunciado": question[statement_field],
+                    "resposta_ouro": resposta_ouro,
                     "nivel_dificuldade": f"Nivel {difficulty}",
                     "legislacao_basica": parsed_curatorship["legislation"],
                     "metadados": extract_metadados(question)
@@ -163,6 +205,19 @@ class BaseExtractor(ABC):
             )
 
         return data
+
+    @staticmethod
+    def _extract_oab_bench_resposta_ouro(ref: dict) -> str:
+        """Extrai a resposta ouro do OAB Bench juntando os turns das choices."""
+        choices = ref.get("choices", [])
+        if not choices:
+            return ""
+        turns = choices[0].get("turns", [])
+        parts = []
+        for t in turns:
+            text = t if isinstance(t, str) else str(t)
+            parts.append(text)
+        return "\n\n".join(parts)
 
     def extract_questions_oab_bench(self) -> list:
         """
@@ -176,6 +231,7 @@ class BaseExtractor(ABC):
             statement_field="statement",
             tipo_pergunta="discursiva",
             extract_metadados=lambda q: {"values": q.get("values")},
+            extract_resposta_ouro=self._extract_oab_bench_resposta_ouro,
         )
 
     def extract_questions_oab_exams(self) -> list:
@@ -196,6 +252,7 @@ class BaseExtractor(ABC):
                 "question_type": q.get("question_type"),
                 "nullified": q.get("nullified"),
             },
+            extract_resposta_ouro=lambda q: str(q.get("answerKey", "")),
         )
 
     def extract_questions(self) -> list:
