@@ -282,27 +282,111 @@ O pipeline pula automaticamente respostas que o juiz informado já avaliou — p
 
 ## Análise estatística (Spearman)
 
-Após popular `avaliacoes_juiz`, o módulo de análise calcula a correlação de Spearman (ρ) entre o juiz e o gabarito humano, conforme a metodologia do enunciado.
+Após popular `avaliacoes_juiz`, o módulo de análise calcula a **correlação de Spearman (ρ)** entre o Juiz-IA e o gabarito humano. Esta seção explica o que é a métrica, por que escolhemos ela e como interpretar os resultados gerados pelo projeto.
+
+### Por que Spearman e não Pearson?
+
+As notas atribuídas pelo Juiz-IA (escala 1 a 5) são **dados ordinais**: existe uma ordem clara (5 é melhor que 4, que é melhor que 3...), mas a *distância* entre os valores não é necessariamente uniforme. A diferença qualitativa entre "Nota 1 — alucinação grave" e "Nota 2 — fundamentação vaga" pode ser muito maior do que a diferença entre "Nota 4 — excelente" e "Nota 5 — excepcional".
+
+- A **correlação de Pearson** mede a relação *linear* entre variáveis contínuas e supõe que distâncias são significativas — premissa que **não vale** para nossa escala.
+- A **correlação de Spearman** trabalha sobre *postos* (`ranks`): cada valor é transformado em sua posição relativa na amostra. Ela captura qualquer **relação monotônica** (crescente ou decrescente), independente de a função ser linear. Por isso é a métrica indicada quando os dados são ordinais, como notas em rubricas. É também a métrica explicitamente sugerida no enunciado da atividade.
+
+### A fórmula
+
+Quando não há empates entre as notas, Spearman tem a forma fechada clássica:
+
+$$\rho = 1 - \frac{6 \sum_{i=1}^{n} d_i^2}{n(n^2 - 1)}$$
+
+Onde:
+- $d_i$ é a diferença entre o posto da nota do Juiz-IA e o posto da nota humana (gabarito), para a i-ésima pergunta;
+- $n$ é o número total de questões avaliadas.
+
+Quando há empates (frequente numa escala de 1–5), a implementação no `scipy.stats.spearmanr` calcula a correlação de Pearson sobre os postos médios — o resultado é equivalente e robusto. Por isso usamos o `scipy` em [spearman_service.py](src/services/analysis/spearman_service.py) em vez de implementar a fórmula manualmente.
+
+A função também devolve um **p-value**, que indica a probabilidade de obter uma correlação tão forte quanto a observada *por puro acaso*. Valores baixos (tipicamente $p < 0.05$) indicam que a correlação é estatisticamente significativa.
+
+### Metodologia aplicada no projeto
+
+O comando `db analysis run` produz três blocos de saída:
 
 ```bash
 uv run python main.py db analysis run
 ```
 
-O relatório inclui três blocos:
+#### 1. Resumo agregado (estatística descritiva)
 
-1. **Resumo agregado** — média, desvio-padrão e contagem das notas por `(dataset, modelo candidato, juiz)`.
-2. **Juiz × Gabarito Humano** — para questões de múltipla escolha, converte o gabarito em nota binarizada (`5` se a resposta do modelo contém a alternativa correta, `1` caso contrário) e calcula ρ contra a nota do juiz.
-3. **Inter-juízes** — quando houver 2+ juízes avaliando as mesmas respostas, calcula ρ par a par (útil para detectar viés sistemático).
+Para cada combinação `(dataset, modelo candidato, juiz)`, são calculadas média, desvio-padrão e contagem das notas. Serve como sanity check antes de olhar a correlação: se um juiz só dá nota 5, qualquer ρ será degenerado.
 
-Interpretação rápida (ρ ∈ [-1, 1]):
+A query SQL por trás está em [avaliacao_repository.py](src/repositories/avaliacao_repository.py#L121-L156) e segue o exemplo do enunciado:
 
-| Faixa de ρ | Leitura |
-|---|---|
-| 0.7 – 1.0 | Forte alinhamento — o juiz "pensa" como o gabarito. |
-| 0.3 – 0.6 | Alinhamento moderado — a rubrica pode precisar de calibração. |
-| < 0.3 | Discordância — achado científico relevante; investigar no relatório. |
+```sql
+SELECT d.nome AS dataset, m_cand.nome_modelo AS candidato,
+       m_juiz.nome_modelo AS juiz,
+       AVG(a.nota_atribuida) AS media,
+       STDDEV_SAMP(a.nota_atribuida) AS desvio,
+       COUNT(a.id_avaliacao) AS total
+FROM avaliacoes_juiz a
+JOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1
+JOIN perguntas p ON p.id_pergunta = r.id_pergunta
+JOIN datasets d ON d.id_dataset = p.id_dataset
+JOIN modelos m_cand ON m_cand.id_modelo = r.id_modelo
+JOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz
+GROUP BY d.nome, candidato, juiz;
+```
 
-> **Nota:** o cálculo do bloco 2 depende do gabarito (`answerKey`) estar presente em `metadados.jsonb` das perguntas de múltipla escolha. Se você populou o banco antes da atualização do [base_extractor.py](src/services/extractors/base_extractor.py), faça `db rollback` + `db migrate` + `db seed all` para recapturar.
+#### 2. Cenário A — Juiz × Gabarito Humano (múltipla escolha)
+
+Para questões de **múltipla escolha** (`oab_exams`), o gabarito humano é discreto (letra A, B, C, D ou E). Seguimos a estratégia descrita no enunciado:
+
+1. Extrai-se o `answerKey` dos metadados da pergunta;
+2. Verifica-se se o texto da resposta do modelo contém a letra correta (heurística com regex `\b<letra>\b`);
+3. Converte-se o gabarito humano em uma **nota binarizada**: `5` se o modelo acertou, `1` se errou;
+4. Calcula-se Spearman entre essa série binarizada e as notas do juiz para o mesmo conjunto de questões.
+
+A intuição é direta: se o juiz dá nota alta sempre que o modelo acerta a alternativa correta e nota baixa quando erra, ρ se aproxima de 1.
+
+#### 3. Cenário B — Inter-juízes (questões abertas)
+
+Para questões **discursivas** (`oab_bench`) não há nota humana — o gabarito é um texto-guideline, não um número. Aqui usamos uma técnica complementar comum em LLM-as-a-Judge: **acordo inter-juízes** (`inter-rater agreement`).
+
+Quando há ≥2 juízes que avaliaram as mesmas respostas, calculamos Spearman par a par. Isso responde duas perguntas importantes:
+
+- **Convergência:** Se GPT-4o e Claude Sonnet 4.6 concordam (ρ alto), há indício de que a rubrica é robusta e o sinal não é aleatório.
+- **Detecção de viés:** Se um juiz local barato (Llama 3.1 8B) tem ρ alto com um juiz "premium" (GPT-4o), ele pode ser um substituto viável; se tem ρ baixo, fica evidenciado o trade-off custo × qualidade.
+
+### Interpretação de ρ
+
+A faixa de Spearman é $\rho \in [-1, 1]$. A leitura recomendada pelo enunciado:
+
+| Faixa de ρ | Leitura | Ação recomendada |
+|---|---|---|
+| 0.7 – 1.0 | **Forte alinhamento** | O juiz "pensa" como o gabarito; viável usá-lo em escala. |
+| 0.3 – 0.6 | **Alinhamento moderado** | Rubrica precisa ser mais específica; revisar critérios. |
+| 0.0 – 0.3 | **Alinhamento fraco** | Juiz inconsistente; trocar modelo ou refinar prompt. |
+| < 0 | **Discordância sistemática** | Achado científico — investigar viés (juiz pode estar mais atualizado que o gabarito, ou vice-versa). Documentar no relatório. |
+
+Casos especiais tratados em [spearman_service.py](src/services/analysis/spearman_service.py):
+
+- **Amostra insuficiente** (n < 2): ρ é indefinido; o relatório imprime `motivo` em vez de quebrar.
+- **Notas constantes** (juiz dá sempre a mesma nota): a variância é zero, ρ é indefinido; reportado explicitamente.
+- **Gabarito ausente** (`answerKey` faltando nos metadados): a questão é pulada e contada em `skipped(sem gabarito)`.
+
+### Limitação conhecida: gabarito em múltipla escolha
+
+O bloco "Juiz × Gabarito Humano" depende de `answerKey` estar presente em `metadados.jsonb` das perguntas de múltipla escolha. O [base_extractor.py](src/services/extractors/base_extractor.py) foi atualizado para capturar esse campo, mas as inserções usam `ON CONFLICT DO NOTHING` — se o banco foi populado **antes** dessa atualização, as linhas antigas não receberão `answerKey`.
+
+Para resolver:
+
+```bash
+uv run python main.py db rollback   # reverte migrations
+uv run python main.py db migrate    # recria as tabelas
+uv run python main.py db seed all   # recaptura tudo com o answerKey já presente
+```
+
+### Referência
+
+- [SciPy: scipy.stats.spearmanr](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html) — implementação usada.
+- Spearman, C. (1904). *The Proof and Measurement of Association between Two Things*. American Journal of Psychology.
 
 ---
 
