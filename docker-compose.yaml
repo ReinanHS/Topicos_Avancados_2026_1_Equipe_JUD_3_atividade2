@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17
+    image: ghcr.io/reinanhs/jud-db:latest
     container_name: postgres_jud_db
     environment:
       POSTGRES_USER: admin
