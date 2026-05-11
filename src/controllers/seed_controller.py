@@ -5,7 +5,7 @@ from src.repositories import (
     ModeloRepository,
 )
 from src.services.extractors.reinan_extractor import ReinanExtractor
-from src.services.extractors.ericles_extractor import EclerkExtractor
+from src.services.extractors.ericles_extractor import EriclesExtractor
 from src.services.extractors.fernanda_extractor import FernandaExtractor
 from src.services.extractors.victor_extractor import VictorExtractor
 from src.services.extractors.julia_extractor import JuliaExtractor
@@ -91,7 +91,7 @@ class SeedController:
     def seed_perguntas(self):
         """Insere as perguntas no banco de dados."""
         reinan_extractor = ReinanExtractor()
-        ericles_extractor = EclerkExtractor()
+        ericles_extractor = EriclesExtractor()
         fernanda_extractor = FernandaExtractor()
         victor_extractor = VictorExtractor()
         julia_extractor = JuliaExtractor()
@@ -173,7 +173,7 @@ class SeedController:
         from src.repositories.resposta_repository import RespostaRepository
 
         reinan_extractor = ReinanExtractor()
-        ericles_extractor = EclerkExtractor()
+        ericles_extractor = EriclesExtractor()
         fernanda_extractor = FernandaExtractor()
         victor_extractor = VictorExtractor()
         julia_extractor = JuliaExtractor()
