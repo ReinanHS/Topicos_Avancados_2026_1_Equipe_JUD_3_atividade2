@@ -172,6 +172,13 @@ class SeedController:
                 "familia": "GPT",
                 "parametro_precisao": "N/A",
             },
+            {
+                "nome_modelo": "GPT-4o mini",
+                "versao": "gpt-4o-mini",
+                "provedor": "OpenAI",
+                "familia": "GPT",
+                "parametro_precisao": "N/A",
+            },
         ]
 
         try:

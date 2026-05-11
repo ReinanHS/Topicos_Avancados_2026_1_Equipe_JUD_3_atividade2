@@ -25,6 +25,7 @@ class JudgeFactory:
         "ollama:qwen2.5:7b": "Qwen 2.5",
         "anthropic:claude-sonnet-4-6": "Claude Sonnet 4.6",
         "openai:gpt-4o": "GPT-4o",
+        "openai:gpt-4o-mini": "GPT-4o mini",
     }
 
     @classmethod
