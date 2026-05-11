@@ -240,6 +240,51 @@ class AvaliacaoRepository:
             print(f"Erro ao recuperar pares ({judge_a}, {judge_b}): {e}")
             raise e
 
+    def fetch_for_export(self, judge_db_model_name: str) -> list[dict]:
+        """
+        Retorna as avaliações de um juiz com as chaves naturais já resolvidas
+        (dataset, id_externo da pergunta, nome do modelo candidato), prontas
+        para serialização em JSON portável entre ambientes.
+        """
+        try:
+            with self._get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        SELECT
+                            d.nome AS dataset,
+                            p.id_externo AS id_externo_pergunta,
+                            m_cand.nome_modelo AS candidato,
+                            a.nota_atribuida,
+                            a.chain_of_thought,
+                            a.data_avaliacao
+                        FROM avaliacoes_juiz a
+                        JOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1
+                        JOIN perguntas p ON p.id_pergunta = r.id_pergunta
+                        JOIN datasets d ON d.id_dataset = p.id_dataset
+                        JOIN modelos m_cand ON m_cand.id_modelo = r.id_modelo
+                        JOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz
+                        WHERE m_juiz.nome_modelo = %s
+                        ORDER BY d.nome, p.id_externo, m_cand.nome_modelo;
+                        """,
+                        (judge_db_model_name,),
+                    )
+                    rows = cur.fetchall()
+                    return [
+                        {
+                            "dataset": row[0],
+                            "id_externo_pergunta": row[1],
+                            "candidato": row[2],
+                            "nota": int(row[3]),
+                            "chain_of_thought": row[4],
+                            "data_avaliacao": row[5].isoformat() if row[5] else None,
+                        }
+                        for row in rows
+                    ]
+        except Exception as e:
+            print(f"Erro ao exportar avaliações do juiz '{judge_db_model_name}': {e}")
+            raise e
+
     def list_distinct_judges(self) -> list[str]:
         """Lista os nomes de modelos juízes que já têm avaliações registradas."""
         try:

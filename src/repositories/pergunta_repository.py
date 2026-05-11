@@ -81,3 +81,47 @@ class PerguntaRepository:
         except Exception as e:
             print(f"Erro ao recuperar ID da pergunta '{id_externo}': {e}")
             raise e
+
+    def fetch_for_export(self) -> list[dict]:
+        """
+        Retorna todas as perguntas com chaves naturais já resolvidas
+        (dataset.nome, categoria.nome) prontas para serialização em JSON
+        portável.
+        """
+        try:
+            with self._get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        SELECT
+                            d.nome AS dataset,
+                            c.nome AS categoria,
+                            p.id_externo,
+                            p.tipo_pergunta,
+                            p.enunciado,
+                            p.nivel_dificuldade,
+                            p.legislacao_basica,
+                            p.metadados
+                        FROM perguntas p
+                        JOIN datasets d ON d.id_dataset = p.id_dataset
+                        JOIN categorias c ON c.id_categoria = p.id_categoria
+                        ORDER BY d.nome, p.id_externo;
+                        """
+                    )
+                    rows = cur.fetchall()
+                    return [
+                        {
+                            "dataset": row[0],
+                            "categoria": row[1],
+                            "id_externo": row[2],
+                            "tipo_pergunta": row[3],
+                            "enunciado": row[4],
+                            "nivel_dificuldade": row[5],
+                            "legislacao_basica": row[6],
+                            "metadados": row[7],
+                        }
+                        for row in rows
+                    ]
+        except Exception as e:
+            print(f"Erro ao exportar perguntas: {e}")
+            raise e

@@ -170,6 +170,34 @@ uv run python main.py db migrate
 uv run python main.py db seed all
 ```
 
+### Compartilhando extrações sem reprocessar
+
+Os 6 extractors em `src/services/extractors/` baixam dados de curadoria e respostas dos repositórios GitHub de cada membro — é um processo lento (HTTP-bound + lookups por linha). Para evitar que todos os colegas refaçam isso, depois de rodar `seed perguntas` e `seed respostas`, exporte e faça commit:
+
+```bash
+uv run python main.py db seed export --type all
+git add Atividade_2/exports/extracao-perguntas.json Atividade_2/exports/extracao-respostas.json
+git commit -m "feat: extrações da Atividade 1 compiladas"
+```
+
+Os demais membros, após `git pull`:
+
+```bash
+uv run python main.py db seed import-all
+```
+
+O import resolve as referências por nome natural (dataset/categoria/modelo) em vez de IDs auto-incrementados, então funciona mesmo se o banco do colega tiver IDs diferentes. É idempotente em dois níveis: o `ExtracaoExporter` checa duplicatas antes de inserir, e o `PerguntaRepository.create` usa `ON CONFLICT DO NOTHING` como cinto de segurança no banco.
+
+Comandos disponíveis:
+
+| Comando | O que faz |
+|---|---|
+| `db seed export --type perguntas` | Exporta só perguntas. |
+| `db seed export --type respostas` | Exporta só respostas. |
+| `db seed export --type all` | Exporta os dois (default). |
+| `db seed import <arquivo.json>` | Importa um arquivo (detecta o tipo automaticamente). |
+| `db seed import-all` | Importa perguntas (primeiro) e respostas (depois) da pasta padrão, respeitando as FKs. |
+
 ### Acessando o CloudBeaver
 
 O [CloudBeaver](https://dbeaver.com/docs/cloudbeaver/) é uma ferramenta web de administração de bancos de dados. Ela já vem configurada automaticamente com a conexão ao PostgreSQL do projeto.
@@ -277,6 +305,34 @@ uv run python main.py db judge evaluate \
 ```
 
 O pipeline pula automaticamente respostas que o juiz informado já avaliou — pode interromper e retomar à vontade sem duplicar custo de API.
+
+### Compartilhando avaliações sem reprocessar
+
+Para evitar que cada membro da equipe pague a API novamente, depois de rodar `judge evaluate` faça o export e commit o arquivo:
+
+```bash
+uv run python main.py db judge export -j openai:gpt-4o-mini
+git add Atividade_2/exports/avaliacoes-gpt-4o-mini.json
+git commit -m "feat: avaliações do gpt-4o-mini"
+```
+
+Outros membros, após `git pull`, carregam os dados sem chamar API:
+
+```bash
+uv run python main.py db judge import Atividade_2/exports/avaliacoes-gpt-4o-mini.json
+```
+
+Comandos disponíveis:
+
+| Comando | O que faz |
+|---|---|
+| `db judge export -j <spec>` | Exporta um juiz específico para `Atividade_2/exports/avaliacoes-<slug>.json`. |
+| `db judge export --all` | Gera um arquivo por juiz que já tem avaliações no banco. |
+| `db judge export -j <spec> --output <path>` | Exporta para um caminho customizado. |
+| `db judge import <arquivo.json>` | Importa um arquivo específico (idempotente). |
+| `db judge import-all` | Importa todos os `avaliacoes-*.json` da pasta padrão. |
+
+O formato do arquivo é JSON portável com chaves naturais (nome do dataset, `id_externo` da pergunta, nome do modelo candidato) em vez de IDs auto-incrementados — então funciona mesmo se o banco do colega tiver IDs diferentes do seu. O import é idempotente em dois níveis: o `AvaliacoesExporter.import_file` checa se cada par `(resposta, juiz)` já existe, e a constraint `uq_avaliacoes_resposta_juiz` no banco é o cinto de segurança.
 
 ---
 

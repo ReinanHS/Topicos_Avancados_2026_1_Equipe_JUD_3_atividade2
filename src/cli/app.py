@@ -2,6 +2,8 @@
 Módulo CLI principal — interface de linha de comando baseada em Typer.
 """
 
+from pathlib import Path
+
 import typer
 
 from src.controllers import (
@@ -88,6 +90,41 @@ def seed_all():
     controller.seed_all()
 
 
+@seed_app.command("export")
+def seed_export(
+    type_: str = typer.Option(
+        "all",
+        "--type",
+        help="O que exportar: 'perguntas', 'respostas' ou 'all' (default).",
+    ),
+):
+    """Exporta perguntas e/ou respostas para JSON portável em Atividade_2/exports/."""
+    SeedController().export_extracao(type_)
+
+
+@seed_app.command("import")
+def seed_import(
+    input_path: Path = typer.Argument(
+        ...,
+        help="Arquivo JSON a importar (extracao-perguntas.json ou extracao-respostas.json).",
+    ),
+):
+    """Importa um arquivo de extração específico. Idempotente."""
+    SeedController().import_extracao(input_path)
+
+
+@seed_app.command("import-all")
+def seed_import_all(
+    directory: Path = typer.Option(
+        Path("Atividade_2/exports"),
+        "--dir",
+        help="Pasta com os arquivos extracao-perguntas.json e extracao-respostas.json.",
+    ),
+):
+    """Importa perguntas (primeiro) e respostas (depois) da pasta indicada."""
+    SeedController().import_extracao_all(directory)
+
+
 @judge_app.command("evaluate")
 def judge_evaluate(
     judge: list[str] = typer.Option(
@@ -117,6 +154,53 @@ def judge_list_available():
     print("Juízes disponíveis:")
     for spec in JudgeFactory.available():
         print(f"  - {spec}")
+
+
+@judge_app.command("export")
+def judge_export(
+    judge: str = typer.Option(
+        None,
+        "--judge",
+        "-j",
+        help="Spec do juiz (ex.: 'openai:gpt-4o-mini'). Obrigatório se --all não for usado.",
+    ),
+    all_: bool = typer.Option(
+        False,
+        "--all",
+        help="Exporta um arquivo por juiz com avaliações no banco.",
+    ),
+    output: Path = typer.Option(
+        None,
+        "--output",
+        help="Caminho de saída. Default: Atividade_2/exports/avaliacoes-<slug>.json",
+    ),
+):
+    """Exporta avaliações do juiz para arquivo JSON portável."""
+    if not all_ and not judge:
+        raise typer.BadParameter("Informe --judge/-j ou use --all.")
+    JudgeController().export(judge_spec=judge, export_all=all_, output=output)
+
+
+@judge_app.command("import")
+def judge_import(
+    input_path: Path = typer.Argument(
+        ..., help="Arquivo JSON a importar (gerado por `judge export`)."
+    ),
+):
+    """Importa avaliações de um arquivo JSON. Idempotente."""
+    JudgeController().import_(input_path)
+
+
+@judge_app.command("import-all")
+def judge_import_all(
+    directory: Path = typer.Option(
+        Path("Atividade_2/exports"),
+        "--dir",
+        help="Pasta com os arquivos avaliacoes-*.json.",
+    ),
+):
+    """Importa todos os arquivos avaliacoes-*.json de uma pasta."""
+    JudgeController().import_all(directory)
 
 
 @analysis_app.command("run")

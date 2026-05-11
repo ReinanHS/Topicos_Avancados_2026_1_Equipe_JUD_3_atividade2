@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from src.repositories import AvaliacaoRepository, ModeloRepository
+from src.services.exporters import AvaliacoesExporter
 from src.services.judges import BaseJudge, JudgeFactory
 from src.services.judges.parser import parse_verdict
 from src.services.judges.prompts import build_prompt
@@ -14,6 +17,7 @@ class JudgeController:
     def __init__(self):
         self.avaliacao_repo = AvaliacaoRepository()
         self.modelo_repo = ModeloRepository()
+        self.exporter = AvaliacoesExporter()
 
     def _resolve_judge_model_id(self, judge: BaseJudge) -> int:
         """Resolve o id_modelo do juiz no banco a partir do nome registrado."""
@@ -98,3 +102,72 @@ class JudgeController:
                 print(f"Falha geral no juiz '{spec}': {e}")
 
         print("\nAvaliação finalizada.")
+
+    def _export_one(self, spec: str | None, db_model_name: str, output: Path | None) -> None:
+        path = self.exporter.export(
+            judge_db_model_name=db_model_name,
+            judge_spec=spec,
+            output_path=output,
+        )
+        count = self.avaliacao_repo.fetch_for_export(db_model_name).__len__()
+        print(f"Exportado: {path} ({count} avaliações)")
+
+    def export(
+        self,
+        judge_spec: str | None,
+        export_all: bool,
+        output: Path | None,
+    ) -> None:
+        """
+        Exporta avaliações para JSON. Se `export_all=True`, gera um arquivo
+        por juiz registrado no banco; caso contrário, exporta apenas o juiz
+        indicado em `judge_spec` (resolvido via JudgeFactory para encontrar
+        o nome no banco).
+        """
+        if export_all:
+            judges = self.avaliacao_repo.list_distinct_judges()
+            if not judges:
+                print("Nenhum juiz tem avaliações no banco — nada a exportar.")
+                return
+            for db_model_name in judges:
+                self._export_one(spec=None, db_model_name=db_model_name, output=None)
+            return
+
+        if not judge_spec:
+            raise ValueError("Informe --judge/-j ou use --all.")
+
+        # Reusa o factory para mapear spec → nome do modelo no banco.
+        db_model_name = JudgeFactory._db_model_map.get(judge_spec)
+        if not db_model_name:
+            available = ", ".join(JudgeFactory.available())
+            raise ValueError(
+                f"Spec '{judge_spec}' não está pré-configurada. "
+                f"Disponíveis: {available}"
+            )
+        self._export_one(spec=judge_spec, db_model_name=db_model_name, output=output)
+
+    def import_(self, input_path: Path) -> None:
+        """Importa um arquivo de avaliações e imprime o resultado."""
+        if not input_path.exists():
+            raise FileNotFoundError(f"Arquivo não encontrado: {input_path}")
+        print(f"Importando {input_path}...")
+        result = self.exporter.import_file(input_path)
+        print(
+            f"  importadas: {result['imported']} | "
+            f"puladas (já existiam): {result['skipped']} | "
+            f"erros: {len(result['errors'])}"
+        )
+        for err in result["errors"]:
+            print(f"    - {err}")
+
+    def import_all(self, directory: Path) -> None:
+        """Importa todos os arquivos .json da pasta indicada."""
+        if not directory.exists():
+            print(f"Pasta não existe: {directory}")
+            return
+        files = sorted(directory.glob("avaliacoes-*.json"))
+        if not files:
+            print(f"Nenhum arquivo 'avaliacoes-*.json' em {directory}.")
+            return
+        for path in files:
+            self.import_(path)
