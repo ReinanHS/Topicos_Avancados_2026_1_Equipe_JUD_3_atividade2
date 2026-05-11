@@ -1,14 +1,14 @@
-from src.services.extractors.ericles_extractor import EclerkExtractor
+from src.services.extractors.ericles_extractor import EriclesExtractor
 
 
-class JuliaExtractor(EclerkExtractor):
+class JuliaExtractor(EriclesExtractor):
     """
     Extrator para as questões da Julia.
 
     A inferencia e a curadoria das questoes da Julia foram executadas dentro
     do repositorio da Atividade 1 do Ericles (junto com as questoes dele e
     da Mikaela), entao reaproveitamos o mesmo `base_raw_url` e o mesmo formato
-    de `curator_annotations.json` (heranca do EclerkExtractor) — apenas
+    de `curator_annotations.json` (heranca do EriclesExtractor) — apenas
     sobrescrevemos o range para extrair somente as perguntas dela.
 
     URL Base: https://github.com/Ericles-Porty/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1

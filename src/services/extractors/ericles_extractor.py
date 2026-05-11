@@ -2,9 +2,9 @@ from src.helper import parse_answer_json
 from src.services.extractors.base_extractor import BaseExtractor
 
 
-class EclerkExtractor(BaseExtractor):
+class EriclesExtractor(BaseExtractor):
     """
-    Extrator específico para o repositório feito por Eclerk.
+    Extrator específico para o repositório feito por Ericles.
     URL Base: https://github.com/Ericles-Porty/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1
     """
 

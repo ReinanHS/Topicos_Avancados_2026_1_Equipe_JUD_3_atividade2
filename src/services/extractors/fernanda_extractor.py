@@ -1,7 +1,7 @@
-from src.services.extractors.ericles_extractor import EclerkExtractor
+from src.services.extractors.ericles_extractor import EriclesExtractor
 
 
-class FernandaExtractor(EclerkExtractor):
+class FernandaExtractor(EriclesExtractor):
     """
     Extrator específico para o repositório feito por Fernanda.
     URL Base: https://github.com/safira1344/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1
