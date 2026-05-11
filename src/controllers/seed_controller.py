@@ -158,6 +158,20 @@ class SeedController:
                 "familia": "DeepSeek",
                 "parametro_precisao": "N/A",
             },
+            {
+                "nome_modelo": "Claude Sonnet 4.6",
+                "versao": "claude-sonnet-4-6",
+                "provedor": "Anthropic",
+                "familia": "Claude",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "GPT-4o",
+                "versao": "gpt-4o",
+                "provedor": "OpenAI",
+                "familia": "GPT",
+                "parametro_precisao": "N/A",
+            },
         ]
 
         try:

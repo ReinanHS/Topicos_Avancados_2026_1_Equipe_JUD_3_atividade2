@@ -41,6 +41,11 @@ Português | [English](./README-EN.md)
   - [Subindo o ambiente com Docker](#subindo-o-ambiente-com-docker)
   - [Acessando o CloudBeaver](#acessando-o-cloudbeaver)
   - [Executando consultas SQL no navegador](#executando-consultas-sql-no-navegador)
+- [Pipeline LLM-as-a-Judge](#pipeline-llm-as-a-judge)
+  - [Juízes suportados](#juízes-suportados)
+  - [Configuração de credenciais](#configuração-de-credenciais)
+  - [Executando o avaliador](#executando-o-avaliador)
+- [Análise estatística (Spearman)](#análise-estatística-spearman)
 - [Contribuições](#contribuições)
 - [Licença](#licença)
 - [Referências](#referências)
@@ -209,6 +214,95 @@ O [Grafana](https://grafana.com/docs/grafana/latest/) é uma ferramenta de visua
 > **Acesso administrativo:** Caso precise de permissões de administrador, utilize as credenciais `admin` / `admin`.
 
 ![Exemplo de dashboard no Grafana](docs/assets/dashboard-no-grafana.png)
+
+---
+
+## Pipeline LLM-as-a-Judge
+
+O avaliador (Juiz-IA) lê as respostas geradas na Atividade 1 (tabela `respostas_atividade_1`), submete cada uma a um modelo juiz com a rubrica do Desembargador OAB (escala 1–5) e persiste o veredito (nota + Chain-of-Thought) em `avaliacoes_juiz`.
+
+Arquitetura modular: `BaseJudge` (contrato) → `JudgeFactory` (resolve `provedor:modelo` na instância correta) → implementações concretas para [Ollama](src/services/judges/ollama_judge.py), [Anthropic](src/services/judges/anthropic_judge.py) e [OpenAI](src/services/judges/openai_judge.py). O prompt fica em [prompts.py](src/services/judges/prompts.py) e o parser do veredito em [parser.py](src/services/judges/parser.py). A idempotência é garantida no banco via constraint única em `(id_resposta_ativa1, id_modelo_juiz)`.
+
+### Juízes suportados
+
+| Spec CLI | Tipo | Modelo no banco |
+|---|---|---|
+| `ollama:llama3.1:8b` | Local (Ollama) | Llama 3.1 |
+| `ollama:qwen2.5:7b` | Local (Ollama) | Qwen 2.5 |
+| `anthropic:claude-sonnet-4-6` | API | Claude Sonnet 4.6 |
+| `openai:gpt-4o` | API | GPT-4o |
+
+Para listar dinamicamente:
+
+```bash
+uv run python main.py db judge list-available
+```
+
+### Configuração de credenciais
+
+Copie `.env.example` para `.env` e preencha conforme o(s) juiz(es) que pretende usar:
+
+```env
+# Para juízes via API (opcionais — só preencha o que for usar)
+ANTHROPIC_API_KEY=sk-ant-...
+OPENAI_API_KEY=sk-...
+
+# Para juízes locais via Ollama (default é http://localhost:11434)
+OLLAMA_HOST=http://localhost:11434
+```
+
+Para juízes Ollama, garanta que o modelo já foi baixado:
+
+```bash
+ollama pull llama3.1:8b
+ollama pull qwen2.5:7b
+```
+
+### Executando o avaliador
+
+O comando aceita de 1 a 3 juízes por execução. Repita `-j` para usar múltiplos juízes:
+
+```bash
+# Apenas um juiz local (sem custo de API)
+uv run python main.py db judge evaluate -j ollama:llama3.1:8b
+
+# Smoke test com limite (útil para validar o pipeline)
+uv run python main.py db judge evaluate -j ollama:llama3.1:8b --limit 5
+
+# Multi-juiz (até 3)
+uv run python main.py db judge evaluate \
+  -j ollama:llama3.1:8b \
+  -j anthropic:claude-sonnet-4-6 \
+  -j openai:gpt-4o
+```
+
+O pipeline pula automaticamente respostas que o juiz informado já avaliou — pode interromper e retomar à vontade sem duplicar custo de API.
+
+---
+
+## Análise estatística (Spearman)
+
+Após popular `avaliacoes_juiz`, o módulo de análise calcula a correlação de Spearman (ρ) entre o juiz e o gabarito humano, conforme a metodologia do enunciado.
+
+```bash
+uv run python main.py db analysis run
+```
+
+O relatório inclui três blocos:
+
+1. **Resumo agregado** — média, desvio-padrão e contagem das notas por `(dataset, modelo candidato, juiz)`.
+2. **Juiz × Gabarito Humano** — para questões de múltipla escolha, converte o gabarito em nota binarizada (`5` se a resposta do modelo contém a alternativa correta, `1` caso contrário) e calcula ρ contra a nota do juiz.
+3. **Inter-juízes** — quando houver 2+ juízes avaliando as mesmas respostas, calcula ρ par a par (útil para detectar viés sistemático).
+
+Interpretação rápida (ρ ∈ [-1, 1]):
+
+| Faixa de ρ | Leitura |
+|---|---|
+| 0.7 – 1.0 | Forte alinhamento — o juiz "pensa" como o gabarito. |
+| 0.3 – 0.6 | Alinhamento moderado — a rubrica pode precisar de calibração. |
+| < 0.3 | Discordância — achado científico relevante; investigar no relatório. |
+
+> **Nota:** o cálculo do bloco 2 depende do gabarito (`answerKey`) estar presente em `metadados.jsonb` das perguntas de múltipla escolha. Se você populou o banco antes da atualização do [base_extractor.py](src/services/extractors/base_extractor.py), faça `db rollback` + `db migrate` + `db seed all` para recapturar.
 
 ---
 

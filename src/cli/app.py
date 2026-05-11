@@ -4,7 +4,13 @@ Módulo CLI principal — interface de linha de comando baseada em Typer.
 
 import typer
 
-from src.controllers import MigrationController, SeedController
+from src.controllers import (
+    AnalysisController,
+    JudgeController,
+    MigrationController,
+    SeedController,
+)
+from src.services.judges import JudgeFactory
 
 app = typer.Typer(no_args_is_help=True)
 db_app = typer.Typer(no_args_is_help=True, help="Gerenciamento do banco de dados.")
@@ -14,6 +20,14 @@ seed_app = typer.Typer(
     no_args_is_help=True, help="Semeia dados iniciais no banco de dados."
 )
 db_app.add_typer(seed_app, name="seed")
+
+judge_app = typer.Typer(no_args_is_help=True, help="Pipeline LLM-as-a-Judge.")
+db_app.add_typer(judge_app, name="judge")
+
+analysis_app = typer.Typer(
+    no_args_is_help=True, help="Análise estatística das avaliações."
+)
+db_app.add_typer(analysis_app, name="analysis")
 
 
 @db_app.command("migrate")
@@ -72,6 +86,43 @@ def seed_all():
     """Executa todos os seeds na ordem correta."""
     controller = SeedController()
     controller.seed_all()
+
+
+@judge_app.command("evaluate")
+def judge_evaluate(
+    judge: list[str] = typer.Option(
+        ...,
+        "--judge",
+        "-j",
+        help=(
+            "Juiz no formato 'provedor:modelo' (ex.: 'ollama:llama3.1:8b', "
+            "'openai:gpt-4o'). Repita para usar de 1 a 3 juízes na mesma execução."
+        ),
+    ),
+    limit: int = typer.Option(
+        None,
+        "--limit",
+        help="Limita o número de respostas avaliadas por juiz (útil para smoke test).",
+    ),
+):
+    """Executa o pipeline LLM-as-a-Judge para os juízes informados."""
+    if not 1 <= len(judge) <= 3:
+        raise typer.BadParameter("Informe entre 1 e 3 juízes via --judge/-j.")
+    JudgeController().evaluate(judge, limit=limit)
+
+
+@judge_app.command("list-available")
+def judge_list_available():
+    """Lista as specs de juízes pré-configuradas."""
+    print("Juízes disponíveis:")
+    for spec in JudgeFactory.available():
+        print(f"  - {spec}")
+
+
+@analysis_app.command("run")
+def analysis_run():
+    """Executa a análise estatística (Spearman + agregados) sobre as avaliações."""
+    AnalysisController().run()
 
 
 @app.callback()

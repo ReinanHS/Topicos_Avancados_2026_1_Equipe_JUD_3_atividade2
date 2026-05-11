@@ -195,6 +195,7 @@ class BaseExtractor(ABC):
                 "exam_year": q.get("exam_year"),
                 "question_type": q.get("question_type"),
                 "nullified": q.get("nullified"),
+                "answerKey": q.get("answerKey"),
             },
         )
 
