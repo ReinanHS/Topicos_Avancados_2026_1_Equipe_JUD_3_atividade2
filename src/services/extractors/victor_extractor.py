@@ -70,6 +70,7 @@ class VictorExtractor(BaseExtractor):
                 "question_type": q.get("question_type"),
                 "nullified": q.get("nullified"),
             },
+            extract_resposta_ouro=lambda q: str(q.get("answerKey", "")),
         )
 
     def get_answers_data(self, dataset_name: str) -> list[dict]:

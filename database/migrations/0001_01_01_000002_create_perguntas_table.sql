@@ -6,6 +6,7 @@ CREATE TABLE perguntas (
     id_externo VARCHAR(150) NOT NULL,
     tipo_pergunta VARCHAR(30) NOT NULL,
     enunciado TEXT NOT NULL,
+    resposta_ouro TEXT NOT NULL,
     nivel_dificuldade VARCHAR(30) NOT NULL,
     legislacao_basica TEXT,
     metadados JSONB,
@@ -26,6 +27,8 @@ COMMENT ON COLUMN perguntas.id_externo IS 'ID original da pergunta no dataset de
 COMMENT ON COLUMN perguntas.enunciado IS 'Texto principal da pergunta.';
 
 COMMENT ON COLUMN perguntas.metadados IS 'Campos específicos do dataset não normalizados';
+
+COMMENT ON COLUMN perguntas.resposta_ouro IS 'Resposta esperada pelo avaliador';
 
 CREATE INDEX idx_perguntas_dataset ON perguntas (id_dataset);
 
