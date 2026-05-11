@@ -104,6 +104,11 @@ jobs:
           POSTGRES_PORT: 5432
         run: uv run python main.py db seed all
 
+      - name: Install postgresql-client-17
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends postgresql-client-17
+
       - name: Export database dump
         env:
           PGPASSWORD: adminpassword
