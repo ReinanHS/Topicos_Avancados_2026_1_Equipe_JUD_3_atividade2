@@ -65,3 +65,57 @@ class RespostaRepository:
         except Exception as e:
             print(f"Erro ao inserir resposta para pergunta '{id_pergunta}': {e}")
             raise e
+    #victor
+    def get_pendentes_avaliacao(self, id_modelo_juiz: int, limit: int | None = 10) -> list[dict]:
+        """
+        Lista respostas da Atividade 1 que ainda não foram avaliadas
+        pelo modelo juiz informado.
+        """
+        try:
+            with self._get_connection() as conn:
+                with conn.cursor() as cur:
+                    sql = """
+                        SELECT
+                            r.id_resposta,
+                            r.id_pergunta,
+                            r.id_modelo,
+                            m.nome_modelo,
+                            r.texto_resposta,
+                            r.tempo_inferencia_ms,
+                            r.data_geracao
+                        FROM respostas_atividade_1 r
+                        JOIN modelos m ON m.id_modelo = r.id_modelo
+                        WHERE NOT EXISTS (
+                            SELECT 1
+                            FROM avaliacoes_juiz a
+                            WHERE a.id_resposta_ativa1 = r.id_resposta
+                              AND a.id_modelo_juiz = %s
+                        )
+                        ORDER BY r.id_resposta
+                    """
+
+                    params = [id_modelo_juiz]
+
+                    if limit is not None and limit > 0:
+                        sql += " LIMIT %s"
+                        params.append(limit)
+
+                    cur.execute(sql, tuple(params))
+                    rows = cur.fetchall()
+
+                    return [
+                        {
+                            "id_resposta": row[0],
+                            "id_pergunta": row[1],
+                            "id_modelo": row[2],
+                            "nome_modelo": row[3],
+                            "texto_resposta": row[4],
+                            "tempo_inferencia_ms": row[5],
+                            "data_geracao": row[6],
+                        }
+                        for row in rows
+                    ]
+
+        except Exception as e:
+            print(f"Erro ao listar respostas pendentes de avaliação: {e}")
+            raise e
