@@ -201,3 +201,13 @@ class SeedController:
                 print(f"Não foi possível semear a resposta: {resposta}")
 
         print("Respostas semeadas com sucesso!")
+
+    def seed_all(self):
+        """Executa todos os seeds na ordem correta de dependências."""
+        print("=== Iniciando seed completo ===")
+        self.seed_modelos()
+        self.seed_categorias()
+        self.seed_datasets()
+        self.seed_perguntas()
+        self.seed_respostas()
+        print("=== Seed completo finalizado com sucesso! ===")
