@@ -67,6 +67,13 @@ def seed_respostas():
     controller.seed_respostas()
 
 
+@seed_app.command("all")
+def seed_all():
+    """Executa todos os seeds na ordem correta."""
+    controller = SeedController()
+    controller.seed_all()
+
+
 @app.callback()
 def main_callback():
     """

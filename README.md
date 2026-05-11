@@ -162,11 +162,7 @@ uv run python main.py db migrate
 ## Seeders
 
 ```bash
-uv run python main.py db seed modelos
-uv run python main.py db seed categorias
-uv run python main.py db seed dataset
-uv run python main.py db seed perguntas
-uv run python main.py db seed respostas
+uv run python main.py db seed all
 ```
 
 ### Acessando o CloudBeaver
