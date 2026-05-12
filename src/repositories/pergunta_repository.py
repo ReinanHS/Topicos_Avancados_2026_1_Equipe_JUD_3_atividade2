@@ -23,6 +23,7 @@ class PerguntaRepository:
         id_externo: str,
         tipo_pergunta: str,
         enunciado: str,
+        resposta_ouro: str,
         nivel_dificuldade: str,
         legislacao_basica: str = None,
         metadados: dict = None,
@@ -38,9 +39,9 @@ class PerguntaRepository:
                         """
                         INSERT INTO perguntas (
                             id_dataset, id_categoria, id_externo, tipo_pergunta, 
-                            enunciado, nivel_dificuldade, legislacao_basica, metadados
+                            enunciado, resposta_ouro, nivel_dificuldade, legislacao_basica, metadados
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT (id_dataset, id_externo) DO NOTHING;
                         """,
                         (
@@ -49,6 +50,7 @@ class PerguntaRepository:
                             id_externo,
                             tipo_pergunta,
                             enunciado,
+                            resposta_ouro,
                             nivel_dificuldade,
                             legislacao_basica,
                             json.dumps(metadados) if metadados else None,
@@ -99,6 +101,7 @@ class PerguntaRepository:
                             p.id_externo,
                             p.tipo_pergunta,
                             p.enunciado,
+                            p.resposta_ouro,
                             p.nivel_dificuldade,
                             p.legislacao_basica,
                             p.metadados
@@ -116,9 +119,10 @@ class PerguntaRepository:
                             "id_externo": row[2],
                             "tipo_pergunta": row[3],
                             "enunciado": row[4],
-                            "nivel_dificuldade": row[5],
-                            "legislacao_basica": row[6],
-                            "metadados": row[7],
+                            "resposta_ouro": row[5],
+                            "nivel_dificuldade": row[6],
+                            "legislacao_basica": row[7],
+                            "metadados": row[8],
                         }
                         for row in rows
                     ]
