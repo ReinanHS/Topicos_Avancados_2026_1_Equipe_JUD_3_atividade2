@@ -23,7 +23,6 @@ class PerguntaRepository:
         id_externo: str,
         tipo_pergunta: str,
         enunciado: str,
-        resposta_ouro: str,
         nivel_dificuldade: str,
         legislacao_basica: str = None,
         metadados: dict = None,
@@ -39,10 +38,9 @@ class PerguntaRepository:
                         """
                         INSERT INTO perguntas (
                             id_dataset, id_categoria, id_externo, tipo_pergunta, 
-                            enunciado, resposta_ouro, nivel_dificuldade,
-                            legislacao_basica, metadados
+                            enunciado, nivel_dificuldade, legislacao_basica, metadados
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT (id_dataset, id_externo) DO NOTHING;
                         """,
                         (
@@ -51,7 +49,6 @@ class PerguntaRepository:
                             id_externo,
                             tipo_pergunta,
                             enunciado,
-                            resposta_ouro,
                             nivel_dificuldade,
                             legislacao_basica,
                             json.dumps(metadados) if metadados else None,
@@ -84,10 +81,12 @@ class PerguntaRepository:
         except Exception as e:
             print(f"Erro ao recuperar ID da pergunta '{id_externo}': {e}")
             raise e
-        #victor
-    def get_by_id(self, id_pergunta: int) -> dict | None:
+
+    def fetch_for_export(self) -> list[dict]:
         """
-        Recupera uma pergunta completa pelo ID interno do banco.
+        Retorna todas as perguntas com chaves naturais já resolvidas
+        (dataset.nome, categoria.nome) prontas para serialização em JSON
+        portável.
         """
         try:
             with self._get_connection() as conn:
@@ -95,11 +94,8 @@ class PerguntaRepository:
                     cur.execute(
                         """
                         SELECT
-                            p.id_pergunta,
-                            p.id_dataset,
-                            d.nome AS nome_dataset,
-                            p.id_categoria,
-                            c.nome AS nome_categoria,
+                            d.nome AS dataset,
+                            c.nome AS categoria,
                             p.id_externo,
                             p.tipo_pergunta,
                             p.enunciado,
@@ -109,30 +105,23 @@ class PerguntaRepository:
                         FROM perguntas p
                         JOIN datasets d ON d.id_dataset = p.id_dataset
                         JOIN categorias c ON c.id_categoria = p.id_categoria
-                        WHERE p.id_pergunta = %s;
-                        """,
-                        (id_pergunta,),
+                        ORDER BY d.nome, p.id_externo;
+                        """
                     )
-
-                    row = cur.fetchone()
-
-                    if row:
-                        return {
-                            "id_pergunta": row[0],
-                            "id_dataset": row[1],
-                            "nome_dataset": row[2],
-                            "id_categoria": row[3],
-                            "nome_categoria": row[4],
-                            "id_externo": row[5],
-                            "tipo_pergunta": row[6],
-                            "enunciado": row[7],
-                            "nivel_dificuldade": row[8],
-                            "legislacao_basica": row[9],
-                            "metadados": row[10],
+                    rows = cur.fetchall()
+                    return [
+                        {
+                            "dataset": row[0],
+                            "categoria": row[1],
+                            "id_externo": row[2],
+                            "tipo_pergunta": row[3],
+                            "enunciado": row[4],
+                            "nivel_dificuldade": row[5],
+                            "legislacao_basica": row[6],
+                            "metadados": row[7],
                         }
-
-                    return None
-
+                        for row in rows
+                    ]
         except Exception as e:
-            print(f"Erro ao recuperar pergunta {id_pergunta}: {e}")
+            print(f"Erro ao exportar perguntas: {e}")
             raise e

@@ -3,7 +3,7 @@ from .dataset_repository import DatasetRepository
 from .pergunta_repository import PerguntaRepository
 from .modelo_repository import ModeloRepository
 from .resposta_repository import RespostaRepository
-from .avaliacao_juiz_repository import AvaliacaoJuizRepository # victor
+from .avaliacao_repository import AvaliacaoRepository
 
 __all__ = [
     "CategoriaRepository",
@@ -11,5 +11,5 @@ __all__ = [
     "PerguntaRepository",
     "ModeloRepository",
     "RespostaRepository",
-    "AvaliacaoJuizRepository", #victor
+    "AvaliacaoRepository",
 ]

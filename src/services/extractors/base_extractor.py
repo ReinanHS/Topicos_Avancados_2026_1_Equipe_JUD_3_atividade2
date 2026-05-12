@@ -251,6 +251,7 @@ class BaseExtractor(ABC):
                 "exam_year": q.get("exam_year"),
                 "question_type": q.get("question_type"),
                 "nullified": q.get("nullified"),
+                "answerKey": q.get("answerKey"),
             },
             extract_resposta_ouro=lambda q: str(q.get("answerKey", "")),
         )

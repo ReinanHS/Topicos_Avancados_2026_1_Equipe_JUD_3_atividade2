@@ -2,21 +2,34 @@
 Módulo CLI principal — interface de linha de comando baseada em Typer.
 """
 
+from pathlib import Path
+
 import typer
 
-from src.controllers import MigrationController, SeedController, JudgeController
+from src.controllers import (
+    AnalysisController,
+    JudgeController,
+    MigrationController,
+    SeedController,
+)
+from src.services.judges import JudgeFactory
 
 app = typer.Typer(no_args_is_help=True)
 db_app = typer.Typer(no_args_is_help=True, help="Gerenciamento do banco de dados.")
 app.add_typer(db_app, name="db")
-#victor
-judge_app = typer.Typer(no_args_is_help=True, help="Pipeline LLM-as-a-Judge.")
-app.add_typer(judge_app, name="judge")
 
 seed_app = typer.Typer(
     no_args_is_help=True, help="Semeia dados iniciais no banco de dados."
 )
 db_app.add_typer(seed_app, name="seed")
+
+judge_app = typer.Typer(no_args_is_help=True, help="Pipeline LLM-as-a-Judge.")
+db_app.add_typer(judge_app, name="judge")
+
+analysis_app = typer.Typer(
+    no_args_is_help=True, help="Análise estatística das avaliações."
+)
+db_app.add_typer(analysis_app, name="analysis")
 
 
 @db_app.command("migrate")
@@ -75,74 +88,126 @@ def seed_all():
     """Executa todos os seeds na ordem correta."""
     controller = SeedController()
     controller.seed_all()
-#victor
-@judge_app.command("run")
-def judge_run(
-    modelo_juiz_db: str = typer.Option(
-        "Llama 3.1",
-        "--modelo-juiz-db",
-        help="Nome do modelo juiz cadastrado na tabela modelos.",
+
+
+@seed_app.command("export")
+def seed_export(
+    type_: str = typer.Option(
+        "all",
+        "--type",
+        help="O que exportar: 'perguntas', 'respostas' ou 'all' (default).",
     ),
-    ollama_model: str = typer.Option(
-        "llama3.1",
-        "--ollama-model",
-        help="Nome do modelo instalado no Ollama. Ex.: llama3.1, qwen2.5, mistral.",
+):
+    """Exporta perguntas e/ou respostas para JSON portável em Atividade_2/exports/."""
+    SeedController().export_extracao(type_)
+
+
+@seed_app.command("import")
+def seed_import(
+    input_path: Path = typer.Argument(
+        ...,
+        help="Arquivo JSON a importar (extracao-perguntas.json ou extracao-respostas.json).",
     ),
-    base_url: str = typer.Option(
-        "http://localhost:11434",
-        "--base-url",
-        help="URL base do Ollama.",
+):
+    """Importa um arquivo de extração específico. Idempotente."""
+    SeedController().import_extracao(input_path)
+
+
+@seed_app.command("import-all")
+def seed_import_all(
+    directory: Path = typer.Option(
+        Path("Atividade_2/exports"),
+        "--dir",
+        help="Pasta com os arquivos extracao-perguntas.json e extracao-respostas.json.",
+    ),
+):
+    """Importa perguntas (primeiro) e respostas (depois) da pasta indicada."""
+    SeedController().import_extracao_all(directory)
+
+
+@judge_app.command("evaluate")
+def judge_evaluate(
+    judge: list[str] = typer.Option(
+        ...,
+        "--judge",
+        "-j",
+        help=(
+            "Juiz no formato 'provedor:modelo' (ex.: 'ollama:llama3.1:8b', "
+            "'openai:gpt-4o'). Repita para usar de 1 a 3 juízes na mesma execução."
+        ),
     ),
     limit: int = typer.Option(
-        10,
+        None,
         "--limit",
-        "-l",
-        help="Quantidade máxima de respostas avaliadas nesta execução. Use 0 para todas.",
+        help="Limita o número de respostas avaliadas por juiz (útil para smoke test).",
     ),
-    use_mock: bool = typer.Option(
-        False,
-        "--mock",
-        help="Executa avaliação simples sem chamar LLM. Use apenas para testar o pipeline.",
-    ),
-    # ---------------------------------------------------------------------
-    # PREPARAÇÃO FUTURA PARA API EXTERNA
-    # ---------------------------------------------------------------------
-    # Caso a equipe decida usar OpenAI API ou Gemini API, uma evolução
-    # possível seria adicionar uma opção provider no comando:
-    #
-    # provider: str = typer.Option(
-    #     "ollama",
-    #     "--provider",
-    #     help="Provedor do Juiz-IA: ollama, openai ou gemini.",
-    # ),
-    #
-    # Exemplos futuros de uso:
-    #
-    # python -m uv run python main.py judge run --provider ollama
-    # python -m uv run python main.py judge run --provider openai
-    # python -m uv run python main.py judge run --provider gemini
-    #
-    # Para isso, também seria necessário adaptar:
-    # - JudgeController;
-    # - JudgeService;
-    # - LLMJudgeClient.
-    #
-    # Nesta versão, mantemos apenas Ollama ativo para não quebrar
-    # o pipeline local.
-    # ---------------------------------------------------------------------
 ):
-    """Executa o pipeline do Juiz-IA e salva as avaliações no banco."""
-    controller = JudgeController()
+    """Executa o pipeline LLM-as-a-Judge para os juízes informados."""
+    if not 1 <= len(judge) <= 3:
+        raise typer.BadParameter("Informe entre 1 e 3 juízes via --judge/-j.")
+    JudgeController().evaluate(judge, limit=limit)
 
-    result = controller.run(
-        modelo_juiz_db=modelo_juiz_db,
-        ollama_model=ollama_model,
-        base_url=base_url,
-        limit=None if limit == 0 else limit,
-        use_mock=use_mock,
-    )
 
-    typer.echo(f"Resultado: {result}")
+@judge_app.command("list-available")
+def judge_list_available():
+    """Lista as specs de juízes pré-configuradas."""
+    print("Juízes disponíveis:")
+    for spec in JudgeFactory.available():
+        print(f"  - {spec}")
+
+
+@judge_app.command("export")
+def judge_export(
+    judge: str = typer.Option(
+        None,
+        "--judge",
+        "-j",
+        help="Spec do juiz (ex.: 'openai:gpt-4o-mini'). Obrigatório se --all não for usado.",
+    ),
+    all_: bool = typer.Option(
+        False,
+        "--all",
+        help="Exporta um arquivo por juiz com avaliações no banco.",
+    ),
+    output: Path = typer.Option(
+        None,
+        "--output",
+        help="Caminho de saída. Default: Atividade_2/exports/avaliacoes-<slug>.json",
+    ),
+):
+    """Exporta avaliações do juiz para arquivo JSON portável."""
+    if not all_ and not judge:
+        raise typer.BadParameter("Informe --judge/-j ou use --all.")
+    JudgeController().export(judge_spec=judge, export_all=all_, output=output)
+
+
+@judge_app.command("import")
+def judge_import(
+    input_path: Path = typer.Argument(
+        ..., help="Arquivo JSON a importar (gerado por `judge export`)."
+    ),
+):
+    """Importa avaliações de um arquivo JSON. Idempotente."""
+    JudgeController().import_(input_path)
+
+
+@judge_app.command("import-all")
+def judge_import_all(
+    directory: Path = typer.Option(
+        Path("Atividade_2/exports"),
+        "--dir",
+        help="Pasta com os arquivos avaliacoes-*.json.",
+    ),
+):
+    """Importa todos os arquivos avaliacoes-*.json de uma pasta."""
+    JudgeController().import_all(directory)
+
+
+@analysis_app.command("run")
+def analysis_run():
+    """Executa a análise estatística (Spearman + agregados) sobre as avaliações."""
+    AnalysisController().run()
+
 
 @app.callback()
 def main_callback():
