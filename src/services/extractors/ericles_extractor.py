@@ -1,4 +1,4 @@
-from src.helper import parse_answer_json
+from src.helper import parse_answer_with_justificativa
 from src.services.extractors.base_extractor import BaseExtractor
 
 
@@ -47,6 +47,14 @@ class EriclesExtractor(BaseExtractor):
         if not parsed:
             return None
 
+        if isinstance(parsed, tuple):
+            texto_resposta, justificativa = parsed
+        else:
+            texto_resposta, justificativa = parsed, None
+
+        if not texto_resposta:
+            return None
+
         db_model_name = self.get_db_model_name(item.get("model", ""))
         model_data = self.modelo_repo.get_by_name(db_model_name)
         id_modelo = model_data["id_modelo"] if model_data else None
@@ -58,7 +66,8 @@ class EriclesExtractor(BaseExtractor):
             return {
                 "id_pergunta": id_pergunta,
                 "id_modelo": id_modelo,
-                "texto_resposta": parsed,
+                "texto_resposta": texto_resposta,
+                "justificativa": justificativa,
                 "tempo_inferencia_ms": None,
             }
         print(f"[Info] Pergunta ou modelo não encontrado: {item}")
@@ -96,7 +105,7 @@ class EriclesExtractor(BaseExtractor):
     def extract_answers_oab_exams(self) -> list:
         def parser(item):
             answer_text = str(item.get("answer", "")).strip()
-            return parse_answer_json(answer_text)
+            return parse_answer_with_justificativa(answer_text)
 
         return self._process_dataset_answers(
             "oab_exams", "multiple_choice.json", parser

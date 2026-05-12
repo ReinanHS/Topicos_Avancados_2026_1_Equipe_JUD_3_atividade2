@@ -155,6 +155,7 @@ class ExtracaoExporter:
             id_modelo=modelo["id_modelo"],
             texto_resposta=entry["texto_resposta"],
             tempo_inferencia_ms=entry.get("tempo_inferencia_ms"),
+            justificativa=entry.get("justificativa"),
         )
         return "imported"
 

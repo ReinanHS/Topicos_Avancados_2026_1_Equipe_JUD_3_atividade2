@@ -63,10 +63,21 @@ def seed_categorias():
 
 
 @seed_app.command("perguntas")
-def seed_perguntas():
+def seed_perguntas(
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por pessoa: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+    tipo: str = typer.Option(
+        None,
+        "--tipo",
+        help="Filtra por tipo: multipla_escolha|discursiva.",
+    ),
+):
     """Insere as perguntas no banco de dados."""
     controller = SeedController()
-    controller.seed_perguntas()
+    controller.seed_perguntas(owner=owner, tipo=tipo)
 
 
 @seed_app.command("modelos")
@@ -77,10 +88,21 @@ def seed_modelos():
 
 
 @seed_app.command("respostas")
-def seed_respostas():
+def seed_respostas(
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por pessoa: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+    tipo: str = typer.Option(
+        None,
+        "--tipo",
+        help="Filtra por tipo: multipla_escolha|discursiva.",
+    ),
+):
     """Insere as respostas dos modelos no banco de dados."""
     controller = SeedController()
-    controller.seed_respostas()
+    controller.seed_respostas(owner=owner, tipo=tipo)
 
 
 @seed_app.command("all")

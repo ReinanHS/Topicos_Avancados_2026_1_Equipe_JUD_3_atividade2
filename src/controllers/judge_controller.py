@@ -37,7 +37,11 @@ class JudgeController:
         Encapsula o try/except para que falhas isoladas não derrubem o lote.
         """
         try:
-            prompt = build_prompt(item, item["texto_resposta"])
+            prompt = build_prompt(
+                item,
+                item["texto_resposta"],
+                justificativa=item.get("justificativa"),
+            )
             raw_output = judge.complete(prompt)
             nota, chain_of_thought = parse_verdict(raw_output)
             self.avaliacao_repo.create(

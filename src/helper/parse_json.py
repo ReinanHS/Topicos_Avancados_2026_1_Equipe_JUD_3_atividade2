@@ -61,9 +61,57 @@ def _try_parse_json(text: str) -> str | None:
     return None
 
 
+def _fallback_regex_justificativa(text: str) -> str | None:
+    """Extrai a justificativa via regex quando o parse JSON falhou."""
+    match = re.search(
+        r'"justificativa"\s*:\s*"((?:[^"\\]|\\.)*)"',
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if match:
+        return match.group(1).strip() or None
+    return None
+
+
+def _try_parse_justificativa(text: str) -> str | None:
+    """Tenta extrair `justificativa` de um JSON decodificável."""
+    try:
+        answer_json = json.loads(text)
+        if isinstance(answer_json, dict):
+            value = answer_json.get("justificativa")
+            if value is None:
+                return None
+            value = str(value).strip()
+            return value or None
+    except json.JSONDecodeError:
+        pass
+    return None
+
+
 def parse_answer_json(answer_text: str) -> str:
     """Função auxiliar para processar o JSON e retornar a resposta."""
     cleaned_text = _clean_json_string(answer_text)
     extracted = _try_parse_json(cleaned_text)
     fallback = _fallback_regex_match(cleaned_text)
     return extracted or fallback or cleaned_text
+
+
+def parse_answer_with_justificativa(answer_text: str) -> tuple[str, str | None]:
+    """
+    Extrai (resposta_letra, justificativa_ou_None) do JSON bruto retornado
+    pelo modelo candidato em questões de múltipla escolha.
+
+    Compatível com o formato antigo (`{"resposta": "X"}`) e o novo
+    (`{"resposta": "X", "justificativa": "..."}`). Quando justificativa
+    não estiver presente, retorna `None`.
+    """
+    cleaned_text = _clean_json_string(answer_text)
+    resposta = (
+        _try_parse_json(cleaned_text)
+        or _fallback_regex_match(cleaned_text)
+        or cleaned_text
+    )
+    justificativa = _try_parse_justificativa(
+        cleaned_text
+    ) or _fallback_regex_justificativa(cleaned_text)
+    return resposta, justificativa

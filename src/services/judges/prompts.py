@@ -66,11 +66,38 @@ def _format_resposta_ouro(pergunta: dict) -> str:
     )
 
 
-def build_prompt(pergunta: dict, resposta_modelo: str) -> str:
+def _format_resposta_modelo(
+    pergunta: dict, resposta_modelo: str, justificativa: str | None
+) -> str:
+    """
+    Formata o bloco mostrado ao juiz. Em múltipla escolha com justificativa
+    disponível, separa a letra e a justificativa em linhas distintas para
+    que o juiz possa avaliar o raciocínio jurídico.
+    """
+    resposta_modelo = (resposta_modelo or "").strip()
+    if (
+        pergunta.get("tipo_pergunta") == "multipla_escolha"
+        and justificativa
+        and justificativa.strip()
+    ):
+        return (
+            f"Alternativa escolhida: {resposta_modelo}\n"
+            f"Justificativa do candidato: {justificativa.strip()}"
+        )
+    return resposta_modelo
+
+
+def build_prompt(
+    pergunta: dict,
+    resposta_modelo: str,
+    justificativa: str | None = None,
+) -> str:
     """
     Monta o prompt final do juiz a partir do dicionário de pergunta vindo do
     repositório (com `enunciado`, `tipo_pergunta`, `metadados`, etc.) e do texto
-    de resposta do modelo candidato.
+    de resposta do modelo candidato. Em múltipla escolha, inclui a
+    `justificativa` do candidato (quando disponível) para que o juiz possa
+    avaliar o raciocínio, não só a letra escolhida.
     """
     return PROMPT_TEMPLATE.format(
         pergunta=pergunta.get("enunciado", "").strip(),
@@ -79,5 +106,7 @@ def build_prompt(pergunta: dict, resposta_modelo: str) -> str:
         legislacao_basica=(
             pergunta.get("legislacao_basica") or "Não informada"
         ).strip(),
-        resposta_modelo=(resposta_modelo or "").strip(),
+        resposta_modelo=_format_resposta_modelo(
+            pergunta, resposta_modelo, justificativa
+        ),
     )
