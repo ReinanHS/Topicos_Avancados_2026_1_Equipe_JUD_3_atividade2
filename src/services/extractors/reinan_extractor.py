@@ -9,7 +9,7 @@ class ReinanExtractor(BaseExtractor):
 
     def __init__(self):
         super().__init__()
-        self.base_raw_url = "https://raw.githubusercontent.com/ReinanHS/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/refs/heads/results"
+        self.base_raw_url = "https://raw.githubusercontent.com/ReinanHS/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/refs/heads/results-2"
         self.dataset_range = {
             "oab_bench": {
                 "slice_start": 176,
@@ -17,7 +17,7 @@ class ReinanExtractor(BaseExtractor):
             },
             "oab_exams": {
                 "slice_start": 1845,
-                "slice_end": 1967,
+                "slice_end": 1968,
             },
         }
 
@@ -121,7 +121,11 @@ class ReinanExtractor(BaseExtractor):
             choices = item.get("choices", [])
             if not choices:
                 return ""
-            return str(choices[0].get("objective_answer", ""))
+
+            objective_answer = str(choices[0].get("objective_answer", ""))
+            justification = str(choices[0].get("justification", ""))
+
+            return f"Resposta: {objective_answer}\nJustificativa: {justification}"
 
         return self._process_dataset_answers("oab_exams", parser)
 
