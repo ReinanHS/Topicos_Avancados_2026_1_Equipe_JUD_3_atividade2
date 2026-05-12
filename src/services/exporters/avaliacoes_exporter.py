@@ -92,7 +92,9 @@ class AvaliacoesExporter:
         if not modelo_candidato:
             raise LookupError(f"modelo candidato '{entry['candidato']}' não existe")
 
-        id_resposta = self.resposta_repo.find_id(id_pergunta, modelo_candidato["id_modelo"])
+        id_resposta = self.resposta_repo.find_id(
+            id_pergunta, modelo_candidato["id_modelo"]
+        )
         if not id_resposta:
             raise LookupError(
                 f"resposta do modelo '{entry['candidato']}' à pergunta "

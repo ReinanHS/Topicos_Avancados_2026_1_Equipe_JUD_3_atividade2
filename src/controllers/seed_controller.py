@@ -269,6 +269,7 @@ class SeedController:
 
         # Lê o type antes de decidir o fluxo — evita try/except esquisito.
         import json as _json
+
         type_ = _json.loads(input_path.read_text(encoding="utf-8")).get("type")
 
         if type_ == "perguntas":

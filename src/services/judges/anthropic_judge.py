@@ -42,5 +42,9 @@ class AnthropicJudge(BaseJudge):
             max_tokens=self.MAX_TOKENS,
             messages=[{"role": "user", "content": prompt}],
         )
-        parts = [block.text for block in message.content if getattr(block, "type", None) == "text"]
+        parts = [
+            block.text
+            for block in message.content
+            if getattr(block, "type", None) == "text"
+        ]
         return "".join(parts)

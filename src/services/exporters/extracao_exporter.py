@@ -94,6 +94,70 @@ class ExtracaoExporter:
             )
         return payload
 
+    def _resolve_dataset(self, name: str) -> dict:
+        dataset = self.dataset_repo.get_by_name(name)
+        if not dataset:
+            raise LookupError(f"dataset '{name}' não existe")
+        return dataset
+
+    def _resolve_categoria(self, name: str) -> dict:
+        categoria = self.categoria_repo.get_by_name(name)
+        if not categoria:
+            raise LookupError(f"categoria '{name}' não existe")
+        return categoria
+
+    def _resolve_modelo(self, name: str) -> dict:
+        modelo = self.modelo_repo.get_by_name(name)
+        if not modelo:
+            raise LookupError(f"modelo '{name}' não existe")
+        return modelo
+
+    def _import_single_pergunta(self, entry: dict) -> str:
+        """Processa uma única pergunta. Retorna 'imported' ou 'skipped'."""
+        dataset = self._resolve_dataset(entry["dataset"])
+        categoria = self._resolve_categoria(entry["categoria"])
+
+        id_dataset = dataset["id_dataset"]
+        if self.pergunta_repo.get_id(entry["id_externo"], id_dataset):
+            return "skipped"
+
+        self.pergunta_repo.create(
+            id_dataset=id_dataset,
+            id_categoria=categoria["id_categoria"],
+            id_externo=entry["id_externo"],
+            tipo_pergunta=entry["tipo_pergunta"],
+            enunciado=entry["enunciado"],
+            nivel_dificuldade=entry["nivel_dificuldade"],
+            legislacao_basica=entry.get("legislacao_basica"),
+            metadados=entry.get("metadados"),
+        )
+        return "imported"
+
+    def _import_single_resposta(self, entry: dict) -> str:
+        """Processa uma única resposta. Retorna 'imported' ou 'skipped'."""
+        dataset = self._resolve_dataset(entry["dataset"])
+        modelo = self._resolve_modelo(entry["modelo"])
+
+        id_pergunta = self.pergunta_repo.get_id(
+            entry["id_externo_pergunta"], dataset["id_dataset"]
+        )
+        if not id_pergunta:
+            raise LookupError(
+                f"pergunta '{entry['id_externo_pergunta']}' não "
+                f"encontrada em '{entry['dataset']}' (importe perguntas antes)"
+            )
+
+        if self.resposta_repo.exists(id_pergunta, modelo["id_modelo"]):
+            return "skipped"
+
+        self.resposta_repo.create(
+            id_pergunta=id_pergunta,
+            id_modelo=modelo["id_modelo"],
+            texto_resposta=entry["texto_resposta"],
+            tempo_inferencia_ms=entry.get("tempo_inferencia_ms"),
+        )
+        return "imported"
+
     def import_perguntas_file(self, input_path: Path) -> dict:
         """
         Importa perguntas de um arquivo JSON. Idempotente:
@@ -107,31 +171,9 @@ class ExtracaoExporter:
 
         for idx, entry in enumerate(items, start=1):
             try:
-                dataset = self.dataset_repo.get_by_name(entry["dataset"])
-                if not dataset:
-                    raise LookupError(f"dataset '{entry['dataset']}' não existe")
-                categoria = self.categoria_repo.get_by_name(entry["categoria"])
-                if not categoria:
-                    raise LookupError(
-                        f"categoria '{entry['categoria']}' não existe"
-                    )
-
-                id_dataset = dataset["id_dataset"]
-                if self.pergunta_repo.get_id(entry["id_externo"], id_dataset):
-                    skipped += 1
-                    continue
-
-                self.pergunta_repo.create(
-                    id_dataset=id_dataset,
-                    id_categoria=categoria["id_categoria"],
-                    id_externo=entry["id_externo"],
-                    tipo_pergunta=entry["tipo_pergunta"],
-                    enunciado=entry["enunciado"],
-                    nivel_dificuldade=entry["nivel_dificuldade"],
-                    legislacao_basica=entry.get("legislacao_basica"),
-                    metadados=entry.get("metadados"),
-                )
-                imported += 1
+                status = self._import_single_pergunta(entry)
+                imported += status == "imported"
+                skipped += status == "skipped"
             except Exception as e:
                 errors.append(f"#{idx} ({entry.get('id_externo')}): {e}")
 
@@ -150,33 +192,9 @@ class ExtracaoExporter:
 
         for idx, entry in enumerate(items, start=1):
             try:
-                dataset = self.dataset_repo.get_by_name(entry["dataset"])
-                if not dataset:
-                    raise LookupError(f"dataset '{entry['dataset']}' não existe")
-                modelo = self.modelo_repo.get_by_name(entry["modelo"])
-                if not modelo:
-                    raise LookupError(f"modelo '{entry['modelo']}' não existe")
-
-                id_pergunta = self.pergunta_repo.get_id(
-                    entry["id_externo_pergunta"], dataset["id_dataset"]
-                )
-                if not id_pergunta:
-                    raise LookupError(
-                        f"pergunta '{entry['id_externo_pergunta']}' não "
-                        f"encontrada em '{entry['dataset']}' (importe perguntas antes)"
-                    )
-
-                if self.resposta_repo.exists(id_pergunta, modelo["id_modelo"]):
-                    skipped += 1
-                    continue
-
-                self.resposta_repo.create(
-                    id_pergunta=id_pergunta,
-                    id_modelo=modelo["id_modelo"],
-                    texto_resposta=entry["texto_resposta"],
-                    tempo_inferencia_ms=entry.get("tempo_inferencia_ms"),
-                )
-                imported += 1
+                status = self._import_single_resposta(entry)
+                imported += status == "imported"
+                skipped += status == "skipped"
             except Exception as e:
                 errors.append(f"#{idx} ({entry.get('id_externo_pergunta')}): {e}")
 

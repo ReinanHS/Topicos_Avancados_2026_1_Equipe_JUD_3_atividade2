@@ -76,6 +76,8 @@ def build_prompt(pergunta: dict, resposta_modelo: str) -> str:
         pergunta=pergunta.get("enunciado", "").strip(),
         tipo_pergunta=pergunta.get("tipo_pergunta", "discursiva"),
         resposta_ouro=_format_resposta_ouro(pergunta),
-        legislacao_basica=(pergunta.get("legislacao_basica") or "Não informada").strip(),
+        legislacao_basica=(
+            pergunta.get("legislacao_basica") or "Não informada"
+        ).strip(),
         resposta_modelo=(resposta_modelo or "").strip(),
     )

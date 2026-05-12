@@ -74,9 +74,7 @@ class AvaliacaoRepository:
             )
             raise e
 
-    def list_pending(
-        self, id_modelo_juiz: int, limit: int | None = None
-    ) -> list[dict]:
+    def list_pending(self, id_modelo_juiz: int, limit: int | None = None) -> list[dict]:
         """
         Retorna as respostas de respostas_atividade_1 que ainda não foram avaliadas
         pelo juiz informado, já com JOIN em perguntas para evitar consultas extras.
@@ -126,7 +124,9 @@ class AvaliacaoRepository:
                         for row in rows
                     ]
         except Exception as e:
-            print(f"Erro ao listar respostas pendentes para juiz '{id_modelo_juiz}': {e}")
+            print(
+                f"Erro ao listar respostas pendentes para juiz '{id_modelo_juiz}': {e}"
+            )
             raise e
 
     def summary_by_dataset_candidate_judge(self) -> list[dict]:

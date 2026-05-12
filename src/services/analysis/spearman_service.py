@@ -65,7 +65,9 @@ class SpearmanAnalysisService:
             if gold is None:
                 skipped += 1
                 continue
-            humano = 5 if self._response_contains_letter(row["texto_resposta"], gold) else 1
+            humano = (
+                5 if self._response_contains_letter(row["texto_resposta"], gold) else 1
+            )
             notas_humanas.append(humano)
             notas_juiz.append(row["nota_atribuida"])
 
