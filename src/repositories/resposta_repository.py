@@ -36,7 +36,9 @@ class RespostaRepository:
                     row = cur.fetchone()
                     return row[0] if row else None
         except Exception as e:
-            print(f"Erro ao buscar id_resposta para pergunta {id_pergunta} / modelo {id_modelo}: {e}")
+            print(
+                f"Erro ao buscar id_resposta para pergunta {id_pergunta} / modelo {id_modelo}: {e}"
+            )
             raise e
 
     def exists(self, id_pergunta: int, id_modelo: int) -> bool:

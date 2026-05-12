@@ -103,7 +103,9 @@ class JudgeController:
 
         print("\nAvaliação finalizada.")
 
-    def _export_one(self, spec: str | None, db_model_name: str, output: Path | None) -> None:
+    def _export_one(
+        self, spec: str | None, db_model_name: str, output: Path | None
+    ) -> None:
         path = self.exporter.export(
             judge_db_model_name=db_model_name,
             judge_spec=spec,
