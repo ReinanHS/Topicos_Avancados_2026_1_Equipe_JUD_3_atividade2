@@ -21,7 +21,7 @@ from src.repositories import (
 
 
 class AvaliacoesExporter:
-    EXPORT_DIR = Path("Atividade_2/exports")
+    EXPORT_DIR = Path("database/backup")
     VERSION = 1
 
     def __init__(self):

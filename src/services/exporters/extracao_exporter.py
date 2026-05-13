@@ -21,7 +21,7 @@ from src.repositories import (
 
 
 class ExtracaoExporter:
-    EXPORT_DIR = Path("Atividade_2/exports")
+    EXPORT_DIR = Path("database/backup")
     VERSION = 1
     PERGUNTAS_FILENAME = "extracao-perguntas.json"
     RESPOSTAS_FILENAME = "extracao-respostas.json"

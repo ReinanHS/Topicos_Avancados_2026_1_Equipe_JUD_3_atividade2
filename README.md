@@ -176,8 +176,6 @@ Os 6 extractors em `src/services/extractors/` baixam dados de curadoria e respos
 
 ```bash
 uv run python main.py db seed export --type all
-git add Atividade_2/exports/extracao-perguntas.json Atividade_2/exports/extracao-respostas.json
-git commit -m "feat: extrações da Atividade 1 compiladas"
 ```
 
 Os demais membros, após `git pull`:
@@ -293,6 +291,8 @@ O comando aceita de 1 a 3 juízes por execução. Repita `-j` para usar múltipl
 ```bash
 # Apenas um juiz local (sem custo de API)
 uv run python main.py db judge evaluate -j ollama:llama3.1:8b
+uv run python main.py db judge evaluate -j google:gemini-2.5-flash --limit 1
+uv run python main.py db judge evaluate -j openai:gpt-4o --limit 1
 
 # Smoke test com limite (útil para validar o pipeline)
 uv run python main.py db judge evaluate -j ollama:llama3.1:8b --limit 5
@@ -311,22 +311,21 @@ O pipeline pula automaticamente respostas que o juiz informado já avaliou — p
 Para evitar que cada membro da equipe pague a API novamente, depois de rodar `judge evaluate` faça o export e commit o arquivo:
 
 ```bash
-uv run python main.py db judge export -j openai:gpt-4o-mini
-git add Atividade_2/exports/avaliacoes-gpt-4o-mini.json
-git commit -m "feat: avaliações do gpt-4o-mini"
+uv run python main.py db judge export -j openai:gpt-4o
+uv run python main.py db judge export -j google:gemini-2.5-flash
 ```
 
 Outros membros, após `git pull`, carregam os dados sem chamar API:
 
 ```bash
-uv run python main.py db judge import Atividade_2/exports/avaliacoes-gpt-4o-mini.json
+uv run python main.py db judge import database/backup/avaliacoes-gpt-4o-mini.json
 ```
 
 Comandos disponíveis:
 
 | Comando | O que faz |
 |---|---|
-| `db judge export -j <spec>` | Exporta um juiz específico para `Atividade_2/exports/avaliacoes-<slug>.json`. |
+| `db judge export -j <spec>` | Exporta um juiz específico para `database/backup/avaliacoes-<slug>.json`. |
 | `db judge export --all` | Gera um arquivo por juiz que já tem avaliações no banco. |
 | `db judge export -j <spec> --output <path>` | Exporta para um caminho customizado. |
 | `db judge import <arquivo.json>` | Importa um arquivo específico (idempotente). |

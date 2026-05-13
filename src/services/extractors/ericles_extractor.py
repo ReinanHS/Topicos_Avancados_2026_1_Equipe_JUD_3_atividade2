@@ -10,7 +10,7 @@ class EriclesExtractor(BaseExtractor):
 
     def __init__(self):
         super().__init__()
-        self.base_raw_url = "https://raw.githubusercontent.com/Ericles-Porty/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/refs/heads/main"
+        self.base_raw_url = "https://raw.githubusercontent.com/Ericles-Porty/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/3b8c42d181714bee4272e2c4cbf77b3ebb3c0e20"
         self.dataset_range = {
             "oab_bench": {
                 "slice_start": 153,
