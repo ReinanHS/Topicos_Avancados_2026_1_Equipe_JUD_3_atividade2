@@ -23,7 +23,7 @@ class VictorExtractor(EriclesExtractor):
                 "slice_end": 210,
             },
             "oab_exams": {
-                "slice_start": 2091,
+                "slice_start": 2092,
                 "slice_end": 2210,
             },
         }
