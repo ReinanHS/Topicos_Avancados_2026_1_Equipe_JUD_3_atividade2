@@ -209,6 +209,20 @@ class SeedController:
                 "familia": "GPT",
                 "parametro_precisao": "N/A",
             },
+            {
+                "nome_modelo": "Gemini 3.1 Flash-Lite",
+                "versao": "gemini-3.1-flash-lite",
+                "provedor": "Google",
+                "familia": "Gemini",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "Gemini 2.5 Flash",
+                "versao": "gemini-2.5-flash",
+                "provedor": "Google",
+                "familia": "Gemini",
+                "parametro_precisao": "N/A",
+            },
         ]
 
         try:
