@@ -67,6 +67,7 @@ class RespostaRepository:
         id_modelo: int,
         texto_resposta: str,
         tempo_inferencia_ms: float = None,
+        justificativa: str | None = None,
     ) -> None:
         """
         Cadastra uma resposta no banco de dados.
@@ -81,11 +82,18 @@ class RespostaRepository:
                     cur.execute(
                         """
                         INSERT INTO respostas_atividade_1 (
-                            id_pergunta, id_modelo, texto_resposta, tempo_inferencia_ms
+                            id_pergunta, id_modelo, texto_resposta,
+                            tempo_inferencia_ms, justificativa
                         )
-                        VALUES (%s, %s, %s, %s);
+                        VALUES (%s, %s, %s, %s, %s);
                         """,
-                        (id_pergunta, id_modelo, texto_resposta, tempo_inferencia_ms),
+                        (
+                            id_pergunta,
+                            id_modelo,
+                            texto_resposta,
+                            tempo_inferencia_ms,
+                            justificativa,
+                        ),
                     )
                 conn.commit()
         except Exception as e:
@@ -107,7 +115,8 @@ class RespostaRepository:
                             p.id_externo AS id_externo_pergunta,
                             m.nome_modelo AS modelo,
                             r.texto_resposta,
-                            r.tempo_inferencia_ms
+                            r.tempo_inferencia_ms,
+                            r.justificativa
                         FROM respostas_atividade_1 r
                         JOIN perguntas p ON p.id_pergunta = r.id_pergunta
                         JOIN datasets d ON d.id_dataset = p.id_dataset
@@ -125,6 +134,7 @@ class RespostaRepository:
                             "tempo_inferencia_ms": (
                                 float(row[4]) if row[4] is not None else None
                             ),
+                            "justificativa": row[5],
                         }
                         for row in rows
                     ]

@@ -15,6 +15,42 @@ from src.services.extractors.julia_extractor import JuliaExtractor
 from src.services.extractors.mikaela_extractor import MikaelaExtractor
 
 
+# Mapa central que permite filtrar a execução por pessoa via --owner.
+EXTRACTORS = {
+    "reinan": ReinanExtractor,
+    "ericles": EriclesExtractor,
+    "fernanda": FernandaExtractor,
+    "victor": VictorExtractor,
+    "julia": JuliaExtractor,
+    "mikaela": MikaelaExtractor,
+}
+
+VALID_TIPOS = {"multipla_escolha", "discursiva"}
+
+
+def _resolve_owners(owner: str | None) -> list[str]:
+    """Resolve a flag --owner para a lista de extratores a executar."""
+    if owner is None:
+        return list(EXTRACTORS.keys())
+    owner = owner.strip().lower()
+    if owner not in EXTRACTORS:
+        raise ValueError(
+            f"--owner inválido: '{owner}'. Use um de: {', '.join(EXTRACTORS.keys())}."
+        )
+    return [owner]
+
+
+def _validate_tipo(tipo: str | None) -> str | None:
+    if tipo is None:
+        return None
+    tipo = tipo.strip().lower()
+    if tipo not in VALID_TIPOS:
+        raise ValueError(
+            f"--tipo inválido: '{tipo}'. Use um de: {', '.join(VALID_TIPOS)}."
+        )
+    return tipo
+
+
 class SeedController:
     """
     Controller responsável por orquestrar a inserção de dados iniciais (seeding)
@@ -91,28 +127,19 @@ class SeedController:
         except Exception as e:
             print(f"Erro ao semear categorias: {e}")
 
-    def seed_perguntas(self):
-        """Insere as perguntas no banco de dados."""
-        reinan_extractor = ReinanExtractor()
-        ericles_extractor = EriclesExtractor()
-        fernanda_extractor = FernandaExtractor()
-        victor_extractor = VictorExtractor()
-        julia_extractor = JuliaExtractor()
-        mikaela_extractor = MikaelaExtractor()
-        pergunta_repo = PerguntaRepository()
+    def _extract_perguntas(self, extractor, tipo: str | None) -> list:
+        if tipo == "multipla_escolha":
+            return extractor.extract_questions_oab_exams()
+        if tipo == "discursiva":
+            return extractor.extract_questions_oab_bench()
+        return extractor.extract_questions()
 
-        perguntas = []
-        perguntas.extend(reinan_extractor.extract_questions())
-        perguntas.extend(ericles_extractor.extract_questions())
-        perguntas.extend(fernanda_extractor.extract_questions())
-        perguntas.extend(victor_extractor.extract_questions())
-        perguntas.extend(julia_extractor.extract_questions())
-        perguntas.extend(mikaela_extractor.extract_questions())
-
-        for pergunta in perguntas:
-            pergunta_repo.create(**pergunta)
-
-        print("Perguntas semeadas com sucesso!")
+    def _extract_respostas(self, extractor, tipo: str | None) -> list:
+        if tipo == "multipla_escolha":
+            return extractor.extract_answers_oab_exams()
+        if tipo == "discursiva":
+            return extractor.extract_answers_oab_bench()
+        return extractor.extract_answers()
 
     def seed_modelos(self):
         """Insere as informações de modelos iniciais no banco de dados."""
@@ -182,6 +209,20 @@ class SeedController:
                 "familia": "GPT",
                 "parametro_precisao": "N/A",
             },
+            {
+                "nome_modelo": "Gemini 3.1 Flash-Lite",
+                "versao": "gemini-3.1-flash-lite",
+                "provedor": "Google",
+                "familia": "Gemini",
+                "parametro_precisao": "N/A",
+            },
+            {
+                "nome_modelo": "Gemini 2.5 Flash",
+                "versao": "gemini-2.5-flash",
+                "provedor": "Google",
+                "familia": "Gemini",
+                "parametro_precisao": "N/A",
+            },
         ]
 
         try:
@@ -192,26 +233,45 @@ class SeedController:
         except Exception as e:
             print(f"Erro ao semear modelos: {e}")
 
-    def seed_respostas(self):
-        """Insere as respostas dos modelos no banco de dados."""
+    def seed_perguntas(self, owner: str | None = None, tipo: str | None = None):
+        """
+        Insere as perguntas no banco de dados.
+
+        Use `owner` para restringir a uma pessoa (ericles|julia|mikaela|fernanda|
+        reinan|victor) e `tipo` para um dos dois datasets (multipla_escolha|
+        discursiva).
+        """
+        owners = _resolve_owners(owner)
+        tipo = _validate_tipo(tipo)
+        pergunta_repo = PerguntaRepository()
+
+        perguntas = []
+        for name in owners:
+            extractor = EXTRACTORS[name]()
+            perguntas.extend(self._extract_perguntas(extractor, tipo))
+
+        for pergunta in perguntas:
+            pergunta_repo.create(**pergunta)
+
+        scope = f"owner={owner or 'todos'}, tipo={tipo or 'todos'}"
+        print(f"Perguntas semeadas com sucesso! ({scope}, total={len(perguntas)})")
+
+    def seed_respostas(self, owner: str | None = None, tipo: str | None = None):
+        """
+        Insere as respostas dos modelos no banco de dados.
+
+        Use `owner` para restringir a uma pessoa e `tipo` para um único dataset.
+        """
         from src.repositories.resposta_repository import RespostaRepository
 
-        reinan_extractor = ReinanExtractor()
-        ericles_extractor = EriclesExtractor()
-        fernanda_extractor = FernandaExtractor()
-        victor_extractor = VictorExtractor()
-        julia_extractor = JuliaExtractor()
-        mikaela_extractor = MikaelaExtractor()
-
+        owners = _resolve_owners(owner)
+        tipo = _validate_tipo(tipo)
         resposta_repo = RespostaRepository()
 
         respostas = []
-        respostas.extend(reinan_extractor.extract_answers())
-        respostas.extend(ericles_extractor.extract_answers())
-        respostas.extend(fernanda_extractor.extract_answers())
-        respostas.extend(victor_extractor.extract_answers())
-        respostas.extend(julia_extractor.extract_answers())
-        respostas.extend(mikaela_extractor.extract_answers())
+        for name in owners:
+            extractor = EXTRACTORS[name]()
+            respostas.extend(self._extract_respostas(extractor, tipo))
 
         for resposta in respostas:
             if resposta.get("id_modelo") and resposta.get("id_pergunta"):
@@ -220,11 +280,13 @@ class SeedController:
                     id_modelo=resposta["id_modelo"],
                     texto_resposta=resposta["texto_resposta"],
                     tempo_inferencia_ms=resposta["tempo_inferencia_ms"],
+                    justificativa=resposta.get("justificativa"),
                 )
             else:
                 print(f"Não foi possível semear a resposta: {resposta}")
 
-        print("Respostas semeadas com sucesso!")
+        scope = f"owner={owner or 'todos'}, tipo={tipo or 'todos'}"
+        print(f"Respostas semeadas com sucesso! ({scope}, total={len(respostas)})")
 
     # ------------------------------------------------------------------
     # Export / Import das extrações (perguntas + respostas)

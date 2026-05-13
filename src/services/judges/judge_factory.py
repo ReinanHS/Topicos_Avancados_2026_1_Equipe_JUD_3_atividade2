@@ -2,6 +2,7 @@ from src.services.judges.base_judge import BaseJudge
 from src.services.judges.ollama_judge import OllamaJudge
 from src.services.judges.anthropic_judge import AnthropicJudge
 from src.services.judges.openai_judge import OpenAIJudge
+from src.services.judges.google_judge import GoogleJudge
 
 
 class JudgeFactory:
@@ -18,6 +19,7 @@ class JudgeFactory:
         "ollama": OllamaJudge,
         "anthropic": AnthropicJudge,
         "openai": OpenAIJudge,
+        "google": GoogleJudge,
     }
 
     _db_model_map = {
@@ -26,6 +28,8 @@ class JudgeFactory:
         "anthropic:claude-sonnet-4-6": "Claude Sonnet 4.6",
         "openai:gpt-4o": "GPT-4o",
         "openai:gpt-4o-mini": "GPT-4o mini",
+        "google:gemini-3.1-flash-lite": "Gemini 3.1 Flash-Lite",
+        "google:gemini-2.5-flash": "Gemini 2.5 Flash",
     }
 
     @classmethod

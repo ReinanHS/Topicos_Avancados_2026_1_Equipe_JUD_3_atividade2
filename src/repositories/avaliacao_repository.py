@@ -86,6 +86,7 @@ class AvaliacaoRepository:
                         SELECT
                             r.id_resposta,
                             r.texto_resposta,
+                            r.justificativa,
                             p.id_pergunta,
                             p.enunciado,
                             p.tipo_pergunta,
@@ -114,12 +115,13 @@ class AvaliacaoRepository:
                         {
                             "id_resposta": row[0],
                             "texto_resposta": row[1],
-                            "id_pergunta": row[2],
-                            "enunciado": row[3],
-                            "tipo_pergunta": row[4],
-                            "legislacao_basica": row[5],
-                            "metadados": row[6],
-                            "modelo_candidato": row[7],
+                            "justificativa": row[2],
+                            "id_pergunta": row[3],
+                            "enunciado": row[4],
+                            "tipo_pergunta": row[5],
+                            "legislacao_basica": row[6],
+                            "metadados": row[7],
+                            "modelo_candidato": row[8],
                         }
                         for row in rows
                     ]

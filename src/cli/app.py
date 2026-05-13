@@ -63,10 +63,21 @@ def seed_categorias():
 
 
 @seed_app.command("perguntas")
-def seed_perguntas():
+def seed_perguntas(
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por pessoa: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+    tipo: str = typer.Option(
+        None,
+        "--tipo",
+        help="Filtra por tipo: multipla_escolha|discursiva.",
+    ),
+):
     """Insere as perguntas no banco de dados."""
     controller = SeedController()
-    controller.seed_perguntas()
+    controller.seed_perguntas(owner=owner, tipo=tipo)
 
 
 @seed_app.command("modelos")
@@ -77,10 +88,21 @@ def seed_modelos():
 
 
 @seed_app.command("respostas")
-def seed_respostas():
+def seed_respostas(
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por pessoa: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+    tipo: str = typer.Option(
+        None,
+        "--tipo",
+        help="Filtra por tipo: multipla_escolha|discursiva.",
+    ),
+):
     """Insere as respostas dos modelos no banco de dados."""
     controller = SeedController()
-    controller.seed_respostas()
+    controller.seed_respostas(owner=owner, tipo=tipo)
 
 
 @seed_app.command("all")
@@ -98,7 +120,7 @@ def seed_export(
         help="O que exportar: 'perguntas', 'respostas' ou 'all' (default).",
     ),
 ):
-    """Exporta perguntas e/ou respostas para JSON portável em Atividade_2/exports/."""
+    """Exporta perguntas e/ou respostas para JSON portável em database/backup/."""
     SeedController().export_extracao(type_)
 
 
@@ -116,7 +138,7 @@ def seed_import(
 @seed_app.command("import-all")
 def seed_import_all(
     directory: Path = typer.Option(
-        Path("Atividade_2/exports"),
+        Path("database/backup"),
         "--dir",
         help="Pasta com os arquivos extracao-perguntas.json e extracao-respostas.json.",
     ),
@@ -172,7 +194,7 @@ def judge_export(
     output: Path = typer.Option(
         None,
         "--output",
-        help="Caminho de saída. Default: Atividade_2/exports/avaliacoes-<slug>.json",
+        help="Caminho de saída. Default: database/backup/avaliacoes-<slug>.json",
     ),
 ):
     """Exporta avaliações do juiz para arquivo JSON portável."""
@@ -194,7 +216,7 @@ def judge_import(
 @judge_app.command("import-all")
 def judge_import_all(
     directory: Path = typer.Option(
-        Path("Atividade_2/exports"),
+        Path("database/backup"),
         "--dir",
         help="Pasta com os arquivos avaliacoes-*.json.",
     ),

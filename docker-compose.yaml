@@ -35,7 +35,7 @@ services:
       - db
 
   grafana:
-    image: grafana/grafana:11.6.0
+    image: grafana/grafana:13.0.1
     container_name: grafana_jud
     environment:
       GF_SECURITY_ADMIN_USER: admin
