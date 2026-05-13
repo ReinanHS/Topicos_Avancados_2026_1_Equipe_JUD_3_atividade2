@@ -113,7 +113,7 @@ jobs:
           POSTGRES_PORT: 5432
         run: |
           uv run python main.py db judge import database/backup/avaliacoes-gemini-2-5-flash.json
-          uv run python main.py db judge import database/backup/avaliacoes-gpt-4o-mini.json
+          uv run python main.py db judge import database/backup/avaliacoes-gpt-4o.json
           uv run python main.py db judge import database/backup/avaliacoes-gpt-5-mini.json
 
       - name: Export database dump
