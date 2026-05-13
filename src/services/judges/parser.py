@@ -17,8 +17,6 @@ def _extract_chain_of_thought(raw: str, nota_match: re.Match) -> str:
     """Devolve a parte 'raciocínio' do output, sem a linha da nota."""
     before_nota = raw[: nota_match.start()].strip()
 
-    # Remove o prefixo "RACIOCÍNIO:" / "REASONING:" se presente, mas
-    # mantém todo o conteúdo subsequente.
     prefix_re = re.compile(
         r"^(?:RACIOC[IÍ]NIO|REASONING|JUSTIFICATIVA|ANÁLISE|ANALISE)\s*[:=\-]\s*",
         re.IGNORECASE,

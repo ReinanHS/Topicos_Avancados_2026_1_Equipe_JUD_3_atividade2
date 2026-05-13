@@ -35,9 +35,13 @@ class OpenAIJudge(BaseJudge):
         return "openai"
 
     def complete(self, prompt: str) -> str:
-        completion = self._client.chat.completions.create(
-            model=self.model,
-            temperature=0.0,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        kwargs = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+
+        if "gpt-5" not in self.model and not self.model.startswith("o"):
+            kwargs["temperature"] = 0.0
+
+        completion = self._client.chat.completions.create(**kwargs)
         return completion.choices[0].message.content or ""

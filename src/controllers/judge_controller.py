@@ -54,7 +54,9 @@ class JudgeController:
         except Exception as e:
             return False, str(e)
 
-    def _evaluate_with_judge(self, judge: BaseJudge, limit: int | None) -> None:
+    def _evaluate_with_judge(
+        self, judge: BaseJudge, limit: int | None, workers: int = 1
+    ) -> None:
         """Executa o pipeline para um único juiz."""
         print(f"\n=== Juiz: {judge.name} (modelo no banco: {judge.db_model_name}) ===")
 
@@ -70,20 +72,58 @@ class JudgeController:
         sucesso = 0
         falhas = 0
 
-        for idx, item in enumerate(pendentes, start=1):
-            ok, err = self._evaluate_one(judge, id_modelo_juiz, item)
-            if ok:
-                sucesso += 1
-                print(f"  [{idx}/{total}] OK  - resposta #{item['id_resposta']}")
-            else:
-                falhas += 1
-                print(
-                    f"  [{idx}/{total}] ERRO - resposta #{item['id_resposta']}: {err}"
-                )
+        if workers > 1:
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            print(f"Executando em paralelo com {workers} worker(s)...")
+            with ThreadPoolExecutor(max_workers=workers) as executor:
+                # Cada item é submetido como uma tarefa isolada, garantindo que
+                # workers diferentes nunca peguem a mesma questão.
+                futures = {
+                    executor.submit(
+                        self._evaluate_one, judge, id_modelo_juiz, item
+                    ): item
+                    for item in pendentes
+                }
+
+                completed = 0
+                for future in as_completed(futures):
+                    item = futures[future]
+                    completed += 1
+                    try:
+                        ok, err = future.result()
+                        if ok:
+                            sucesso += 1
+                            print(
+                                f"  [{completed}/{total}] OK  - resposta #{item['id_resposta']}"
+                            )
+                        else:
+                            falhas += 1
+                            print(
+                                f"  [{completed}/{total}] ERRO - resposta #{item['id_resposta']}: {err}"
+                            )
+                    except Exception as e:
+                        falhas += 1
+                        print(
+                            f"  [{completed}/{total}] ERRO INESPERADO - resposta #{item['id_resposta']}: {e}"
+                        )
+        else:
+            for idx, item in enumerate(pendentes, start=1):
+                ok, err = self._evaluate_one(judge, id_modelo_juiz, item)
+                if ok:
+                    sucesso += 1
+                    print(f"  [{idx}/{total}] OK  - resposta #{item['id_resposta']}")
+                else:
+                    falhas += 1
+                    print(
+                        f"  [{idx}/{total}] ERRO - resposta #{item['id_resposta']}: {err}"
+                    )
 
         print(f"Juiz {judge.name} concluído: {sucesso} sucesso(s), {falhas} falha(s).")
 
-    def evaluate(self, judge_specs: list[str], limit: int | None = None) -> None:
+    def evaluate(
+        self, judge_specs: list[str], limit: int | None = None, workers: int = 1
+    ) -> None:
         """
         Executa o pipeline para cada juiz da lista, em sequência.
 
@@ -101,7 +141,7 @@ class JudgeController:
                 continue
 
             try:
-                self._evaluate_with_judge(judge, limit=limit)
+                self._evaluate_with_judge(judge, limit=limit, workers=workers)
             except Exception as e:
                 print(f"Falha geral no juiz '{spec}': {e}")
 
