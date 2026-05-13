@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict d7PD8sunoHJbvv7uJdvkFv0Up47KPhfxlt23ts0R2yGLvBrmXEgvRfW3BR5HjlT
+\restrict I7QXe4kkNHTTE5ZNFcgdeoOLBBwLf095TfGigwnpFIZoEDSm3yt8LDgUrZbxtkS
 
 -- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
 -- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
@@ -362,7 +362,8 @@ CREATE TABLE public.respostas_atividade_1 (
     id_modelo integer,
     texto_resposta text NOT NULL,
     tempo_inferencia_ms double precision,
-    data_geracao timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    data_geracao timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    justificativa text
 );
 
 
@@ -617,5 +618,5 @@ ALTER TABLE ONLY public.respostas_atividade_1
 -- PostgreSQL database dump complete
 --
 
-\unrestrict d7PD8sunoHJbvv7uJdvkFv0Up47KPhfxlt23ts0R2yGLvBrmXEgvRfW3BR5HjlT
+\unrestrict I7QXe4kkNHTTE5ZNFcgdeoOLBBwLf095TfGigwnpFIZoEDSm3yt8LDgUrZbxtkS
 
