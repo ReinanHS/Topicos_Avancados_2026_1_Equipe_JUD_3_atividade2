@@ -179,11 +179,15 @@ class BaseExtractor(ABC):
             )
 
             if not curatorship:
+                print(
+                    f"[Info] Pergunta {question_id} não encontrada na curadoria: {curatorship}"
+                )
                 continue
 
             parsed_curatorship = self.parse_curatorship(curatorship)
             category_id = self.find_category_id(parsed_curatorship["category"])
             difficulty = parsed_curatorship["difficulty"]
+            legislacao = parsed_curatorship["legislation"]
 
             resposta_ouro = ref_map.get(question_id, "")
             if extract_resposta_ouro and not resposta_ouro:
@@ -198,7 +202,7 @@ class BaseExtractor(ABC):
                     "enunciado": question[statement_field],
                     "resposta_ouro": resposta_ouro,
                     "nivel_dificuldade": f"Nivel {difficulty}",
-                    "legislacao_basica": parsed_curatorship["legislation"],
+                    "legislacao_basica": legislacao,
                     "metadados": extract_metadados(question)
                     | {"source_file": self.__class__.__name__},
                 }
