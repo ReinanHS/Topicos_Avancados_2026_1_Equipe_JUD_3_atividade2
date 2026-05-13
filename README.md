@@ -291,8 +291,9 @@ O comando aceita de 1 a 3 juízes por execução. Repita `-j` para usar múltipl
 ```bash
 # Apenas um juiz local (sem custo de API)
 uv run python main.py db judge evaluate -j ollama:llama3.1:8b
-uv run python main.py db judge evaluate -j google:gemini-2.5-flash --limit 1
-uv run python main.py db judge evaluate -j openai:gpt-4o --limit 1
+uv run python main.py db judge evaluate -j google:gemini-2.5-flash --limit 9 --workers 3
+uv run python main.py db judge evaluate -j openai:gpt-4o --limit 9 --workers 3
+uv run python main.py db judge evaluate -j openai:gpt-5-mini-2025-08-07 --limit 9 --workers 3
 
 # Smoke test com limite (útil para validar o pipeline)
 uv run python main.py db judge evaluate -j ollama:llama3.1:8b --limit 5
@@ -313,6 +314,7 @@ Para evitar que cada membro da equipe pague a API novamente, depois de rodar `ju
 ```bash
 uv run python main.py db judge export -j openai:gpt-4o
 uv run python main.py db judge export -j google:gemini-2.5-flash
+uv run python main.py db judge export -j openai:gpt-5-mini-2025-08-07
 ```
 
 Outros membros, após `git pull`, carregam os dados sem chamar API:

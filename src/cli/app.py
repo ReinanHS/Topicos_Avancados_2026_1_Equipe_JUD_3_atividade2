@@ -163,11 +163,17 @@ def judge_evaluate(
         "--limit",
         help="Limita o número de respostas avaliadas por juiz (útil para smoke test).",
     ),
+    workers: int = typer.Option(
+        1,
+        "--workers",
+        "-w",
+        help="Número de execuções paralelas por juiz. Padrão: 1.",
+    ),
 ):
     """Executa o pipeline LLM-as-a-Judge para os juízes informados."""
     if not 1 <= len(judge) <= 3:
         raise typer.BadParameter("Informe entre 1 e 3 juízes via --judge/-j.")
-    JudgeController().evaluate(judge, limit=limit)
+    JudgeController().evaluate(judge, limit=limit, workers=workers)
 
 
 @judge_app.command("list-available")

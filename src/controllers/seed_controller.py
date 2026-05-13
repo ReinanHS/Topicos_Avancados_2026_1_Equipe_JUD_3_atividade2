@@ -223,6 +223,13 @@ class SeedController:
                 "familia": "Gemini",
                 "parametro_precisao": "N/A",
             },
+            {
+                "nome_modelo": "GPT-5 mini",
+                "versao": "gpt-5-mini-2025-08-07",
+                "provedor": "OpenAI",
+                "familia": "GPT",
+                "parametro_precisao": "N/A",
+            },
         ]
 
         try:

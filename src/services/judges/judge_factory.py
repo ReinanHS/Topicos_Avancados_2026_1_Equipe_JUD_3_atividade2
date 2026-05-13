@@ -28,6 +28,7 @@ class JudgeFactory:
         "anthropic:claude-sonnet-4-6": "Claude Sonnet 4.6",
         "openai:gpt-4o": "GPT-4o",
         "openai:gpt-4o-mini": "GPT-4o mini",
+        "openai:gpt-5-mini-2025-08-07": "GPT-5 mini",
         "google:gemini-3.1-flash-lite": "Gemini 3.1 Flash-Lite",
         "google:gemini-2.5-flash": "Gemini 2.5 Flash",
     }

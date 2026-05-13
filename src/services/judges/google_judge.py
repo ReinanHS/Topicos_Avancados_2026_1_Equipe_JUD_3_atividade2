@@ -28,8 +28,6 @@ class GoogleJudge(BaseJudge):
                 "Pacote 'google-genai' não instalado. Rode `uv add google-genai` ou adicione no pyproject.toml."
             ) from e
 
-        # Inicializa o client usando a chave
-        # Para Vertex AI completo, poderia exigir genai.Client(vertexai=True, ...) mas a chave já atende na maioria dos casos.
         self._client = genai.Client(api_key=api_key)
 
     @property
