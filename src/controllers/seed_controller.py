@@ -17,12 +17,12 @@ from src.services.extractors.mikaela_extractor import MikaelaExtractor
 
 # Mapa central que permite filtrar a execução por pessoa via --owner.
 EXTRACTORS = {
-    "reinan":   ReinanExtractor,
-    "ericles":  EriclesExtractor,
+    "reinan": ReinanExtractor,
+    "ericles": EriclesExtractor,
     "fernanda": FernandaExtractor,
-    "victor":   VictorExtractor,
-    "julia":    JuliaExtractor,
-    "mikaela":  MikaelaExtractor,
+    "victor": VictorExtractor,
+    "julia": JuliaExtractor,
+    "mikaela": MikaelaExtractor,
 }
 
 VALID_TIPOS = {"multipla_escolha", "discursiva"}
@@ -141,29 +141,6 @@ class SeedController:
             return extractor.extract_answers_oab_bench()
         return extractor.extract_answers()
 
-    def seed_perguntas(self, owner: str | None = None, tipo: str | None = None):
-        """
-        Insere as perguntas no banco de dados.
-
-        Use `owner` para restringir a uma pessoa (ericles|julia|mikaela|fernanda|
-        reinan|victor) e `tipo` para um dos dois datasets (multipla_escolha|
-        discursiva).
-        """
-        owners = _resolve_owners(owner)
-        tipo = _validate_tipo(tipo)
-        pergunta_repo = PerguntaRepository()
-
-        perguntas = []
-        for name in owners:
-            extractor = EXTRACTORS[name]()
-            perguntas.extend(self._extract_perguntas(extractor, tipo))
-
-        for pergunta in perguntas:
-            pergunta_repo.create(**pergunta)
-
-        scope = f"owner={owner or 'todos'}, tipo={tipo or 'todos'}"
-        print(f"Perguntas semeadas com sucesso! ({scope}, total={len(perguntas)})")
-
     def seed_modelos(self):
         """Insere as informações de modelos iniciais no banco de dados."""
         repo = ModeloRepository()
@@ -241,6 +218,29 @@ class SeedController:
             print("Modelos semeados com sucesso!")
         except Exception as e:
             print(f"Erro ao semear modelos: {e}")
+
+    def seed_perguntas(self, owner: str | None = None, tipo: str | None = None):
+        """
+        Insere as perguntas no banco de dados.
+
+        Use `owner` para restringir a uma pessoa (ericles|julia|mikaela|fernanda|
+        reinan|victor) e `tipo` para um dos dois datasets (multipla_escolha|
+        discursiva).
+        """
+        owners = _resolve_owners(owner)
+        tipo = _validate_tipo(tipo)
+        pergunta_repo = PerguntaRepository()
+
+        perguntas = []
+        for name in owners:
+            extractor = EXTRACTORS[name]()
+            perguntas.extend(self._extract_perguntas(extractor, tipo))
+
+        for pergunta in perguntas:
+            pergunta_repo.create(**pergunta)
+
+        scope = f"owner={owner or 'todos'}, tipo={tipo or 'todos'}"
+        print(f"Perguntas semeadas com sucesso! ({scope}, total={len(perguntas)})")
 
     def seed_respostas(self, owner: str | None = None, tipo: str | None = None):
         """

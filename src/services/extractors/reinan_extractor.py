@@ -38,8 +38,16 @@ class ReinanExtractor(BaseExtractor):
     def _process_item(
         self, item: dict, answer_parser: callable, dataset_id: int, id_modelo: int
     ) -> dict | None:
-        parsed_text = answer_parser(item)
-        if not parsed_text:
+        parsed = answer_parser(item)
+        if not parsed:
+            return None
+
+        if isinstance(parsed, tuple):
+            texto_resposta, justificativa = parsed
+        else:
+            texto_resposta, justificativa = parsed, None
+
+        if not texto_resposta:
             return None
 
         id_externo = str(item.get("question_id") or item.get("id"))
@@ -49,9 +57,13 @@ class ReinanExtractor(BaseExtractor):
             return {
                 "id_pergunta": id_pergunta,
                 "id_modelo": id_modelo,
-                "texto_resposta": parsed_text,
+                "texto_resposta": texto_resposta,
+                "justificativa": justificativa,
                 "tempo_inferencia_ms": None,
             }
+        print(
+            f"[Info] Pergunta {id_pergunta} ou modelo {id_modelo} não encontrado: {id_externo}"
+        )
         return None
 
     def _process_model_answers(
@@ -125,7 +137,7 @@ class ReinanExtractor(BaseExtractor):
             objective_answer = str(choices[0].get("objective_answer", ""))
             justification = str(choices[0].get("justification", ""))
 
-            return f"Resposta: {objective_answer}\nJustificativa: {justification}"
+            return objective_answer, justification
 
         return self._process_dataset_answers("oab_exams", parser)
 

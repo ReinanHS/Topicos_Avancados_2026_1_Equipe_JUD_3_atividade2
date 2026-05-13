@@ -70,7 +70,9 @@ class EriclesExtractor(BaseExtractor):
                 "justificativa": justificativa,
                 "tempo_inferencia_ms": None,
             }
-        print(f"[Info] Pergunta ou modelo não encontrado: {item}")
+        print(
+            f"[Info] Pergunta {id_pergunta} ou modelo {id_modelo} não encontrado: {id_externo}"
+        )
         return None
 
     def _process_dataset_answers(
