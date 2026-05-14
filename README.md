@@ -54,7 +54,7 @@ Português | [English](./README-EN.md)
 
 ## Sobre
 
-Este repositório contém as contribuições individuais do aluno **Reinan Gabriel** para a segunda atividade avaliativa da disciplina **Tópicos Avançados em Engenharia de Software e Sistemas de Informação I** (UFS 2026.1).
+Este repositório contém as contribuições coletivas do grupo para a segunda atividade avaliativa da disciplina Tópicos Avançados em Engenharia de Software e Sistemas de Informação I (UFS 2026.1). Além das implementações realizadas, o material apresenta as informações e resultados consolidados que a equipe, como um todo, logrou desenvolver durante a atividade.
 
 O projeto dá continuidade à [Atividade 1](https://github.com/ReinanHS/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1), avançando da inferência básica para uma avaliação estruturada das respostas dos modelos. As frentes principais são:
 
@@ -83,6 +83,26 @@ O vídeo a seguir mostra os resultados coletados pela equipe para a segunda ativ
       </a><br/>
       <a href="https://github.com/ReinanHS">Reinan Gabriel</a>
     </td>
+    <td align="center">
+      <a href="https://github.com/Ericles-Porty">
+        <img src="https://github.com/Ericles-Porty.png" height="64" width="64" alt="Ericles Dos Santos"/>
+      </a><br/>
+      <a href="https://github.com/Ericles-Porty">Ericles Dos Santos</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Leomascarenhas91">
+        <img src="https://github.com/Leomascarenhas91.png" height="64" width="64" alt="Victor Mascarenhas"/>
+      </a><br/>
+      <a href="https://github.com/Leomascarenhas91">Victor Mascarenhas</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/safira1344">
+        <img src="https://github.com/safira1344.png" height="64" width="64" alt="Ericles Dos Santos"/>
+      </a><br/>
+      <a href="https://github.com/safira1344">Fernanda Mirely</a>
+    </td>
   </tr>
 </table>
 </div>
@@ -99,94 +119,124 @@ O esquema relacional segue a estrutura sugerida pelo professor, com cinco tabela
 
 ---
 
-## Instruções de execução
+## 🚀 Como iniciar o projeto (Passo a Passo)
 
-### Pré-requisitos
+Bem-vindo! Para facilitar o seu entendimento, organizamos o processo de configuração do ambiente em etapas simples. Siga-as na ordem para ter tudo funcionando perfeitamente.
 
-| Requisito | Versão mínima | Descrição |
+### 1. Pré-requisitos
+
+Antes de começar, garanta que você tem as seguintes ferramentas instaladas:
+
+| Ferramenta | Versão mínima | Por que precisamos? |
 |-----------|---------------|-----------|
-| [Python](https://www.python.org/downloads/) | 3.12+ | Linguagem principal do projeto |
-| [Docker](https://docs.docker.com/get-docker/) | 24+ | Containerização dos serviços (PostgreSQL e CloudBeaver) |
-| [Docker Compose](https://docs.docker.com/compose/install/) | 2.x | Orquestração dos contêineres |
-| [Git](https://git-scm.com/install) | 2.x | Controle de versão |
+| [Python](https://www.python.org/downloads/) | 3.12+ | Linguagem principal do projeto. |
+| [Docker](https://docs.docker.com/get-docker/) | 24+ | Para rodar o banco de dados e ferramentas complementares sem sujar sua máquina. |
+| [Docker Compose](https://docs.docker.com/compose/install/) | 2.x | Para ligar todos os contêineres Docker com um único comando. |
+| [Git](https://git-scm.com/install) | 2.x | Para baixar o código e trabalhar com versionamento. |
+| [Make](https://www.gnu.org/software/make/) | (Opcional) | Para rodar atalhos úteis, mas deixamos os comandos brutos caso não tenha instalado. |
 
-> **Nota:** O PostgreSQL 17 já é provisionado automaticamente via Docker, não sendo necessário instalá-lo separadamente.
+> **💡 Dica:** O banco de dados PostgreSQL (versão 17) já vem configurado dentro do Docker. Você não precisa instalá-lo separadamente na sua máquina!
 
-### Subindo o ambiente com Docker
+### 2. Subindo o ambiente com Docker
 
-Com o Docker instalado e em execução, basta rodar o comando abaixo na raiz do projeto:
+Com o Docker instalado e rodando no seu computador, abra o terminal na raiz do projeto e inicie os serviços:
 
 ```bash
+docker pull ghcr.io/reinanhs/jud-db:latest
+docker compose down -v
 docker compose up -d
 ```
 
-Isso irá provisionar automaticamente dois serviços:
+> **🐳 Dicas de ouro para o Docker (Evitando dores de cabeça):**
+> 
+> - **Sempre pegue a versão mais nova:** Para garantir que você tem a imagem mais recente do banco ou das ferramentas, adicione a tag `--pull always`:
+>   `docker compose up -d --pull always`
+> - **Problemas com cache?** Se as coisas estiverem estranhas ou alguma configuração não estiver atualizando, force a recriação das imagens ignorando o cache:
+>   `docker compose build --no-cache`
+> - **Começar 100% do zero:** Para resetar o banco de dados completamente (excluir todos os dados), basta remover os *volumes* ao parar os contêineres:
+>   `docker compose down -v`
 
-| Serviço           | Porta  | Descrição                                        |
-|-------------------|--------|--------------------------------------------------|
-| **PostgreSQL 17** | `5432` | Banco de dados relacional do projeto             |
-| **CloudBeaver**   | `8978` | Interface web para gerenciar e consultar o banco |
+O comando `up -d` rodará de forma silenciosa dois serviços principais:
+- **PostgreSQL 17** (Porta `5432`): O banco de dados relacional.
+- **CloudBeaver** (Porta `8978`): Interface no navegador para gerenciar seu banco (detalhes na próxima seção).
 
-Para verificar se os contêineres estão rodando corretamente:
+Para verificar se estão rodando: `docker compose ps`
+Para desligar tudo ao fim do dia: `docker compose down`
 
-```bash
-docker compose ps
-```
+### 3. Instalando as dependências do Projeto
 
-Para parar o ambiente:
-
-```bash
-docker compose down
-```
-
-### Instalação e execução
-
-Para executar o projeto de forma local, siga os passos:
+Agora vamos preparar o ambiente Python. O projeto utiliza a ferramenta `uv` para uma instalação super rápida:
 
 ```bash
-# (Opcional) Criar e ativar um ambiente virtual
+# 1. Crie o ambiente virtual (um espaço seguro para as libs do projeto)
 python -m venv .venv
 
-# Ativação no Linux/macOS
+# 2. Ative o ambiente virtual
+# No Linux/macOS:
 source .venv/bin/activate
-
-# Ativação no Windows (PowerShell)
+# No Windows (PowerShell):
 # .venv\Scripts\activate
 
-# Instalar as dependências
+# 3. Instale as dependências de uma vez
 uv sync
 ```
 
-## Migrations
+### 4. Populando o banco de dados
+
+Para que o projeto funcione corretamente, você precisará de dados. Executar as extrações do zero pode ser um processo lento, devido ao grande volume de requisições e ao processamento de textos densos.
+
+#### Jeito fácil (Recomendado)
+
+Para facilitar o processo, **nosso CI/CD atualiza automaticamente a imagem do banco de dados**. Isso significa que os dados já estão prontos dentro da imagem, e você pode não precisar executar os comandos manuais abaixo.
+
+Esse processo de *dump* automático garante que as informações sejam processadas pelo CI/CD, reduzindo a carga de trabalho local. Ao baixar a imagem, o banco de dados já estará inicializado e com as informações cadastradas.
+
+A única ação necessária é baixar a imagem (conforme as seções anteriores) e verificar se não há conflitos de cache.
+
+```shell
+docker pull ghcr.io/reinanhs/jud-db:latest
+docker compose down -v
+docker compose up -d --pull always
+
+```
+
+#### Jeito avançado
+
+Em alguns cenários, você pode preferir importar tudo manualmente. Para isso, utilize o procedimento abaixo para deletar o seu banco de dados atual e recriá-lo utilizando os scripts de importação e as configurações pré-processadas:
 
 ```bash
+# 1. Recria as tabelas do zero usando os arquivos de migração
 uv run python main.py db rollback
 uv run python main.py db migrate
-```
 
-## Seeders
-
-```bash
+# 2. Importação do seed (dados iniciais)
 uv run python main.py db seed all
+
+# 3. Importa todas as perguntas e respostas dos datasets
+uv run python main.py db seed import-all
+
+# 4. Importa todas as avaliações já realizadas pelos Juízes IA
+uv run python main.py db judge import-all
+
 ```
 
-### Compartilhando extrações sem reprocessar
+> **Por que fazer isso?** A importação é inteligente e resolve referências por nome natural (idempotente). Isso evita chamadas de rede redundantes, economizando tempo e possíveis custos de API.
 
-Os 6 extractors em `src/services/extractors/` baixam dados de curadoria e respostas dos repositórios GitHub de cada membro — é um processo lento (HTTP-bound + lookups por linha). Para evitar que todos os colegas refaçam isso, depois de rodar `seed perguntas` e `seed respostas`, exporte e faça commit:
+#### Importação manual via pg_dump
+
+```shell
+make db-restore-full
+```
+
+Caso você não tenha a ferramenta **make** instalada, é possível copiar as instruções diretamente do arquivo `Makefile`.
+
+### Compartilhando extrações novas
 
 ```bash
 uv run python main.py db seed export --type all
 ```
 
-Os demais membros, após `git pull`:
-
-```bash
-uv run python main.py db seed import-all
-```
-
-O import resolve as referências por nome natural (dataset/categoria/modelo) em vez de IDs auto-incrementados, então funciona mesmo se o banco do colega tiver IDs diferentes. É idempotente em dois níveis: o `ExtracaoExporter` checa duplicatas antes de inserir, e o `PerguntaRepository.create` usa `ON CONFLICT DO NOTHING` como cinto de segurança no banco.
-
-Comandos disponíveis:
+Tabela rápida de comandos manuais:
 
 | Comando | O que faz |
 |---|---|
@@ -194,7 +244,7 @@ Comandos disponíveis:
 | `db seed export --type respostas` | Exporta só respostas. |
 | `db seed export --type all` | Exporta os dois (default). |
 | `db seed import <arquivo.json>` | Importa um arquivo (detecta o tipo automaticamente). |
-| `db seed import-all` | Importa perguntas (primeiro) e respostas (depois) da pasta padrão, respeitando as FKs. |
+| `db seed import-all` | Importa perguntas e respostas da pasta padrão. |
 
 ### Acessando o CloudBeaver
 
@@ -290,7 +340,7 @@ O comando aceita de 1 a 3 juízes por execução. Repita `-j` para usar múltipl
 
 ```bash
 # Apenas um juiz local (sem custo de API)
-uv run python main.py db judge evaluate -j ollama:llama3.1:8b
+uv run python main.py db judge evaluate -j ollama:llama3.1:8b --limit 9 --workers 3
 uv run python main.py db judge evaluate -j google:gemini-2.5-flash --limit 9 --workers 3
 uv run python main.py db judge evaluate -j openai:gpt-4o --limit 9 --workers 3
 uv run python main.py db judge evaluate -j openai:gpt-5-mini-2025-08-07 --limit 9 --workers 3
