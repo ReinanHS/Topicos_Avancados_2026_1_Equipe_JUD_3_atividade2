@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict I7QXe4kkNHTTE5ZNFcgdeoOLBBwLf095TfGigwnpFIZoEDSm3yt8LDgUrZbxtkS
+\restrict xDEarLDKEZYShuCo5FyhKQghNPi59vARNJ0AScmgOPcDBeWqRbIP9Vz1mJ5HrXU
 
 -- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
 -- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
@@ -296,8 +296,8 @@ CREATE TABLE public.perguntas (
     legislacao_basica text,
     metadados jsonb,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    CONSTRAINT ck_nivel_dificuldade CHECK (((nivel_dificuldade)::text = ANY ((ARRAY['Nivel 1'::character varying, 'Nivel 2'::character varying, 'Nivel 3'::character varying])::text[]))),
-    CONSTRAINT ck_tipo_pergunta_p CHECK (((tipo_pergunta)::text = ANY ((ARRAY['discursiva'::character varying, 'multipla_escolha'::character varying])::text[])))
+    CONSTRAINT ck_nivel_dificuldade CHECK (((nivel_dificuldade)::text = ANY (ARRAY[('Nivel 1'::character varying)::text, ('Nivel 2'::character varying)::text, ('Nivel 3'::character varying)::text]))),
+    CONSTRAINT ck_tipo_pergunta_p CHECK (((tipo_pergunta)::text = ANY (ARRAY[('discursiva'::character varying)::text, ('multipla_escolha'::character varying)::text])))
 );
 
 
@@ -618,5 +618,5 @@ ALTER TABLE ONLY public.respostas_atividade_1
 -- PostgreSQL database dump complete
 --
 
-\unrestrict I7QXe4kkNHTTE5ZNFcgdeoOLBBwLf095TfGigwnpFIZoEDSm3yt8LDgUrZbxtkS
+\unrestrict xDEarLDKEZYShuCo5FyhKQghNPi59vARNJ0AScmgOPcDBeWqRbIP9Vz1mJ5HrXU
 

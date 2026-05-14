@@ -1,4 +1,2554 @@
 {
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Dashboard de análise das avaliações LLM do projeto JUD — Atividade 2",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#3d71d9",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "refId": "A"
+        }
+      ],
+      "title": "Total de Avaliações",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#5a34d1",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS value\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "refId": "A"
+        }
+      ],
+      "title": "Total de Respostas",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#1a7a4a",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS value\nFROM perguntas p\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "refId": "A"
+        }
+      ],
+      "title": "Total de Perguntas",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#b85c00",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(DISTINCT m.id_modelo) AS value\nFROM modelos m\nWHERE m.nome_modelo IN ($nome_modelo)",
+          "refId": "A"
+        }
+      ],
+      "title": "Total de Modelos",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#8b008b",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(DISTINCT d.id_dataset) AS value\nFROM datasets d\nWHERE d.nome IN ($dataset)",
+          "refId": "A"
+        }
+      ],
+      "title": "Total de Datasets",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c4402e",
+                "value": 0
+              },
+              {
+                "color": "#e8a838",
+                "value": 2.5
+              },
+              {
+                "color": "#37872d",
+                "value": 3.5
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "refId": "A"
+        }
+      ],
+      "title": "Nota Média Geral",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Nota média (escala 1–5) atribuída pelo Juiz-IA a cada modelo candidato avaliado na Atividade 1. Quanto maior a nota, mais a resposta do modelo se aproximou do gabarito segundo a rubrica definida (precisão jurídica, fundamentação legal e ausência de alucinações normativas). Cada modelo é representado por uma cor distinta e consistente ao longo do dashboard. Os filtros de Modelo, Dataset, Categoria e Source File no topo são aplicados a este ranking.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Nota Média (1–5)",
+            "axisPlacement": "auto",
+            "fillOpacity": 85,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "Gemma 2": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Gemma 2"
+                },
+                "Llama 3.2": {
+                  "color": "blue",
+                  "index": 2,
+                  "text": "Llama 3.2"
+                },
+                "Qwen 2.5": {
+                  "color": "purple",
+                  "index": 0,
+                  "text": "Qwen 2.5"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "max": 5,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "barRadius": 0.1,
+        "barWidth": 0.7,
+        "colorByField": "nome_modelo",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -15,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  m.nome_modelo,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY nota_media DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "🏆 Ranking de Modelos · Nota Média do Juiz-IA",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Painel cruzado mostrando como cada Juiz-IA avaliou cada modelo candidato, agrupado por dataset. Permite identificar Auto-avaliação (juiz = candidato), Viés de auto-preferência intra-família (mesma família tende a se favorecer) e Avaliações cruzadas entre famílias distintas (referência neutra). A coluna 'Delta vs. Media Global' mostra o quanto este juiz sobre/subestima o candidato — valores positivos (verde) indicam favorecimento; negativos (vermelho) indicam rigor acima do normal. Pares com menos de 3 avaliações são omitidos.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "dataset"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Dataset"
+              },
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "candidato"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Candidato"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "juiz"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Juiz"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "media"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Media"
+              },
+              {
+                "id": "min",
+                "value": 1
+              },
+              {
+                "id": "max",
+                "value": 5
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#b71c1c",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e64a19",
+                      "value": 2
+                    },
+                    {
+                      "color": "#fbc02d",
+                      "value": 3
+                    },
+                    {
+                      "color": "#7cb342",
+                      "value": 4
+                    },
+                    {
+                      "color": "#1b5e20",
+                      "value": 4.5
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mediana"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Mediana"
+              },
+              {
+                "id": "min",
+                "value": 1
+              },
+              {
+                "id": "max",
+                "value": 5
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "desvio"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Desvio"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_min"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Min"
+              },
+              {
+                "id": "custom.width",
+                "value": 65
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_max"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Max"
+              },
+              {
+                "id": "custom.width",
+                "value": 65
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "N"
+              },
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "relacao"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Relacao"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "desvio_da_media_global"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Delta vs. Media Global"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#b71c1c",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e64a19",
+                      "value": -0.5
+                    },
+                    {
+                      "color": "#9e9e9e",
+                      "value": -0.15
+                    },
+                    {
+                      "color": "#7cb342",
+                      "value": 0.15
+                    },
+                    {
+                      "color": "#1b5e20",
+                      "value": 0.5
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  d.nome AS dataset,\n  m_cand.nome_modelo AS candidato,\n  m_juiz.nome_modelo AS juiz,\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS media,\n  ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY a.nota_atribuida)::numeric, 2) AS mediana,\n  ROUND(COALESCE(STDDEV_SAMP(a.nota_atribuida), 0)::numeric, 2) AS desvio,\n  MIN(a.nota_atribuida) AS nota_min,\n  MAX(a.nota_atribuida) AS nota_max,\n  COUNT(a.id_avaliacao) AS total\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p ON p.id_pergunta = r.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY\n  d.nome,\n  m_cand.id_modelo, m_cand.nome_modelo, m_cand.familia,\n  m_juiz.id_modelo, m_juiz.nome_modelo, m_juiz.familia\nHAVING COUNT(a.id_avaliacao) >= 3\nORDER BY\n  d.nome ASC,\n  candidato ASC,\n  media DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Matriz cruzada · Candidato × Juiz",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Apresenta a nota média atribuída às respostas de cada modelo avaliado, organizada por categoria jurídica. O total de avaliações indica quantos julgamentos foram considerados no cálculo de cada média. Os valores refletem o conjunto de avaliações disponível para os filtros selecionados.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "categoria",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Categoria"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "modelo",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Modelo"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_media",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Nota média"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_avaliacoes",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total de avaliações"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  c.nome              AS categoria,\n  m_cand.nome_modelo  AS modelo,\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS nota_media,\n  COUNT(a.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r ON r.id_resposta    = a.id_resposta_ativa1\nJOIN perguntas p             ON p.id_pergunta    = r.id_pergunta\nJOIN datasets d              ON d.id_dataset     = p.id_dataset\nJOIN categorias c            ON c.id_categoria   = p.id_categoria\nJOIN modelos m_cand          ON m_cand.id_modelo = r.id_modelo\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome             IN ($dataset)\n  AND c.nome             IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY c.nome, m_cand.nome_modelo\nHAVING COUNT(a.id_avaliacao) >= 2\nORDER BY c.nome ASC, m_cand.nome_modelo ASC, nota_media DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Nota média por categoria e modelo avaliado",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Exibe a média geral das notas atribuídas às respostas em cada categoria jurídica, considerando todos os modelos avaliados selecionados nos filtros. Cada barra representa a média consolidada da categoria, sem separação por modelo avaliado ou por modelo juiz.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "id": 12,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "normal",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  c.nome AS categoria,\n\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS nota_media_geral\n\nFROM avaliacoes_juiz a\n\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\n\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\n-- Modelo que gerou a resposta avaliada\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\n\n-- Modelo juiz que atribuiu a nota\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n\nGROUP BY c.nome\n\nHAVING COUNT(a.id_avaliacao) >= 2\n\nORDER BY nota_media_geral DESC, c.nome ASC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Nota média geral por categoria",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Nº de Respostas",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "Gemma 2": {
+                  "color": "blue",
+                  "index": 0,
+                  "text": "Gemma 2"
+                },
+                "Llama 3.2": {
+                  "color": "purple",
+                  "index": 1,
+                  "text": "Llama 3.2"
+                },
+                "Qwen 2.5": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Qwen 2.5"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 24
+      },
+      "id": 9,
+      "options": {
+        "barRadius": 0.1,
+        "barWidth": 0.7,
+        "colorByField": "nome_modelo",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -15,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  m.nome_modelo,\n  COUNT(ra.id_resposta) AS total_respostas\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY total_respostas DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Quantidade de respostas por modelo",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Nº de Perguntas",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "oab_bench": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "oab_bench"
+                },
+                "oab_exams": {
+                  "color": "blue",
+                  "index": 0,
+                  "text": "oab_exams"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 24
+      },
+      "id": 11,
+      "options": {
+        "barRadius": 0.1,
+        "barWidth": 0.7,
+        "colorByField": "dataset",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -15,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  d.nome AS dataset,\n  COUNT(p.id_pergunta) AS total_perguntas\nFROM perguntas p\nJOIN datasets d ON p.id_dataset = d.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY d.nome\nORDER BY total_perguntas DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Perguntas por dataset",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 24
+      },
+      "id": 15,
+      "options": {
+        "displayLabels": [
+          "percent",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  m.nome_modelo AS modelo_juiz,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz aj\nJOIN modelos m ON aj.id_modelo_juiz = m.id_modelo\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos mc ON ra.id_modelo = mc.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY total_avaliacoes DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Avaliações por modelo juiz",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_atribuida"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#c4402e",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e8a838",
+                      "value": 3
+                    },
+                    {
+                      "color": "#37872d",
+                      "value": 4
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "data_avaliacao"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  provedor,\n  custo_original,\n  moeda_original,\n  custo_em_reais\nFROM (\n  VALUES\n    (\n      'OpenAI',\n      15.94::numeric,\n      'USD',\n      ROUND((15.94 * 5.0119)::numeric, 2)\n    ),\n    (\n      'Google Cloud / Gemini',\n      95.25::numeric,\n      'BRL',\n      95.25::numeric\n    )\n) AS custos (\n  provedor,\n  custo_original,\n  moeda_original,\n  custo_em_reais\n)\nORDER BY custo_em_reais DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Informações de custos",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Compara a nota média atribuída por cada modelo juiz às respostas avaliadas. O painel ajuda a observar se determinado juiz tende a ser mais rigoroso ou mais permissivo dentro do recorte selecionado.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 1.43
+              },
+              {
+                "color": "#EAB839",
+                "value": 1.51
+              },
+              {
+                "color": "#6ED0E0",
+                "value": 1.62
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_atribuida"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#c4402e",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e8a838",
+                      "value": 3
+                    },
+                    {
+                      "color": "#37872d",
+                      "value": 4
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 18,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "never",
+        "stacking": "normal",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  m_juiz.nome_modelo AS modelo_juiz,\n\n  ROUND(\n    AVG(a.nota_atribuida)::numeric,\n    2\n  ) AS nota_media_atribuida\n\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY m_juiz.nome_modelo\nORDER BY nota_media_atribuida DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Perfil de atribuição de notas por juiz",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Relaciona o custo total registrado para cada provedor com a quantidade de avaliações realizadas pelos respectivos modelos juízes. O custo por avaliação é uma estimativa agregada do experimento completo e não varia conforme os filtros do dashboard.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_atribuida"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#c4402e",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e8a838",
+                      "value": 3
+                    },
+                    {
+                      "color": "#37872d",
+                      "value": 4
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 39
+      },
+      "id": 17,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "data_avaliacao"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH custos AS (\n  SELECT\n    'OpenAI' AS provedor,\n    ROUND((15.94 * 5.0119)::numeric, 2) AS custo_em_reais\n\n  UNION ALL\n\n  SELECT\n    'Google Cloud / Gemini' AS provedor,\n    95.25::numeric AS custo_em_reais\n),\n\navaliacoes_por_provedor AS (\n  SELECT\n    CASE\n      WHEN m_juiz.nome_modelo IN ('GPT-4o', 'GPT-5 mini')\n        THEN 'OpenAI'\n      WHEN m_juiz.nome_modelo = 'Gemini 2.5 Flash'\n        THEN 'Google Cloud / Gemini'\n    END AS provedor,\n\n    COUNT(a.id_avaliacao) AS total_avaliacoes\n\n  FROM avaliacoes_juiz a\n  JOIN modelos m_juiz\n    ON m_juiz.id_modelo = a.id_modelo_juiz\n\n  WHERE m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\n  GROUP BY 1\n)\n\nSELECT\n  c.provedor,\n  c.custo_em_reais,\n  COALESCE(ap.total_avaliacoes, 0) AS total_avaliacoes,\n\n  ROUND(\n    c.custo_em_reais / NULLIF(ap.total_avaliacoes, 0),\n    4\n  ) AS custo_por_avaliacao_reais,\n\n  ROUND(\n    ap.total_avaliacoes / NULLIF(c.custo_em_reais, 0),\n    2\n  ) AS avaliacoes_por_real\n\nFROM custos c\nLEFT JOIN avaliacoes_por_provedor ap\n  ON ap.provedor = c.provedor\n\nORDER BY custo_por_avaliacao_reais ASC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Eficiência de custo por provedor de juiz",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Indica a proporção de respostas que cada modelo juiz classificou com notas altas, correspondentes aos níveis “excelente” e “excepcional” da rubrica adotada. O painel complementa a média geral ao revelar diferenças de severidade na aplicação da escala.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_atribuida"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#c4402e",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e8a838",
+                      "value": 3
+                    },
+                    {
+                      "color": "#37872d",
+                      "value": 4
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 39
+      },
+      "id": 19,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  m_juiz.nome_modelo AS modelo_juiz,\n\n  COUNT(a.id_avaliacao)\n    FILTER (WHERE a.nota_atribuida >= 4)\n    AS avaliacoes_com_nota_alta,\n\n  ROUND(\n    100.0\n    * COUNT(a.id_avaliacao) FILTER (WHERE a.nota_atribuida >= 4)\n    / NULLIF(COUNT(a.id_avaliacao), 0),\n    1\n  ) AS taxa_notas_altas_pct\n\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY m_juiz.nome_modelo\nORDER BY taxa_notas_altas_pct DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Percentual de avaliações com nota 4 ou 5 por juiz",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "description": "Compara os modelos juízes dois a dois nas respostas avaliadas em comum. O acordo exato indica a porcentagem de casos em que ambos atribuíram a mesma nota, enquanto a diferença média absoluta mostra a distância média entre as notas. O painel funciona como uma leitura descritiva complementar à análise de concordância inter-juízes discutida no relatório.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nota_atribuida"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#c4402e",
+                      "value": 0
+                    },
+                    {
+                      "color": "#e8a838",
+                      "value": 3
+                    },
+                    {
+                      "color": "#37872d",
+                      "value": 4
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 47
+      },
+      "id": 16,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "data_avaliacao"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  LEAST(m1.nome_modelo, m2.nome_modelo)\n    || ' × ' ||\n  GREATEST(m1.nome_modelo, m2.nome_modelo)\n    AS par_de_juizes,\n\n  COUNT(*) AS respostas_comparadas,\n\n  COUNT(*)\n    FILTER (\n      WHERE a1.nota_atribuida = a2.nota_atribuida\n    ) AS concordancias_exatas,\n\n  ROUND(\n    100.0\n    * COUNT(*) FILTER (\n        WHERE a1.nota_atribuida = a2.nota_atribuida\n      )\n    / NULLIF(COUNT(*), 0),\n    1\n  ) AS acordo_exato_pct,\n\n  ROUND(\n    AVG(\n      ABS(a1.nota_atribuida - a2.nota_atribuida)\n    )::numeric,\n    2\n  ) AS diferenca_media_absoluta\n\nFROM avaliacoes_juiz a1\nJOIN avaliacoes_juiz a2\n  ON a2.id_resposta_ativa1 = a1.id_resposta_ativa1\n AND a1.id_modelo_juiz < a2.id_modelo_juiz\n\nJOIN modelos m1\n  ON m1.id_modelo = a1.id_modelo_juiz\n\nJOIN modelos m2\n  ON m2.id_modelo = a2.id_modelo_juiz\n\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a1.id_resposta_ativa1\n\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n\n  AND m1.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\n  AND m2.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  LEAST(m1.nome_modelo, m2.nome_modelo),\n  GREATEST(m1.nome_modelo, m2.nome_modelo)\n\nORDER BY acordo_exato_pct DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Concordância das notas entre pares de juízes",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 47
+      },
+      "id": 14,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "nota_media"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  m.nome_modelo,\n  d.nome AS dataset,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media,\n  MIN(aj.nota_atribuida) AS nota_min,\n  MAX(aj.nota_atribuida) AS nota_max\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON p.id_dataset = d.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo, d.nome\nORDER BY nota_media DESC",
+          "refId": "A"
+        }
+      ],
+      "title": "Ranking de modelos - Nota média por dataset",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 21,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "data_avaliacao"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  p.enunciado AS \"Pergunta\",\n\n  COALESCE(\n    NULLIF(BTRIM(p.metadados->>'answerKey'), ''),\n    p.resposta_ouro\n  ) AS \"Gabarito\",\n\n  (\n    'Resposta objetiva: ' || ra.texto_resposta\n    ||\n    CASE\n      WHEN NULLIF(BTRIM(ra.justificativa), '') IS NOT NULL\n      THEN E'\\n\\nJustificativa:\\n' || ra.justificativa\n      ELSE ''\n    END\n  ) AS \"Resposta e justificativa\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-4o'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-4o\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-5 mini'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-5 mini\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'Gemini 2.5 Flash'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. Gemini 2.5\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  MAX(aj.data_avaliacao) AS \"Última avaliação\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE d.nome = 'oab_exams'\n  AND mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado,\n  p.metadados,\n  p.resposta_ouro,\n  ra.texto_resposta,\n  ra.justificativa\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  p.id_externo ASC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Análise individual - OAB Exams",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "data_avaliacao"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  p.enunciado AS \"Pergunta\",\n\n  COALESCE(\n    NULLIF(BTRIM(p.metadados->>'guidelines'), ''),\n    p.resposta_ouro\n  ) AS \"Referência\",\n\n  ra.texto_resposta AS \"Resposta\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-4o'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-4o\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-5 mini'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-5 mini\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'Gemini 2.5 Flash'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. Gemini 2.5\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  MAX(aj.data_avaliacao) AS \"Última avaliação\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE d.nome = 'oab_bench'\n  AND mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado,\n  p.metadados,\n  p.resposta_ouro,\n  ra.texto_resposta\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  p.id_externo ASC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Análise individual - OAB Bench",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 73
+      },
+      "id": 22,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "data_avaliacao"
+          }
+        ]
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  d.nome AS \"Dataset\",\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  LEFT(p.enunciado, 180) || '...' AS \"Pergunta resumida\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MIN(aj.nota_atribuida) AS \"Menor nota\",\n  MAX(aj.nota_atribuida) AS \"Maior nota\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  COUNT(DISTINCT mj.nome_modelo) AS \"Nº de juízes\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  d.nome,\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado\n\nHAVING COUNT(DISTINCT mj.nome_modelo) >= 2\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  \"Dataset\" ASC,\n  \"ID questão\" ASC\n\nLIMIT 50;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Respostas com maior divergência entre os juízes",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "jud",
+    "llm",
+    "avaliacoes",
+    "postgres"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres"
+        },
+        "definition": "SELECT nome_modelo FROM modelos ORDER BY nome_modelo",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Modelo",
+        "multi": true,
+        "name": "nome_modelo",
+        "options": [],
+        "query": "SELECT nome_modelo FROM modelos ORDER BY nome_modelo",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres"
+        },
+        "definition": "SELECT nome FROM datasets ORDER BY nome",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Dataset",
+        "multi": true,
+        "name": "dataset",
+        "options": [],
+        "query": "SELECT nome FROM datasets ORDER BY nome",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres"
+        },
+        "definition": "SELECT nome FROM categorias ORDER BY nome",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Categoria",
+        "multi": true,
+        "name": "categoria",
+        "options": [],
+        "query": "SELECT nome FROM categorias ORDER BY nome",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres"
+        },
+        "definition": "SELECT DISTINCT metadados->>'source_file' FROM perguntas WHERE metadados->>'source_file' IS NOT NULL ORDER BY 1",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Source File",
+        "multi": true,
+        "name": "source_file",
+        "options": [],
+        "query": "SELECT DISTINCT metadados->>'source_file' FROM perguntas WHERE metadados->>'source_file' IS NOT NULL ORDER BY 1",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "America/Sao_Paulo",
+  "title": "JUD — Análise de Avaliações LLM",
+  "uid": "jud-avaliacoes-dashboard",
+  "version": 1,
   "__inputs": [],
   "__requires": [
     {
@@ -37,1223 +2587,5 @@
       "name": "Table",
       "version": ""
     }
-  ],
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
-        },
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
-  "description": "Dashboard de análise das avaliações LLM do projeto JUD — Atividade 2",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
-  "id": null,
-  "links": [],
-  "panels": [
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#3d71d9",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 1
-      },
-      "id": 1,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "title": "Total de Avaliações",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#5a34d1",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 1
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "title": "Total de Respostas",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS value\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#1a7a4a",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 1
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "title": "Total de Perguntas",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS value\nFROM perguntas p\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#b85c00",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 1
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "title": "Total de Modelos",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(DISTINCT m.id_modelo) AS value\nFROM modelos m\nWHERE m.nome_modelo IN ($nome_modelo)",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#8b008b",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 1
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "title": "Total de Datasets",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(DISTINCT d.id_dataset) AS value\nFROM datasets d\nWHERE d.nome IN ($dataset)",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#c4402e",
-                "value": null
-              },
-              {
-                "color": "#e8a838",
-                "value": 2.5
-              },
-              {
-                "color": "#37872d",
-                "value": 3.5
-              }
-            ]
-          },
-          "unit": "short",
-          "decimals": 2
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 1
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "title": "Nota Média Geral",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Nota Média",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short",
-          "decimals": 2,
-          "min": 0,
-          "max": 5
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 5
-      },
-      "id": 7,
-      "options": {
-        "barRadius": 0.1,
-        "barWidth": 0.7,
-        "colorByField": "nome_modelo",
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": -15,
-        "xTickLabelSpacing": 0
-      },
-      "title": "Nota Média por Modelo Candidato",
-      "type": "barchart",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY nota_media DESC",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": [
-            {
-              "options": {
-                "1": {
-                  "text": "Nota 1 ★"
-                },
-                "2": {
-                  "text": "Nota 2 ★★"
-                },
-                "3": {
-                  "text": "Nota 3 ★★★"
-                },
-                "4": {
-                  "text": "Nota 4 ★★★★"
-                },
-                "5": {
-                  "text": "Nota 5 ★★★★★"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 5
-      },
-      "id": 8,
-      "options": {
-        "displayLabels": [
-          "name",
-          "percent"
-        ],
-        "legend": {
-          "calcs": [
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "pie",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "title": "Distribuição de Notas Atribuídas",
-      "type": "piechart",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  aj.nota_atribuida::text AS nota,\n  COUNT(*) AS total\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE aj.nota_atribuida IS NOT NULL\n  AND m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY aj.nota_atribuida\nORDER BY aj.nota_atribuida",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisLabel": "Nº de Respostas",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 9,
-      "options": {
-        "barRadius": 0.1,
-        "barWidth": 0.7,
-        "colorByField": "nome_modelo",
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": -15
-      },
-      "title": "Quantidade de Respostas por Modelo",
-      "type": "barchart",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  COUNT(ra.id_resposta) AS total_respostas\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY total_respostas DESC",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisLabel": "Tempo (ms)",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ms",
-          "decimals": 0
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 14
-      },
-      "id": 10,
-      "options": {
-        "barRadius": 0.1,
-        "barWidth": 0.7,
-        "colorByField": "nome_modelo",
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": -15
-      },
-      "title": "Tempo Médio de Inferência por Modelo (ms)",
-      "type": "barchart",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  ROUND(AVG(ra.tempo_inferencia_ms)::numeric, 0) AS tempo_medio_ms\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE ra.tempo_inferencia_ms IS NOT NULL\n  AND m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY tempo_medio_ms DESC",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisLabel": "Nº de Perguntas",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 22
-      },
-      "id": 11,
-      "options": {
-        "barRadius": 0.1,
-        "barWidth": 0.7,
-        "colorByField": "dataset",
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": -15
-      },
-      "title": "Perguntas por Dataset",
-      "type": "barchart",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  d.nome AS dataset,\n  COUNT(p.id_pergunta) AS total_perguntas\nFROM perguntas p\nJOIN datasets d ON p.id_dataset = d.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY d.nome\nORDER BY total_perguntas DESC",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisLabel": "Nº de Avaliações",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 22
-      },
-      "id": 12,
-      "options": {
-        "barRadius": 0.1,
-        "barWidth": 0.7,
-        "colorByField": "modelo_juiz",
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": -15
-      },
-      "title": "Avaliações por Modelo Juiz",
-      "type": "barchart",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo AS modelo_juiz,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz aj\nJOIN modelos m ON aj.id_modelo_juiz = m.id_modelo\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos mc ON ra.id_modelo = mc.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY total_avaliacoes DESC",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "nota_atribuida"
-            },
-            "properties": [
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background",
-                  "valueDisplayMode": "text"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "#c4402e",
-                      "value": null
-                    },
-                    {
-                      "color": "#e8a838",
-                      "value": 3
-                    },
-                    {
-                      "color": "#37872d",
-                      "value": 4
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 30
-      },
-      "id": 13,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "data_avaliacao"
-          }
-        ]
-      },
-      "title": "Últimas Avaliações",
-      "type": "table",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  aj.id_avaliacao,\n  mj.nome_modelo AS modelo_juiz,\n  mc.nome_modelo AS modelo_candidato,\n  aj.nota_atribuida,\n  LEFT(p.enunciado, 80) || '...' AS pergunta,\n  LEFT(ra.texto_resposta, 100) || '...' AS resposta,\n  aj.data_avaliacao\nFROM avaliacoes_juiz aj\nJOIN modelos mj ON aj.id_modelo_juiz = mj.id_modelo\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos mc ON ra.id_modelo = mc.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nORDER BY aj.data_avaliacao DESC\nLIMIT 50",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres-jud-db"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 40
-      },
-      "id": 14,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "nota_media"
-          }
-        ]
-      },
-      "title": "Ranking de Modelos — Nota Média por Dataset",
-      "type": "table",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres-jud-db"
-          },
-          "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  d.nome AS dataset,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media,\n  MIN(aj.nota_atribuida) AS nota_min,\n  MAX(aj.nota_atribuida) AS nota_max\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON p.id_dataset = d.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo, d.nome\nORDER BY nota_media DESC",
-          "refId": "A",
-          "format": "table"
-        }
-      ]
-    }
-  ],
-  "refresh": "30s",
-  "schemaVersion": 39,
-  "tags": [
-    "jud",
-    "llm",
-    "avaliacoes",
-    "postgres"
-  ],
-  "templating": {
-    "list": [
-      {
-        "allValue": "",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "postgres",
-          "uid": "postgres-jud-db"
-        },
-        "definition": "SELECT nome_modelo FROM modelos ORDER BY nome_modelo",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Modelo",
-        "multi": true,
-        "name": "nome_modelo",
-        "options": [],
-        "query": "SELECT nome_modelo FROM modelos ORDER BY nome_modelo",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": "",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "postgres",
-          "uid": "postgres-jud-db"
-        },
-        "definition": "SELECT nome FROM datasets ORDER BY nome",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Dataset",
-        "multi": true,
-        "name": "dataset",
-        "options": [],
-        "query": "SELECT nome FROM datasets ORDER BY nome",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": "",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "postgres",
-          "uid": "postgres-jud-db"
-        },
-        "definition": "SELECT nome FROM categorias ORDER BY nome",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Categoria",
-        "multi": true,
-        "name": "categoria",
-        "options": [],
-        "query": "SELECT nome FROM categorias ORDER BY nome",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": "",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "postgres",
-          "uid": "postgres-jud-db"
-        },
-        "definition": "SELECT DISTINCT metadados->>'source_file' FROM perguntas WHERE metadados->>'source_file' IS NOT NULL ORDER BY 1",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Source File",
-        "multi": true,
-        "name": "source_file",
-        "options": [],
-        "query": "SELECT DISTINCT metadados->>'source_file' FROM perguntas WHERE metadados->>'source_file' IS NOT NULL ORDER BY 1",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      }
-    ]
-  },
-  "time": {
-    "from": "now-30d",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "America/Sao_Paulo",
-  "title": "JUD — Análise de Avaliações LLM",
-  "uid": "jud-avaliacoes-dashboard",
-  "version": 1
+  ]
 }
