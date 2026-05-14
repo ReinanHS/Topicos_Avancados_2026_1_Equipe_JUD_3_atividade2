@@ -68,9 +68,9 @@ O projeto dá continuidade à [Atividade 1](https://github.com/ReinanHS/Topicos_
 
 O vídeo a seguir mostra os resultados coletados pela equipe para a segunda atividade avaliativa:
 
-[![Vídeo no YouTube](https://gitlab.com/reinanhs/repo-slide-presentation/-/wikis/uploads/7cc03556931898d62b45b84b5006d119/image.png)](https://youtu.be/dQw4w9WgXcQ)
+[![Vídeo no YouTube](https://gitlab.com/reinanhs/repo-slide-presentation/-/wikis/uploads/7cc03556931898d62b45b84b5006d119/image.png)](https://youtu.be/YiBB6kJq82w)
 
-- **Assista ao vídeo completo:** [https://youtu.be/dQw4w9WgXcQ](https://youtu.be/dQw4w9WgXcQ)
+- **Assista ao vídeo completo:** [https://youtu.be/YiBB6kJq82w](https://youtu.be/YiBB6kJq82w)
 
 ## Colaboradores
 
