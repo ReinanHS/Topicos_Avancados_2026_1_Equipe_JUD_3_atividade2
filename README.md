@@ -36,6 +36,7 @@ Português | [English](./README-EN.md)
 - [Apresentação](#apresentação)
 - [Colaboradores](#colaboradores)
 - [Arquitetura do banco de dados](#arquitetura-do-banco-de-dados)
+- [Base de Conhecimento e RAG](#base-de-conhecimento-e-rag)
 - [Instruções de execução](#instruções-de-execução)
   - [Pré-requisitos](#pré-requisitos)
   - [Subindo o ambiente com Docker](#subindo-o-ambiente-com-docker)
@@ -121,6 +122,14 @@ O esquema relacional segue a estrutura sugerida pelo professor, com cinco tabela
 - [Acesse o link para visualizar o diagrama detalhado no DBDiagram.io](https://dbdiagram.io/d/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade2-69e940f2d80a958d1cb60703)
 
 <img src="docs/assets/arquitetura-do-banco-de-dados.svg" alt="Diagrama de entidade-relacionamento" width="100%">
+
+---
+
+## Base de Conhecimento e RAG
+
+Para mitigar alucinações e fornecer respostas com fundamentação jurídica robusta, o projeto faz uso de **RAG (Retrieval-Augmented Generation)**. A base de conhecimento do RAG é alimentada por documentos externos rigorosamente selecionados (como leis federais, códigos e jurisprudências de tribunais superiores) que possuem relação direta com as questões jurídicas do dataset.
+
+Se você deseja compreender os critérios de curadoria, o mapeamento de quais arquivos foram incluídos para cada questão, as fontes oficiais utilizadas e as justificativas baseadas na temporalidade dos modelos, acesse a documentação detalhada em [Curadoria de Documentos Externos](docs/curadoria-documentos-externos.md).
 
 ---
 
