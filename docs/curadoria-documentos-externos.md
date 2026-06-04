@@ -15,20 +15,20 @@ As buscas e coletas dos documentos foram realizadas em fontes jurídicas oficiai
 
 ## Questões avaliadas e arquivos presentes na base de conhecimento do RAG
 
-| Questão                                    | Área                   | Tipo              | Status informado | Arquivo/documento associado                          | Situação para o RAG                                                              |
-| ------------------------------------------ | ---------------------- | ----------------- | ---------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `44_direito_administrativo_questao_1`      | Direito Administrativo | Questão           | Presente         | `L14133` — Lei nº 14.133/2021                        | Documento presente na base                                                       |
-| `44_direito_administrativo_questao_2`      | Direito Administrativo | Questão           | Pendente         | Não identificado no texto                            | Necessário localizar/incluir documento                                           |
-| `44_direito_administrativo_questao_3`      | Direito Administrativo | Questão           | Presente         | `L8429compilada` — Lei nº 8.429/1992                 | Documento presente na base                                                       |
-| `44_direito_administrativo_questao_4`      | Direito Administrativo | Questão           | Presente         | `L13869` — Lei nº 13.869/2019                        | Documento presente na base                                                       |
-| `44_direito_civil_peca_profissional`       | Direito Civil          | Peça profissional | Presente         | `L8078compilado` — Código de Defesa do Consumidor    | Documento presente na base                                                       |
-| `44_direito_civil_questao_1`               | Direito Civil          | Questão           | Presente         | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
-| `44_direito_civil_questao_2`               | Direito Civil          | Questão           | Pendente         | `L13105compilada` — Código de Processo Civil de 2015 | O texto menciona documento associado, mas a lista marca como pendente; verificar |
-| `44_direito_civil_questao_3`               | Direito Civil          | Questão           | Pendente         | `L13105compilada` — Código de Processo Civil de 2015 | O texto menciona documento associado, mas a lista marca como pendente; verificar |
-| `44_direito_civil_questao_4`               | Direito Civil          | Questão           | Presente         | `L13146` — Lei nº 13.146/2015                        | Documento presente na base                                                       |
-| `44_direito_do_trabalho_peca_profissional` | Direito do Trabalho    | Peça profissional | Presente         | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
-| `44_direito_do_trabalho_questao_1`         | Direito do Trabalho    | Questão           | Pendente         | Não identificado no texto                            | Necessário localizar/incluir documento                                           |
-| `44_direito_do_trabalho_questao_2`         | Direito do Trabalho    | Questão           | Presente         | `Constituicao` — Constituição Federal de 1988 e ADCT | Documento presente na base                                                       |
+| Questão                                    | Área                   | Arquivo/documento associado                          | Situação para o RAG                                                              |
+| ------------------------------------------ | ---------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `44_direito_administrativo_questao_1`      | Direito Administrativo | `L14133` — Lei nº 14.133/2021                        | Documento presente na base                                                       |
+| `44_direito_administrativo_questao_2`      | Direito Administrativo | Não identificado no texto                            | Necessário localizar/incluir documento                                           |
+| `44_direito_administrativo_questao_3`      | Direito Administrativo | `L8429compilada` — Lei nº 8.429/1992                 | Documento presente na base                                                       |
+| `44_direito_administrativo_questao_4`      | Direito Administrativo | `L13869` — Lei nº 13.869/2019                        | Documento presente na base                                                       |
+| `44_direito_civil_peca_profissional`       | Direito Civil          | `L8078compilado` — Código de Defesa do Consumidor    | Documento presente na base                                                       |
+| `44_direito_civil_questao_1`               | Direito Civil          | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `44_direito_civil_questao_2`               | Direito Civil          | `L13105compilada` — Código de Processo Civil de 2015 | Documento presente na base                                                       |
+| `44_direito_civil_questao_3`               | Direito Civil          | `L13105compilada` — Código de Processo Civil de 2015 | Documento presente na base                                                       |
+| `44_direito_civil_questao_4`               | Direito Civil          | `L13146` — Lei nº 13.146/2015                        | Documento presente na base                                                       |
+| `44_direito_do_trabalho_peca_profissional` | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
+| `44_direito_do_trabalho_questao_1`         | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
+| `44_direito_do_trabalho_questao_2`         | Direito do Trabalho    | `Constituicao` — Constituição Federal de 1988 e ADCT | Documento presente na base                                                       |
 
 ## Fontes utilizadas na curadoria dos documentos externos
 
@@ -210,8 +210,6 @@ Dessa forma, os dispositivos selecionados oferecem a base processual necessária
 O Código de Processo Civil é de 16/03/2015, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
 
 Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois permite ancorar as respostas nos dispositivos processuais corretos sobre denunciação da lide e embargos monitórios.
-
-> **Observação:** apesar de o texto indicar o uso do Código de Processo Civil para as questões `44_direito_civil_questao_2` e `44_direito_civil_questao_3`, a lista de controle marca essas duas questões como pendentes. Recomenda-se verificar se o arquivo já foi efetivamente inserido na base vetorial do RAG.
 
 ## Lei nº 13.146/2015 — curadoria de Reinan
 
