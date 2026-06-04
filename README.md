@@ -52,6 +52,11 @@ Português | [English](./README-EN.md)
 
 </details>
 
+> [!IMPORTANT]
+> As alterações correspondentes à entrega da segunda atividade foram preservadas na tag [v1.0.0](https://github.com/ReinanHS/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade2/tree/v1.0.0). Essa tag representa o estado do repositório até a data limite estabelecida para a entrega.
+>
+> A branch principal `main` continua em desenvolvimento para contemplar a atividade 3. Portanto, eventuais alterações posteriores à entrega da terceira atividade não modificam o conteúdo versionado na tag `v1.0.0`.
+
 ## Sobre
 
 Este repositório contém as contribuições coletivas do grupo para a segunda atividade avaliativa da disciplina Tópicos Avançados em Engenharia de Software e Sistemas de Informação I (UFS 2026.1). Além das implementações realizadas, o material apresenta as informações e resultados consolidados que a equipe, como um todo, logrou desenvolver durante a atividade.
