@@ -15,11 +15,13 @@ class RespostaRepository:
         conn_str = self.db_manager.get_connection_string
         return psycopg2.connect(conn_str)
 
-    def find_id(self, id_pergunta: int, id_modelo: int) -> int | None:
+    def find_id(
+        self, id_pergunta: int, id_modelo: int, usou_rag: bool = False
+    ) -> int | None:
         """
         Retorna o id_resposta da resposta gerada pelo `id_modelo` para a
-        `id_pergunta`, ou None se não houver. Usada no fluxo de import de
-        avaliações para traduzir chaves naturais em IDs.
+        `id_pergunta` com a respectiva flag de RAG, ou None se não houver.
+        Usada no fluxo de import de avaliações para traduzir chaves naturais em IDs.
         """
         try:
             with self._get_connection() as conn:
@@ -28,16 +30,16 @@ class RespostaRepository:
                         """
                         SELECT id_resposta
                         FROM respostas_atividade_1
-                        WHERE id_pergunta = %s AND id_modelo = %s
+                        WHERE id_pergunta = %s AND id_modelo = %s AND usou_rag = %s
                         LIMIT 1;
                         """,
-                        (id_pergunta, id_modelo),
+                        (id_pergunta, id_modelo, usou_rag),
                     )
                     row = cur.fetchone()
                     return row[0] if row else None
         except Exception as e:
             print(
-                f"Erro ao buscar id_resposta para pergunta {id_pergunta} / modelo {id_modelo}: {e}"
+                f"Erro ao buscar id_resposta para pergunta {id_pergunta} / modelo {id_modelo} (RAG={usou_rag}): {e}"
             )
             raise e
 

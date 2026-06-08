@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict rl6cefPW6C10MItjC27UX97zbL0ynZlEkI6fylKc4jSXLJSRTCmPNzkA6OvlwkE
+\restrict M4ubEAgYb9LUcfgp69E0dB2tsagZNceoyUY9qFAfyO2JHP4qY8UpvPIvH8bGMg2
 
--- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
--- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
+-- Dumped from database version 17.10 (Debian 17.10-1.pgdg13+1)
+-- Dumped by pg_dump version 17.10 (Debian 17.10-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -620,5 +620,5 @@ ALTER TABLE ONLY public.respostas_atividade_1
 -- PostgreSQL database dump complete
 --
 
-\unrestrict rl6cefPW6C10MItjC27UX97zbL0ynZlEkI6fylKc4jSXLJSRTCmPNzkA6OvlwkE
+\unrestrict M4ubEAgYb9LUcfgp69E0dB2tsagZNceoyUY9qFAfyO2JHP4qY8UpvPIvH8bGMg2
 
