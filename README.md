@@ -329,12 +329,12 @@ Arquitetura modular: `BaseJudge` (contrato) → `JudgeFactory` (resolve `provedo
 
 ### Juízes suportados
 
-| Spec CLI | Tipo | Modelo no banco |
-|---|---|---|
-| `ollama:llama3.1:8b` | Local (Ollama) | Llama 3.1 |
-| `ollama:qwen2.5:7b` | Local (Ollama) | Qwen 2.5 |
-| `anthropic:claude-sonnet-4-6` | API | Claude Sonnet 4.6 |
-| `openai:gpt-4o` | API | GPT-4o |
+| Spec CLI                      | Tipo           | Modelo no banco   |
+|-------------------------------|----------------|-------------------|
+| `ollama:llama3.1:8b`          | Local (Ollama) | Llama 3.1         |
+| `ollama:qwen2.5:7b`           | Local (Ollama) | Qwen 2.5          |
+| `anthropic:claude-sonnet-4-6` | API            | Claude Sonnet 4.6 |
+| `openai:gpt-4o`               | API            | GPT-4o            |
 
 Para listar dinamicamente:
 
@@ -403,13 +403,13 @@ uv run python main.py db judge import database/backup/avaliacoes-gpt-4o-mini.jso
 
 Comandos disponíveis:
 
-| Comando | O que faz |
-|---|---|
-| `db judge export -j <spec>` | Exporta um juiz específico para `database/backup/avaliacoes-<slug>.json`. |
-| `db judge export --all` | Gera um arquivo por juiz que já tem avaliações no banco. |
-| `db judge export -j <spec> --output <path>` | Exporta para um caminho customizado. |
-| `db judge import <arquivo.json>` | Importa um arquivo específico (idempotente). |
-| `db judge import-all` | Importa todos os `avaliacoes-*.json` da pasta padrão. |
+| Comando                                     | O que faz                                                                 |
+|---------------------------------------------|---------------------------------------------------------------------------|
+| `db judge export -j <spec>`                 | Exporta um juiz específico para `database/backup/avaliacoes-<slug>.json`. |
+| `db judge export --all`                     | Gera um arquivo por juiz que já tem avaliações no banco.                  |
+| `db judge export -j <spec> --output <path>` | Exporta para um caminho customizado.                                      |
+| `db judge import <arquivo.json>`            | Importa um arquivo específico (idempotente).                              |
+| `db judge import-all`                       | Importa todos os `avaliacoes-*.json` da pasta padrão.                     |
 
 O formato do arquivo é JSON portável com chaves naturais (nome do dataset, `id_externo` da pergunta, nome do modelo candidato) em vez de IDs auto-incrementados — então funciona mesmo se o banco do colega tiver IDs diferentes do seu. O import é idempotente em dois níveis: o `AvaliacoesExporter.import_file` checa se cada par `(resposta, juiz)` já existe, e a constraint `uq_avaliacoes_resposta_juiz` no banco é o cinto de segurança.
 
@@ -493,12 +493,12 @@ Quando há ≥2 juízes que avaliaram as mesmas respostas, calculamos Spearman p
 
 A faixa de Spearman é $\rho \in [-1, 1]$. A leitura recomendada pelo enunciado:
 
-| Faixa de ρ | Leitura | Ação recomendada |
-|---|---|---|
-| 0.7 – 1.0 | **Forte alinhamento** | O juiz "pensa" como o gabarito; viável usá-lo em escala. |
-| 0.3 – 0.6 | **Alinhamento moderado** | Rubrica precisa ser mais específica; revisar critérios. |
-| 0.0 – 0.3 | **Alinhamento fraco** | Juiz inconsistente; trocar modelo ou refinar prompt. |
-| < 0 | **Discordância sistemática** | Achado científico — investigar viés (juiz pode estar mais atualizado que o gabarito, ou vice-versa). Documentar no relatório. |
+| Faixa de ρ | Leitura                      | Ação recomendada                                                                                                              |
+|------------|------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| 0.7 – 1.0  | **Forte alinhamento**        | O juiz "pensa" como o gabarito; viável usá-lo em escala.                                                                      |
+| 0.3 – 0.6  | **Alinhamento moderado**     | Rubrica precisa ser mais específica; revisar critérios.                                                                       |
+| 0.0 – 0.3  | **Alinhamento fraco**        | Juiz inconsistente; trocar modelo ou refinar prompt.                                                                          |
+| < 0        | **Discordância sistemática** | Achado científico — investigar viés (juiz pode estar mais atualizado que o gabarito, ou vice-versa). Documentar no relatório. |
 
 Casos especiais tratados em [spearman_service.py](src/services/analysis/spearman_service.py):
 

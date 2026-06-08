@@ -175,8 +175,9 @@ class ReinanExtractor(BaseExtractor):
 
             objective_answer = str(choices[0].get("objective_answer", ""))
             justification = str(choices[0].get("justification", ""))
+            chain_of_thought = str(choices[0].get("chain_of_thought", ""))
 
-            return objective_answer, justification
+            return objective_answer, f"Justificativa: {justification}\nCadeia de pensamento: {chain_of_thought}"
 
         return self._process_dataset_answers("oab_exams", parser, usou_rag=True)
 
