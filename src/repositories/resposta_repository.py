@@ -142,7 +142,8 @@ class RespostaRepository:
                             m.nome_modelo AS modelo,
                             r.texto_resposta,
                             r.tempo_inferencia_ms,
-                            r.justificativa
+                            r.justificativa,
+                            r.usou_rag
                         FROM respostas_atividade_1 r
                         JOIN perguntas p ON p.id_pergunta = r.id_pergunta
                         JOIN datasets d ON d.id_dataset = p.id_dataset
@@ -161,6 +162,7 @@ class RespostaRepository:
                                 float(row[4]) if row[4] is not None else None
                             ),
                             "justificativa": row[5],
+                            "usou_rag": row[6],
                         }
                         for row in rows
                     ]
