@@ -240,11 +240,25 @@ Quick table of manual commands:
 
 | Command | What it does |
 |---|---|
-| `db seed export --type perguntas` | Exports only questions. |
-| `db seed export --type respostas` | Exports only responses. |
-| `db seed export --type all` | Exports both, which is the default. |
-| `db seed import <arquivo.json>` | Imports one file and detects the type automatically. |
+| `db seed modelos` | Seeds models registered in the system. |
+| `db seed categorias` | Seeds standard legal categories. |
+| `db seed datasets` | Seeds definitions of datasets (oab_exams, oab_bench). |
+| `db seed perguntas` | Extracts and seeds questions for all contributors. |
+| `db seed respostas` | Extracts and seeds normal answers (without RAG) for all contributors. |
+| `db seed respostas-rag` | Extracts and seeds RAG answers (from branch `results-3`) for contributors who implemented it. |
+| `db seed all` | Sequentially runs all seeds above (includes RAG). |
+| `db seed export --type perguntas` | Exports only questions from the database to a JSON file. |
+| `db seed export --type respostas` | Exports only responses from the database to a JSON file. |
+| `db seed export --type all` | Exports both (default). |
+| `db seed import <arquivo.json>` | Imports an exported JSON file (automatically detects the type). |
 | `db seed import-all` | Imports questions and responses from the default folder. |
+
+You can optionally filter the execution by contributor using the `--owner` option (e.g. `--owner reinan`) or by dataset type with `--tipo` (e.g. `--tipo multipla_escolha`).
+
+Example to seed only the responses generated with RAG by Reinan:
+```bash
+uv run python main.py db seed respostas-rag --owner reinan
+```
 
 ### Accessing CloudBeaver
 

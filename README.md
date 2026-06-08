@@ -254,11 +254,25 @@ Tabela rápida de comandos manuais:
 
 | Comando | O que faz |
 |---|---|
-| `db seed export --type perguntas` | Exporta só perguntas. |
-| `db seed export --type respostas` | Exporta só respostas. |
+| `db seed modelos` | Semeia os modelos cadastrados no sistema. |
+| `db seed categorias` | Semeia as categorias jurídicas padrão. |
+| `db seed datasets` | Semeia as definições dos datasets (oab_exams, oab_bench). |
+| `db seed perguntas` | Extrai e semeia as perguntas de todos os colaboradores. |
+| `db seed respostas` | Extrai e semeia as respostas normais (sem RAG) de todos os colaboradores. |
+| `db seed respostas-rag` | Extrai e semeia as respostas geradas com RAG (ramo/branch `results-3`) dos colaboradores que implementaram. |
+| `db seed all` | Roda sequencialmente todos os seeds acima (inclui RAG). |
+| `db seed export --type perguntas` | Exporta só perguntas do banco para arquivo JSON. |
+| `db seed export --type respostas` | Exporta só respostas do banco para arquivo JSON. |
 | `db seed export --type all` | Exporta os dois (default). |
-| `db seed import <arquivo.json>` | Importa um arquivo (detecta o tipo automaticamente). |
+| `db seed import <arquivo.json>` | Importa um arquivo JSON exportado (detecta o tipo automaticamente). |
 | `db seed import-all` | Importa perguntas e respostas da pasta padrão. |
+
+Você pode opcionalmente filtrar a execução por colaborador com a opção `--owner` (ex: `--owner reinan`) ou por tipo de dataset com `--tipo` (ex: `--tipo multipla_escolha`).
+
+Exemplo para semear apenas as respostas geradas com RAG do Reinan:
+```bash
+uv run python main.py db seed respostas-rag --owner reinan
+```
 
 ### Acessando o CloudBeaver
 
