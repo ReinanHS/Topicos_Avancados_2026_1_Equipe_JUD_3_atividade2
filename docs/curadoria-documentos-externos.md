@@ -29,6 +29,18 @@ As buscas e coletas dos documentos foram realizadas em fontes jurídicas oficiai
 | `44_direito_do_trabalho_peca_profissional` | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
 | `44_direito_do_trabalho_questao_1`         | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
 | `44_direito_do_trabalho_questao_2`         | Direito do Trabalho    | `Constituicao` — Constituição Federal de 1988 e ADCT | Documento presente na base                                                       |
+| `43_direito_constitucional_peca_profissional` | Direito Constitucional | `Constituicao` — CF/1988 + `L12016` — Lei nº 12.016/2009 | Documento presente na base |
+| `43_direito_constitucional_questao_1`      | Direito Constitucional | `Constituicao` — Constituição Federal de 1988        | Documento presente na base                                                       |
+| `43_direito_constitucional_questao_2`      | Direito Constitucional | `Constituicao` — Constituição Federal de 1988        | Documento presente na base                                                       |
+| `43_direito_constitucional_questao_3`      | Direito Constitucional | `Constituicao` — CF/1988 (reforço: SV 49/STF)        | Documento presente na base                                                       |
+| `43_direito_constitucional_questao_4`      | Direito Constitucional | `Constituicao` — Constituição Federal de 1988        | Documento presente na base                                                       |
+| `43_direito_do_trabalho_questao_3`         | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
+| `43_direito_do_trabalho_questao_4`         | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
+| `43_direito_empresarial_peca_profissional` | Direito Empresarial    | `L4886` — Lei nº 4.886/1965                          | Documento presente na base                                                       |
+| `43_direito_empresarial_questao_1`         | Direito Empresarial    | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_empresarial_questao_2`         | Direito Empresarial    | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_empresarial_questao_3`         | Direito Empresarial    | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_empresarial_questao_4`         | Direito Empresarial    | `L11101` — Lei nº 11.101/2005                        | Documento presente na base                                                       |
 
 ## Fontes utilizadas na curadoria dos documentos externos
 
@@ -278,3 +290,124 @@ Dessa forma, o dispositivo selecionado do Ato das Disposições Constitucionais 
 A Constituição Federal é de 05/10/1988, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
 
 Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois permite ancorar a resposta no fundamento constitucional correto da estabilidade gestante e evitar o erro de condicionar o direito ao conhecimento prévio do empregador.
+
+## Constituição Federal de 1988 — curadoria de Éricles
+
+**Arquivo:** `Constituicao`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm
+**Questões relacionadas:** `43_direito_constitucional_peca_profissional`, `43_direito_constitucional_questao_1`, `43_direito_constitucional_questao_2`, `43_direito_constitucional_questao_3` e `43_direito_constitucional_questao_4`
+
+### Justificativa de inclusão
+
+O arquivo `Constituicao` foi incluído porque as cinco questões de Direito Constitucional sob esta curadoria exigem fundamento direto no texto constitucional. Os dispositivos selecionados oferecem a base normativa necessária:
+
+* **Art. 5º, XX, e Art. 5º, LXIX:** fundamentam a peça `43_direito_constitucional_peca_profissional`. O inciso XX assegura que ninguém pode ser compelido a associar-se ou a permanecer associado, evidenciando a inconstitucionalidade da Lei Municipal do Associativismo Bairrista, que pune com multa quem não se filia à associação de moradores. O inciso LXIX é o assento constitucional do mandado de segurança, peça cabível para amparar o direito líquido e certo de João (detalhada na seção da Lei nº 12.016/2009).
+* **Art. 29, VI:** fundamenta a `questao_1`, pois o subsídio dos Vereadores é fixado pelas próprias Câmaras Municipais em cada legislatura para a subsequente (princípio da anterioridade), observados os limites por faixa populacional, o que afasta a dúvida do enunciado sobre suposto "apoio do Prefeito".
+* **Art. 22, I; Art. 5º, LXVI; e Art. 103, VIII:** fundamentam a `questao_2`. A Lei Estadual nº X/24, que manda manter o preso em flagrante independentemente de liberdade provisória, é inconstitucional sob o aspecto formal (competência privativa da União para legislar sobre direito processual penal — Art. 22, I) e material (Art. 5º, LXVI, veda manter na prisão quem a lei admite liberdade provisória); o partido político com representação no Congresso é legitimado à ADI (Art. 103, VIII).
+* **Art. 170, caput e parágrafo único:** fundamenta a `questao_3`, pois a vedação de alvará de funcionamento em razão da preexistência de estabelecimento similar em raio de 300 m ofende a livre concorrência e a livre iniciativa, entendimento reforçado pela Súmula Vinculante 49 do STF.
+* **Art. 109, §3º e §4º:** fundamentam a `questao_4`. Quando a comarca do domicílio do segurado não é sede de vara federal, a causa previdenciária pode tramitar na Justiça Estadual por competência delegada (§3º), mas o recurso cabível é sempre para o Tribunal Regional Federal (§4º), e não para o Tribunal de Justiça, o que revela a inconstitucionalidade da proposta de emenda estadual.
+
+### Temporalidade
+
+A Constituição Federal é de 05/10/1988, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora os modelos nos dispositivos corretos e evita que confundam competências legislativas, limites de subsídio, remédios constitucionais e regras de competência recursal.
+
+## Lei nº 12.016/2009 — Mandado de Segurança — curadoria de Éricles
+
+**Arquivo:** `L12016`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2009/lei/l12016.htm
+**Questão relacionada:** `43_direito_constitucional_peca_profissional`
+
+### Justificativa de inclusão
+
+O arquivo `L12016` foi incluído porque a peça `43_direito_constitucional_peca_profissional` exige expressamente a ação constitucional de procedimento célere, sem instrução probatória e sem condenação em honorários sucumbenciais — características que identificam o mandado de segurança como peça cabível:
+
+* **Art. 1º:** cabimento do mandado de segurança para proteger direito líquido e certo lesado por ato ilegal de autoridade pública (o Secretário Municipal). O direito de João é líquido e certo por ser comprovável de plano por prova documental pré-constituída (a notificação e a própria Lei Municipal nº XX).
+* **Art. 23:** prazo decadencial de 120 dias para a impetração, requisito atendido, pois João procurou o advogado apenas dez dias após a notificação.
+* **Art. 25:** no mandado de segurança não cabe condenação ao pagamento de honorários advocatícios, atendendo diretamente à exigência do enunciado.
+
+### Temporalidade
+
+A Lei nº 12.016/2009 é de 07/08/2009, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois conduz o modelo a identificar corretamente o mandado de segurança (e não ação ordinária, popular ou civil pública) e suas regras de rito, decadência e ausência de honorários.
+
+## Consolidação das Leis do Trabalho — curadoria de Éricles
+
+**Arquivo:** `DEL5452`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm
+**Questões relacionadas:** `43_direito_do_trabalho_questao_3` e `43_direito_do_trabalho_questao_4`
+
+### Justificativa de inclusão
+
+O arquivo `DEL5452` foi incluído porque as questões de Direito do Trabalho sob esta curadoria dependem de dispositivos específicos da CLT:
+
+* **Art. 543, §3º, c/c Art. 494 e Art. 853:** fundamentam a `questao_3`. Sônia, empossada dirigente sindical, possui estabilidade que veda sua dispensa salvo falta grave apurada em inquérito judicial (Art. 853), admitida apenas a suspensão durante o processo (Art. 494). Logo, a dispensa direta por justa causa foi irregular (reforço: Súmula 379 do TST).
+* **Art. 482:** elenca as hipóteses de justa causa; a conduta atribuída a Sônia precisaria enquadrar-se em uma de suas alíneas, cabendo o ônus probatório ao empregador.
+* **Art. 462, caput e §1º:** fundamenta a `questao_4`. O desconto por dano causado pelo empregado é lícito em caso de dolo e, em caso de culpa, somente quando previsto em contrato. Como Maria agiu com culpa (descuido) e havia cláusula contratual expressa, o desconto de R$ 2.500,00 é, em tese, regular.
+* **Art. 477, §6º:** estabelece o prazo de dez dias para o pagamento das verbas rescisórias, prazo a que o enunciado faz referência.
+
+### Temporalidade
+
+A CLT é de 01/05/1943, considerada em sua versão compilada (já alcançada pela Reforma Trabalhista — Lei nº 13.467/2017); ambas as normas são anteriores ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, ancorando a resposta nas regras corretas sobre estabilidade sindical, inquérito para apuração de falta grave e desconto por dano causado pelo empregado.
+
+## Lei nº 4.886/1965 — Representação Comercial — curadoria de Éricles
+
+**Arquivo:** `L4886`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/l4886.htm
+**Questão relacionada:** `43_direito_empresarial_peca_profissional`
+
+### Justificativa de inclusão
+
+O arquivo `L4886` foi incluído porque a peça `43_direito_empresarial_peca_profissional` versa sobre contrato de representação comercial autônoma extinto sem aviso prévio, regido por lei especial, e não pela CLT. Esse é o ponto central da questão, pois a sentença narrada errou ao negar o aviso prévio sob o argumento de inexistência de relação de emprego. Os dispositivos selecionados sustentam a pretensão de reforma da sentença (por apelação):
+
+* **Art. 27, alínea "j":** a indenização devida ao representante, na rescisão sem culpa, não pode ser inferior a 1/12 do total da retribuição auferida durante todo o tempo de exercício da representação — afasta a limitação aos últimos cinco anos imposta pela sentença.
+* **Art. 34:** a denúncia imotivada de contrato por prazo indeterminado vigente há mais de seis meses obriga ao aviso prévio de, no mínimo, 30 dias, ou ao pagamento de indenização equivalente a 1/3 das comissões auferidas nos três meses anteriores; por independer de vínculo empregatício, derruba o fundamento da sentença.
+
+### Temporalidade
+
+A Lei nº 4.886/1965 é de 09/12/1965, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora o modelo na lei especial dos representantes comerciais e evita o erro — cometido até pela própria sentença narrada — de tratar a relação como trabalhista ou de aplicar prazos prescricionais incabíveis.
+
+## Código Civil de 2002 — curadoria de Éricles
+
+**Arquivo:** `L10406compilada`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm
+**Questões relacionadas:** `43_direito_empresarial_questao_1`, `43_direito_empresarial_questao_2` e `43_direito_empresarial_questao_3`
+
+### Justificativa de inclusão
+
+O arquivo `L10406compilada` foi incluído porque três questões empresariais sob esta curadoria têm base no Código Civil:
+
+* **Art. 1.020 e Art. 1.021:** fundamentam a `questao_1`. Os administradores de sociedade simples são obrigados a prestar contas justificadas de sua administração, e qualquer sócio pode, a qualquer tempo, examinar livros e documentos. A prestação que se limita a especificar "despesas e investimentos" é incompleta e não satisfaz o dever legal.
+* **Art. 1.144, Art. 1.145 e Art. 1.146:** fundamentam a `questao_2` (trespasse). O trespasse só produz efeitos perante terceiros após averbação no Registro Público de Empresas Mercantis e publicação na imprensa oficial (Art. 1.144); o adquirente responde pelos débitos anteriores regularmente contabilizados, permanecendo o alienante solidariamente obrigado por um ano (Art. 1.146). Como os débitos de julho, agosto e setembro de 2023 não foram regularmente contabilizados, o adquirente não responde por eles, e a ausência de publicação compromete a eficácia do negócio perante terceiros.
+* **Art. 753:** fundamenta a `questao_3` (contrato de transporte). Interrompido o transporte por causa alheia (bloqueio na via) e não obtidas instruções do remetente, o transportador deve zelar pela coisa — podendo depositá-la em juízo ou, sendo perecível, vendê-la —, com direito ao pagamento proporcional do frete.
+
+### Temporalidade
+
+O Código Civil é de 10/01/2002, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora as respostas nas regras corretas sobre prestação de contas em sociedade simples, eficácia do trespasse e deveres do transportador.
+
+## Lei nº 11.101/2005 — Recuperação Judicial e Falência — curadoria de Éricles
+
+**Arquivo:** `L11101`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2005/lei/l11101.htm
+**Questão relacionada:** `43_direito_empresarial_questao_4`
+
+### Justificativa de inclusão
+
+O arquivo `L11101` foi incluído porque a questão `43_direito_empresarial_questao_4` trata de plano de recuperação judicial que prevê a alienação judicial de unidade produtiva isolada (UPI), abrangendo ativos intangíveis e quotas dos sócios:
+
+* **Art. 60 e seu parágrafo único:** autorizam a alienação judicial de filiais ou unidades produtivas isoladas prevista no plano de recuperação. O objeto da alienação fica livre de qualquer ônus, e não há sucessão do arrematante nas obrigações do devedor, inclusive as de natureza tributária e trabalhista, observado o Art. 141.
+* **Art. 141, II:** reforça que, na alienação de ativos no âmbito da recuperação, o adquirente não sucede o devedor nas obrigações, inclusive trabalhistas e tributárias (constitucionalidade reconhecida pelo STF na ADI 3.934), afastando a conclusão equivocada de transmissão dos passivos ao adquirente da UPI.
+
+### Temporalidade
+
+A Lei nº 11.101/2005 é de 09/02/2005 e foi considerada em sua versão alterada pela Lei nº 14.112/2020; ambas as normas são anteriores ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora a resposta na regra de ausência de sucessão na alienação de unidade produtiva isolada, evitando que o modelo conclua erroneamente pela transferência das obrigações do devedor ao arrematante.
