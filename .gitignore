@@ -126,3 +126,4 @@ dist/
 .complexipy_cache
 complexipy_results_*
 .env
+scratch/

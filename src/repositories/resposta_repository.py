@@ -41,9 +41,9 @@ class RespostaRepository:
             )
             raise e
 
-    def exists(self, id_pergunta: int, id_modelo: int) -> bool:
+    def exists(self, id_pergunta: int, id_modelo: int, usou_rag: bool = False) -> bool:
         """
-        Verifica se já existe uma resposta para a mesma pergunta pelo mesmo modelo.
+        Verifica se já existe uma resposta para a mesma pergunta pelo mesmo modelo e modo de RAG.
         """
         try:
             with self._get_connection() as conn:
@@ -52,9 +52,9 @@ class RespostaRepository:
                         """
                         SELECT 1
                         FROM respostas_atividade_1
-                        WHERE id_pergunta = %s AND id_modelo = %s;
+                        WHERE id_pergunta = %s AND id_modelo = %s AND usou_rag = %s;
                         """,
-                        (id_pergunta, id_modelo),
+                        (id_pergunta, id_modelo, usou_rag),
                     )
                     return cur.fetchone() is not None
         except Exception as e:
@@ -68,12 +68,35 @@ class RespostaRepository:
         texto_resposta: str,
         tempo_inferencia_ms: float = None,
         justificativa: str | None = None,
+        usou_rag: bool = False,
     ) -> None:
         """
         Cadastra uma resposta no banco de dados.
-        Ignora caso já exista uma resposta para a mesma pergunta pelo mesmo modelo.
+        Se já existir uma resposta para a mesma pergunta pelo mesmo modelo e modo de RAG, ela será atualizada.
         """
-        if self.exists(id_pergunta, id_modelo):
+        if self.exists(id_pergunta, id_modelo, usou_rag):
+            try:
+                with self._get_connection() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            """
+                            UPDATE respostas_atividade_1
+                            SET texto_resposta = %s, tempo_inferencia_ms = %s, justificativa = %s
+                            WHERE id_pergunta = %s AND id_modelo = %s AND usou_rag = %s;
+                            """,
+                            (
+                                texto_resposta,
+                                tempo_inferencia_ms,
+                                justificativa,
+                                id_pergunta,
+                                id_modelo,
+                                usou_rag,
+                            ),
+                        )
+                    conn.commit()
+            except Exception as e:
+                print(f"Erro ao atualizar resposta para pergunta '{id_pergunta}': {e}")
+                raise e
             return
 
         try:
@@ -83,9 +106,9 @@ class RespostaRepository:
                         """
                         INSERT INTO respostas_atividade_1 (
                             id_pergunta, id_modelo, texto_resposta,
-                            tempo_inferencia_ms, justificativa
+                            tempo_inferencia_ms, justificativa, usou_rag
                         )
-                        VALUES (%s, %s, %s, %s, %s);
+                        VALUES (%s, %s, %s, %s, %s, %s);
                         """,
                         (
                             id_pergunta,
@@ -93,6 +116,7 @@ class RespostaRepository:
                             texto_resposta,
                             tempo_inferencia_ms,
                             justificativa,
+                            usou_rag,
                         ),
                     )
                 conn.commit()

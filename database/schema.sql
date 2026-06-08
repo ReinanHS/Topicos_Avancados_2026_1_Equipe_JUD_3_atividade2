@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict xDEarLDKEZYShuCo5FyhKQghNPi59vARNJ0AScmgOPcDBeWqRbIP9Vz1mJ5HrXU
+\restrict rl6cefPW6C10MItjC27UX97zbL0ynZlEkI6fylKc4jSXLJSRTCmPNzkA6OvlwkE
 
 -- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
 -- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
@@ -77,6 +77,7 @@ CREATE TABLE public.avaliacoes_juiz (
     nota_atribuida integer,
     chain_of_thought text NOT NULL,
     data_avaliacao timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    usou_rag boolean DEFAULT false NOT NULL,
     CONSTRAINT avaliacoes_juiz_nota_atribuida_check CHECK (((nota_atribuida >= 1) AND (nota_atribuida <= 5)))
 );
 
@@ -363,7 +364,8 @@ CREATE TABLE public.respostas_atividade_1 (
     texto_resposta text NOT NULL,
     tempo_inferencia_ms double precision,
     data_geracao timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    justificativa text
+    justificativa text,
+    usou_rag boolean DEFAULT false NOT NULL
 );
 
 
@@ -618,5 +620,5 @@ ALTER TABLE ONLY public.respostas_atividade_1
 -- PostgreSQL database dump complete
 --
 
-\unrestrict xDEarLDKEZYShuCo5FyhKQghNPi59vARNJ0AScmgOPcDBeWqRbIP9Vz1mJ5HrXU
+\unrestrict rl6cefPW6C10MItjC27UX97zbL0ynZlEkI6fylKc4jSXLJSRTCmPNzkA6OvlwkE
 

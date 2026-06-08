@@ -288,12 +288,59 @@ class SeedController:
                     texto_resposta=resposta["texto_resposta"],
                     tempo_inferencia_ms=resposta["tempo_inferencia_ms"],
                     justificativa=resposta.get("justificativa"),
+                    usou_rag=resposta.get("usou_rag", False),
                 )
             else:
                 print(f"Não foi possível semear a resposta: {resposta}")
 
         scope = f"owner={owner or 'todos'}, tipo={tipo or 'todos'}"
         print(f"Respostas semeadas com sucesso! ({scope}, total={len(respostas)})")
+
+    def _extract_respostas_rag(self, extractor, tipo: str | None) -> list:
+        if tipo == "multipla_escolha":
+            if hasattr(extractor, "extract_answers_oab_exams_rag"):
+                return extractor.extract_answers_oab_exams_rag()
+            return []
+        if tipo == "discursiva":
+            if hasattr(extractor, "extract_answers_oab_bench_rag"):
+                return extractor.extract_answers_oab_bench_rag()
+            return []
+        if hasattr(extractor, "extract_answers_rag"):
+            return extractor.extract_answers_rag()
+        return []
+
+    def seed_respostas_rag(self, owner: str | None = None, tipo: str | None = None):
+        """
+        Insere as respostas dos modelos geradas com RAG no banco de dados.
+
+        Use `owner` para restringir a uma pessoa e `tipo` para um único dataset.
+        """
+        from src.repositories.resposta_repository import RespostaRepository
+
+        owners = _resolve_owners(owner)
+        tipo = _validate_tipo(tipo)
+        resposta_repo = RespostaRepository()
+
+        respostas = []
+        for name in owners:
+            extractor = EXTRACTORS[name]()
+            respostas.extend(self._extract_respostas_rag(extractor, tipo))
+
+        for resposta in respostas:
+            if resposta.get("id_modelo") and resposta.get("id_pergunta"):
+                resposta_repo.create(
+                    id_pergunta=resposta["id_pergunta"],
+                    id_modelo=resposta["id_modelo"],
+                    texto_resposta=resposta["texto_resposta"],
+                    tempo_inferencia_ms=resposta["tempo_inferencia_ms"],
+                    justificativa=resposta.get("justificativa"),
+                    usou_rag=resposta.get("usou_rag", True),
+                )
+            else:
+                print(f"Não foi possível semear a resposta RAG: {resposta}")
+
+        scope = f"owner={owner or 'todos'}, tipo={tipo or 'todos'}"
+        print(f"Respostas RAG semeadas com sucesso! ({scope}, total={len(respostas)})")
 
     # ------------------------------------------------------------------
     # Export / Import das extrações (perguntas + respostas)
@@ -385,4 +432,5 @@ class SeedController:
         self.seed_datasets()
         self.seed_perguntas()
         self.seed_respostas()
+        self.seed_respostas_rag()
         print("=== Seed completo finalizado com sucesso! ===")

@@ -71,7 +71,7 @@
           },
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "rawSql": "SELECT COUNT(*) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)",
           "refId": "A"
         }
       ],
@@ -131,7 +131,7 @@
           },
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS value\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "rawSql": "SELECT COUNT(*) AS value\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)",
           "refId": "A"
         }
       ],
@@ -380,7 +380,7 @@
           },
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)",
+          "rawSql": "SELECT ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS value\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)",
           "refId": "A"
         }
       ],
@@ -497,7 +497,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY nota_media DESC",
+          "rawSql": "SELECT\n  m.nome_modelo,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\nGROUP BY m.nome_modelo\nORDER BY nota_media DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -875,7 +875,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  d.nome AS dataset,\n  m_cand.nome_modelo AS candidato,\n  m_juiz.nome_modelo AS juiz,\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS media,\n  ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY a.nota_atribuida)::numeric, 2) AS mediana,\n  ROUND(COALESCE(STDDEV_SAMP(a.nota_atribuida), 0)::numeric, 2) AS desvio,\n  MIN(a.nota_atribuida) AS nota_min,\n  MAX(a.nota_atribuida) AS nota_max,\n  COUNT(a.id_avaliacao) AS total\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p ON p.id_pergunta = r.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY\n  d.nome,\n  m_cand.id_modelo, m_cand.nome_modelo, m_cand.familia,\n  m_juiz.id_modelo, m_juiz.nome_modelo, m_juiz.familia\nHAVING COUNT(a.id_avaliacao) >= 3\nORDER BY\n  d.nome ASC,\n  candidato ASC,\n  media DESC",
+          "rawSql": "SELECT\n  d.nome AS dataset,\n  m_cand.nome_modelo AS candidato,\n  m_juiz.nome_modelo AS juiz,\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS media,\n  ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY a.nota_atribuida)::numeric, 2) AS mediana,\n  ROUND(COALESCE(STDDEV_SAMP(a.nota_atribuida), 0)::numeric, 2) AS desvio,\n  MIN(a.nota_atribuida) AS nota_min,\n  MAX(a.nota_atribuida) AS nota_max,\n  COUNT(a.id_avaliacao) AS total\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p ON p.id_pergunta = r.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND r.usou_rag::text IN ($usou_rag)\nGROUP BY\n  d.nome,\n  m_cand.id_modelo, m_cand.nome_modelo, m_cand.familia,\n  m_juiz.id_modelo, m_juiz.nome_modelo, m_juiz.familia\nHAVING COUNT(a.id_avaliacao) >= 3\nORDER BY\n  d.nome ASC,\n  candidato ASC,\n  media DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1007,7 +1007,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  c.nome              AS categoria,\n  m_cand.nome_modelo  AS modelo,\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS nota_media,\n  COUNT(a.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r ON r.id_resposta    = a.id_resposta_ativa1\nJOIN perguntas p             ON p.id_pergunta    = r.id_pergunta\nJOIN datasets d              ON d.id_dataset     = p.id_dataset\nJOIN categorias c            ON c.id_categoria   = p.id_categoria\nJOIN modelos m_cand          ON m_cand.id_modelo = r.id_modelo\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome             IN ($dataset)\n  AND c.nome             IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY c.nome, m_cand.nome_modelo\nHAVING COUNT(a.id_avaliacao) >= 2\nORDER BY c.nome ASC, m_cand.nome_modelo ASC, nota_media DESC;",
+          "rawSql": "SELECT\n  c.nome              AS categoria,\n  m_cand.nome_modelo  AS modelo,\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS nota_media,\n  COUNT(a.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r ON r.id_resposta    = a.id_resposta_ativa1\nJOIN perguntas p             ON p.id_pergunta    = r.id_pergunta\nJOIN datasets d              ON d.id_dataset     = p.id_dataset\nJOIN categorias c            ON c.id_categoria   = p.id_categoria\nJOIN modelos m_cand          ON m_cand.id_modelo = r.id_modelo\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome             IN ($dataset)\n  AND c.nome             IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND r.usou_rag::text IN ($usou_rag)\nGROUP BY c.nome, m_cand.nome_modelo\nHAVING COUNT(a.id_avaliacao) >= 2\nORDER BY c.nome ASC, m_cand.nome_modelo ASC, nota_media DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1112,7 +1112,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  c.nome AS categoria,\n\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS nota_media_geral\n\nFROM avaliacoes_juiz a\n\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\n\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\n-- Modelo que gerou a resposta avaliada\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\n\n-- Modelo juiz que atribuiu a nota\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n\nGROUP BY c.nome\n\nHAVING COUNT(a.id_avaliacao) >= 2\n\nORDER BY nota_media_geral DESC, c.nome ASC;",
+          "rawSql": "SELECT\n  c.nome AS categoria,\n\n  ROUND(AVG(a.nota_atribuida)::numeric, 2) AS nota_media_geral\n\nFROM avaliacoes_juiz a\n\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\n\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\n-- Modelo que gerou a resposta avaliada\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\n\n-- Modelo juiz que atribuiu a nota\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND r.usou_rag::text IN ($usou_rag)\n\nGROUP BY c.nome\n\nHAVING COUNT(a.id_avaliacao) >= 2\n\nORDER BY nota_media_geral DESC, c.nome ASC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1239,7 +1239,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  COUNT(ra.id_resposta) AS total_respostas\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY total_respostas DESC",
+          "rawSql": "SELECT\n  m.nome_modelo,\n  COUNT(ra.id_resposta) AS total_respostas\nFROM respostas_atividade_1 ra\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\nGROUP BY m.nome_modelo\nORDER BY total_respostas DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1444,7 +1444,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo AS modelo_juiz,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz aj\nJOIN modelos m ON aj.id_modelo_juiz = m.id_modelo\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos mc ON ra.id_modelo = mc.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo\nORDER BY total_avaliacoes DESC",
+          "rawSql": "SELECT\n  m.nome_modelo AS modelo_juiz,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes\nFROM avaliacoes_juiz aj\nJOIN modelos m ON aj.id_modelo_juiz = m.id_modelo\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos mc ON ra.id_modelo = mc.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON d.id_dataset = p.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\nGROUP BY m.nome_modelo\nORDER BY total_avaliacoes DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1709,7 +1709,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  m_juiz.nome_modelo AS modelo_juiz,\n\n  ROUND(\n    AVG(a.nota_atribuida)::numeric,\n    2\n  ) AS nota_media_atribuida\n\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY m_juiz.nome_modelo\nORDER BY nota_media_atribuida DESC;",
+          "rawSql": "SELECT\n  m_juiz.nome_modelo AS modelo_juiz,\n\n  ROUND(\n    AVG(a.nota_atribuida)::numeric,\n    2\n  ) AS nota_media_atribuida\n\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n  AND r.usou_rag::text IN ($usou_rag)\n\nGROUP BY m_juiz.nome_modelo\nORDER BY nota_media_atribuida DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1829,7 +1829,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH custos AS (\n  SELECT\n    'OpenAI' AS provedor,\n    ROUND((15.94 * 5.0119)::numeric, 2) AS custo_em_reais\n\n  UNION ALL\n\n  SELECT\n    'Google Cloud / Gemini' AS provedor,\n    95.25::numeric AS custo_em_reais\n),\n\navaliacoes_por_provedor AS (\n  SELECT\n    CASE\n      WHEN m_juiz.nome_modelo IN ('GPT-4o', 'GPT-5 mini')\n        THEN 'OpenAI'\n      WHEN m_juiz.nome_modelo = 'Gemini 2.5 Flash'\n        THEN 'Google Cloud / Gemini'\n    END AS provedor,\n\n    COUNT(a.id_avaliacao) AS total_avaliacoes\n\n  FROM avaliacoes_juiz a\n  JOIN modelos m_juiz\n    ON m_juiz.id_modelo = a.id_modelo_juiz\n\n  WHERE m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\n  GROUP BY 1\n)\n\nSELECT\n  c.provedor,\n  c.custo_em_reais,\n  COALESCE(ap.total_avaliacoes, 0) AS total_avaliacoes,\n\n  ROUND(\n    c.custo_em_reais / NULLIF(ap.total_avaliacoes, 0),\n    4\n  ) AS custo_por_avaliacao_reais,\n\n  ROUND(\n    ap.total_avaliacoes / NULLIF(c.custo_em_reais, 0),\n    2\n  ) AS avaliacoes_por_real\n\nFROM custos c\nLEFT JOIN avaliacoes_por_provedor ap\n  ON ap.provedor = c.provedor\n\nORDER BY custo_por_avaliacao_reais ASC;",
+          "rawSql": "WITH custos AS (\n  SELECT\n    'OpenAI' AS provedor,\n    ROUND((15.94 * 5.0119)::numeric, 2) AS custo_em_reais\n\n  UNION ALL\n\n  SELECT\n    'Google Cloud / Gemini' AS provedor,\n    95.25::numeric AS custo_em_reais\n),\n\navaliacoes_por_provedor AS (\n  SELECT\n    CASE\n      WHEN m_juiz.nome_modelo IN ('GPT-4o', 'GPT-5 mini')\n        THEN 'OpenAI'\n      WHEN m_juiz.nome_modelo = 'Gemini 2.5 Flash'\n        THEN 'Google Cloud / Gemini'\n    END AS provedor,\n\n    COUNT(a.id_avaliacao) AS total_avaliacoes\n\n  FROM avaliacoes_juiz a\n  JOIN modelos m_juiz\n    ON m_juiz.id_modelo = a.id_modelo_juiz\n\n  WHERE m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n    AND a.usou_rag::text IN ($usou_rag)\n\n  GROUP BY 1\n)\n\nSELECT\n  c.provedor,\n  c.custo_em_reais,\n  COALESCE(ap.total_avaliacoes, 0) AS total_avaliacoes,\n\n  ROUND(\n    c.custo_em_reais / NULLIF(ap.total_avaliacoes, 0),\n    4\n  ) AS custo_por_avaliacao_reais,\n\n  ROUND(\n    ap.total_avaliacoes / NULLIF(c.custo_em_reais, 0),\n    2\n  ) AS avaliacoes_por_real\n\nFROM custos c\nLEFT JOIN avaliacoes_por_provedor ap\n  ON ap.provedor = c.provedor\n\nORDER BY custo_por_avaliacao_reais ASC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1963,7 +1963,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  m_juiz.nome_modelo AS modelo_juiz,\n\n  COUNT(a.id_avaliacao)\n    FILTER (WHERE a.nota_atribuida >= 4)\n    AS avaliacoes_com_nota_alta,\n\n  ROUND(\n    100.0\n    * COUNT(a.id_avaliacao) FILTER (WHERE a.nota_atribuida >= 4)\n    / NULLIF(COUNT(a.id_avaliacao), 0),\n    1\n  ) AS taxa_notas_altas_pct\n\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY m_juiz.nome_modelo\nORDER BY taxa_notas_altas_pct DESC;",
+          "rawSql": "SELECT\n  m_juiz.nome_modelo AS modelo_juiz,\n\n  COUNT(a.id_avaliacao)\n    FILTER (WHERE a.nota_atribuida >= 4)\n    AS avaliacoes_com_nota_alta,\n\n  ROUND(\n    100.0\n    * COUNT(a.id_avaliacao) FILTER (WHERE a.nota_atribuida >= 4)\n    / NULLIF(COUNT(a.id_avaliacao), 0),\n    1\n  ) AS taxa_notas_altas_pct\n\nFROM avaliacoes_juiz a\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a.id_resposta_ativa1\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\nJOIN modelos m_juiz\n  ON m_juiz.id_modelo = a.id_modelo_juiz\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND m_juiz.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n  AND r.usou_rag::text IN ($usou_rag)\n\nGROUP BY m_juiz.nome_modelo\nORDER BY taxa_notas_altas_pct DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2083,7 +2083,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  LEAST(m1.nome_modelo, m2.nome_modelo)\n    || ' × ' ||\n  GREATEST(m1.nome_modelo, m2.nome_modelo)\n    AS par_de_juizes,\n\n  COUNT(*) AS respostas_comparadas,\n\n  COUNT(*)\n    FILTER (\n      WHERE a1.nota_atribuida = a2.nota_atribuida\n    ) AS concordancias_exatas,\n\n  ROUND(\n    100.0\n    * COUNT(*) FILTER (\n        WHERE a1.nota_atribuida = a2.nota_atribuida\n      )\n    / NULLIF(COUNT(*), 0),\n    1\n  ) AS acordo_exato_pct,\n\n  ROUND(\n    AVG(\n      ABS(a1.nota_atribuida - a2.nota_atribuida)\n    )::numeric,\n    2\n  ) AS diferenca_media_absoluta\n\nFROM avaliacoes_juiz a1\nJOIN avaliacoes_juiz a2\n  ON a2.id_resposta_ativa1 = a1.id_resposta_ativa1\n AND a1.id_modelo_juiz < a2.id_modelo_juiz\n\nJOIN modelos m1\n  ON m1.id_modelo = a1.id_modelo_juiz\n\nJOIN modelos m2\n  ON m2.id_modelo = a2.id_modelo_juiz\n\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a1.id_resposta_ativa1\n\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n\n  AND m1.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\n  AND m2.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  LEAST(m1.nome_modelo, m2.nome_modelo),\n  GREATEST(m1.nome_modelo, m2.nome_modelo)\n\nORDER BY acordo_exato_pct DESC;",
+          "rawSql": "SELECT\n  LEAST(m1.nome_modelo, m2.nome_modelo)\n    || ' × ' ||\n  GREATEST(m1.nome_modelo, m2.nome_modelo)\n    AS par_de_juizes,\n\n  COUNT(*) AS respostas_comparadas,\n\n  COUNT(*)\n    FILTER (\n      WHERE a1.nota_atribuida = a2.nota_atribuida\n    ) AS concordancias_exatas,\n\n  ROUND(\n    100.0\n    * COUNT(*) FILTER (\n        WHERE a1.nota_atribuida = a2.nota_atribuida\n      )\n    / NULLIF(COUNT(*), 0),\n    1\n  ) AS acordo_exato_pct,\n\n  ROUND(\n    AVG(\n      ABS(a1.nota_atribuida - a2.nota_atribuida)\n    )::numeric,\n    2\n  ) AS diferenca_media_absoluta\n\nFROM avaliacoes_juiz a1\nJOIN avaliacoes_juiz a2\n  ON a2.id_resposta_ativa1 = a1.id_resposta_ativa1\n AND a1.id_modelo_juiz < a2.id_modelo_juiz\n\nJOIN modelos m1\n  ON m1.id_modelo = a1.id_modelo_juiz\n\nJOIN modelos m2\n  ON m2.id_modelo = a2.id_modelo_juiz\n\nJOIN respostas_atividade_1 r\n  ON r.id_resposta = a1.id_resposta_ativa1\n\nJOIN perguntas p\n  ON p.id_pergunta = r.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nJOIN modelos m_cand\n  ON m_cand.id_modelo = r.id_modelo\n\nWHERE m_cand.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND r.usou_rag::text IN ($usou_rag)\n\n  AND m1.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\n  AND m2.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  LEAST(m1.nome_modelo, m2.nome_modelo),\n  GREATEST(m1.nome_modelo, m2.nome_modelo)\n\nORDER BY acordo_exato_pct DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2164,7 +2164,7 @@
           },
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  m.nome_modelo,\n  d.nome AS dataset,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media,\n  MIN(aj.nota_atribuida) AS nota_min,\n  MAX(aj.nota_atribuida) AS nota_max\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON p.id_dataset = d.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\nGROUP BY m.nome_modelo, d.nome\nORDER BY nota_media DESC",
+          "rawSql": "SELECT\n  m.nome_modelo,\n  d.nome AS dataset,\n  COUNT(aj.id_avaliacao) AS total_avaliacoes,\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS nota_media,\n  MIN(aj.nota_atribuida) AS nota_min,\n  MAX(aj.nota_atribuida) AS nota_max\nFROM avaliacoes_juiz aj\nJOIN respostas_atividade_1 ra ON aj.id_resposta_ativa1 = ra.id_resposta\nJOIN modelos m ON ra.id_modelo = m.id_modelo\nJOIN perguntas p ON ra.id_pergunta = p.id_pergunta\nJOIN datasets d ON p.id_dataset = d.id_dataset\nJOIN categorias c ON c.id_categoria = p.id_categoria\nWHERE m.nome_modelo IN ($nome_modelo)\n  AND d.nome IN ($dataset)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\nGROUP BY m.nome_modelo, d.nome\nORDER BY nota_media DESC",
           "refId": "A"
         }
       ],
@@ -2229,7 +2229,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  p.enunciado AS \"Pergunta\",\n\n  COALESCE(\n    NULLIF(BTRIM(p.metadados->>'answerKey'), ''),\n    p.resposta_ouro\n  ) AS \"Gabarito\",\n\n  (\n    'Resposta objetiva: ' || ra.texto_resposta\n    ||\n    CASE\n      WHEN NULLIF(BTRIM(ra.justificativa), '') IS NOT NULL\n      THEN E'\\n\\nJustificativa:\\n' || ra.justificativa\n      ELSE ''\n    END\n  ) AS \"Resposta e justificativa\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-4o'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-4o\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-5 mini'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-5 mini\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'Gemini 2.5 Flash'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. Gemini 2.5\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  MAX(aj.data_avaliacao) AS \"Última avaliação\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE d.nome = 'oab_exams'\n  AND mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado,\n  p.metadados,\n  p.resposta_ouro,\n  ra.texto_resposta,\n  ra.justificativa\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  p.id_externo ASC;",
+          "rawSql": "SELECT\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  p.enunciado AS \"Pergunta\",\n\n  COALESCE(\n    NULLIF(BTRIM(p.metadados->>'answerKey'), ''),\n    p.resposta_ouro\n  ) AS \"Gabarito\",\n\n  (\n    'Resposta objetiva: ' || ra.texto_resposta\n    ||\n    CASE\n      WHEN NULLIF(BTRIM(ra.justificativa), '') IS NOT NULL\n      THEN E'\\n\\nJustificativa:\\n' || ra.justificativa\n      ELSE ''\n    END\n  ) AS \"Resposta e justificativa\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-4o'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-4o\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-5 mini'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-5 mini\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'Gemini 2.5 Flash'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. Gemini 2.5\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  MAX(aj.data_avaliacao) AS \"Última avaliação\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE d.nome = 'oab_exams'\n  AND mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado,\n  p.metadados,\n  p.resposta_ouro,\n  ra.texto_resposta,\n  ra.justificativa\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  p.id_externo ASC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2311,7 +2311,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  p.enunciado AS \"Pergunta\",\n\n  COALESCE(\n    NULLIF(BTRIM(p.metadados->>'guidelines'), ''),\n    p.resposta_ouro\n  ) AS \"Referência\",\n\n  ra.texto_resposta AS \"Resposta\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-4o'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-4o\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-5 mini'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-5 mini\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'Gemini 2.5 Flash'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. Gemini 2.5\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  MAX(aj.data_avaliacao) AS \"Última avaliação\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE d.nome = 'oab_bench'\n  AND mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado,\n  p.metadados,\n  p.resposta_ouro,\n  ra.texto_resposta\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  p.id_externo ASC;",
+          "rawSql": "SELECT\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  p.enunciado AS \"Pergunta\",\n\n  COALESCE(\n    NULLIF(BTRIM(p.metadados->>'guidelines'), ''),\n    p.resposta_ouro\n  ) AS \"Referência\",\n\n  ra.texto_resposta AS \"Resposta\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-4o'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-4o\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'GPT-5 mini'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. GPT-5 mini\",\n\n  MAX(\n    CASE\n      WHEN mj.nome_modelo = 'Gemini 2.5 Flash'\n      THEN\n        'Nota: ' || aj.nota_atribuida::text\n        || E'\\n\\nJulgamento:\\n'\n        || aj.chain_of_thought\n    END\n  ) AS \"Aval. Gemini 2.5\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  MAX(aj.data_avaliacao) AS \"Última avaliação\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE d.nome = 'oab_bench'\n  AND mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado,\n  p.metadados,\n  p.resposta_ouro,\n  ra.texto_resposta\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  p.id_externo ASC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2384,7 +2384,6 @@
           }
         ]
       },
-      "pluginVersion": "13.0.1",
       "targets": [
         {
           "datasource": {
@@ -2393,7 +2392,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  d.nome AS \"Dataset\",\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  LEFT(p.enunciado, 180) || '...' AS \"Pergunta resumida\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MIN(aj.nota_atribuida) AS \"Menor nota\",\n  MAX(aj.nota_atribuida) AS \"Maior nota\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  COUNT(DISTINCT mj.nome_modelo) AS \"Nº de juízes\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  d.nome,\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado\n\nHAVING COUNT(DISTINCT mj.nome_modelo) >= 2\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  \"Dataset\" ASC,\n  \"ID questão\" ASC\n\nLIMIT 50;",
+          "rawSql": "SELECT\n  d.nome AS \"Dataset\",\n  c.nome AS \"Categoria\",\n  p.id_externo AS \"ID questão\",\n  mc.nome_modelo AS \"Modelo\",\n\n  LEFT(p.enunciado, 180) || '...' AS \"Pergunta resumida\",\n\n  ROUND(AVG(aj.nota_atribuida)::numeric, 2) AS \"Média dos juízes\",\n\n  MIN(aj.nota_atribuida) AS \"Menor nota\",\n  MAX(aj.nota_atribuida) AS \"Maior nota\",\n\n  MAX(aj.nota_atribuida) - MIN(aj.nota_atribuida) AS \"Divergência\",\n\n  COUNT(DISTINCT mj.nome_modelo) AS \"Nº de juízes\"\n\nFROM avaliacoes_juiz aj\nJOIN modelos mj\n  ON aj.id_modelo_juiz = mj.id_modelo\n\nJOIN respostas_atividade_1 ra\n  ON aj.id_resposta_ativa1 = ra.id_resposta\n\nJOIN modelos mc\n  ON ra.id_modelo = mc.id_modelo\n\nJOIN perguntas p\n  ON ra.id_pergunta = p.id_pergunta\n\nJOIN datasets d\n  ON d.id_dataset = p.id_dataset\n\nJOIN categorias c\n  ON c.id_categoria = p.id_categoria\n\nWHERE mc.nome_modelo IN ($nome_modelo)\n  AND c.nome IN ($categoria)\n  AND COALESCE(p.metadados->>'source_file', '') IN ($source_file)\n  AND ra.usou_rag::text IN ($usou_rag)\n  AND mj.nome_modelo IN (\n    'GPT-4o',\n    'GPT-5 mini',\n    'Gemini 2.5 Flash'\n  )\n\nGROUP BY\n  d.nome,\n  c.nome,\n  p.id_externo,\n  mc.nome_modelo,\n  p.enunciado\n\nHAVING COUNT(DISTINCT mj.nome_modelo) >= 2\n\nORDER BY\n  \"Divergência\" DESC,\n  \"Média dos juízes\" ASC,\n  \"Dataset\" ASC,\n  \"ID questão\" ASC\n\nLIMIT 50;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2524,6 +2523,42 @@
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "RAG",
+        "multi": true,
+        "name": "usou_rag",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "Com RAG",
+            "value": "true"
+          },
+          {
+            "selected": false,
+            "text": "Sem RAG",
+            "value": "false"
+          }
+        ],
+        "query": "Com RAG : true, Sem RAG : false",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },

@@ -105,6 +105,24 @@ def seed_respostas(
     controller.seed_respostas(owner=owner, tipo=tipo)
 
 
+@seed_app.command("respostas-rag")
+def seed_respostas_rag(
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por pessoa: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+    tipo: str = typer.Option(
+        None,
+        "--tipo",
+        help="Filtra por tipo: multipla_escolha|discursiva.",
+    ),
+):
+    """Insere as respostas dos modelos geradas com RAG no banco de dados."""
+    controller = SeedController()
+    controller.seed_respostas_rag(owner=owner, tipo=tipo)
+
+
 @seed_app.command("all")
 def seed_all():
     """Executa todos os seeds na ordem correta."""
