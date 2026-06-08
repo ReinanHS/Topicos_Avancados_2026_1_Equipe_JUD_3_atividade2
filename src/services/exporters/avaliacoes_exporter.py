@@ -92,13 +92,14 @@ class AvaliacoesExporter:
         if not modelo_candidato:
             raise LookupError(f"modelo candidato '{entry['candidato']}' não existe")
 
+        resposta_usou_rag = entry.get("resposta_usou_rag", entry.get("usou_rag", False))
         id_resposta = self.resposta_repo.find_id(
-            id_pergunta, modelo_candidato["id_modelo"]
+            id_pergunta, modelo_candidato["id_modelo"], usou_rag=resposta_usou_rag
         )
         if not id_resposta:
             raise LookupError(
                 f"resposta do modelo '{entry['candidato']}' à pergunta "
-                f"'{entry['id_externo_pergunta']}' não encontrada"
+                f"'{entry['id_externo_pergunta']}' (RAG={resposta_usou_rag}) não encontrada"
             )
 
         return id_resposta
@@ -144,6 +145,7 @@ class AvaliacoesExporter:
                     id_modelo_juiz=id_modelo_juiz,
                     nota_atribuida=entry["nota"],
                     chain_of_thought=entry["chain_of_thought"],
+                    usou_rag=entry.get("usou_rag", False),
                 )
                 imported += 1
             except Exception as e:

@@ -41,6 +41,7 @@ class AvaliacaoRepository:
         id_modelo_juiz: int,
         nota_atribuida: int,
         chain_of_thought: str,
+        usou_rag: bool = False,
     ) -> None:
         """
         Cadastra uma avaliação no banco de dados.
@@ -55,15 +56,16 @@ class AvaliacaoRepository:
                     cur.execute(
                         """
                         INSERT INTO avaliacoes_juiz (
-                            id_resposta_ativa1, id_modelo_juiz, nota_atribuida, chain_of_thought
+                            id_resposta_ativa1, id_modelo_juiz, nota_atribuida, chain_of_thought, usou_rag
                         )
-                        VALUES (%s, %s, %s, %s);
+                        VALUES (%s, %s, %s, %s, %s);
                         """,
                         (
                             id_resposta_ativa1,
                             id_modelo_juiz,
                             nota_atribuida,
                             chain_of_thought,
+                            usou_rag,
                         ),
                     )
                 conn.commit()
@@ -92,7 +94,8 @@ class AvaliacaoRepository:
                             p.tipo_pergunta,
                             p.legislacao_basica,
                             p.metadados,
-                            m.nome_modelo AS modelo_candidato
+                            m.nome_modelo AS modelo_candidato,
+                            r.usou_rag
                         FROM respostas_atividade_1 r
                         JOIN perguntas p ON p.id_pergunta = r.id_pergunta
                         JOIN modelos m ON m.id_modelo = r.id_modelo
@@ -122,6 +125,7 @@ class AvaliacaoRepository:
                             "legislacao_basica": row[6],
                             "metadados": row[7],
                             "modelo_candidato": row[8],
+                            "usou_rag": row[9],
                         }
                         for row in rows
                     ]
@@ -259,7 +263,9 @@ class AvaliacaoRepository:
                             m_cand.nome_modelo AS candidato,
                             a.nota_atribuida,
                             a.chain_of_thought,
-                            a.data_avaliacao
+                            a.data_avaliacao,
+                            a.usou_rag,
+                            r.usou_rag AS resposta_usou_rag
                         FROM avaliacoes_juiz a
                         JOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1
                         JOIN perguntas p ON p.id_pergunta = r.id_pergunta
@@ -280,6 +286,8 @@ class AvaliacaoRepository:
                             "nota": int(row[3]),
                             "chain_of_thought": row[4],
                             "data_avaliacao": row[5].isoformat() if row[5] else None,
+                            "usou_rag": row[6],
+                            "resposta_usou_rag": row[7],
                         }
                         for row in rows
                     ]

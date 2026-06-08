@@ -147,7 +147,10 @@ class ExtracaoExporter:
                 f"encontrada em '{entry['dataset']}' (importe perguntas antes)"
             )
 
-        if self.resposta_repo.exists(id_pergunta, modelo["id_modelo"]):
+        usou_rag = entry.get("usou_rag", False)
+        if self.resposta_repo.exists(
+            id_pergunta, modelo["id_modelo"], usou_rag=usou_rag
+        ):
             return "skipped"
 
         self.resposta_repo.create(
@@ -156,6 +159,7 @@ class ExtracaoExporter:
             texto_resposta=entry["texto_resposta"],
             tempo_inferencia_ms=entry.get("tempo_inferencia_ms"),
             justificativa=entry.get("justificativa"),
+            usou_rag=usou_rag,
         )
         return "imported"
 

@@ -49,6 +49,7 @@ class JudgeController:
                 id_modelo_juiz=id_modelo_juiz,
                 nota_atribuida=nota,
                 chain_of_thought=chain_of_thought,
+                usou_rag=False,
             )
             return True, None
         except Exception as e:
