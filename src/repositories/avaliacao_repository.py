@@ -264,7 +264,8 @@ class AvaliacaoRepository:
                             a.nota_atribuida,
                             a.chain_of_thought,
                             a.data_avaliacao,
-                            a.usou_rag
+                            a.usou_rag,
+                            r.usou_rag AS resposta_usou_rag
                         FROM avaliacoes_juiz a
                         JOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1
                         JOIN perguntas p ON p.id_pergunta = r.id_pergunta
@@ -286,6 +287,7 @@ class AvaliacaoRepository:
                             "chain_of_thought": row[4],
                             "data_avaliacao": row[5].isoformat() if row[5] else None,
                             "usou_rag": row[6],
+                            "resposta_usou_rag": row[7],
                         }
                         for row in rows
                     ]
