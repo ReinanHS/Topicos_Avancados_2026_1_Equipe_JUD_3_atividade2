@@ -36,7 +36,12 @@ class ReinanExtractor(BaseExtractor):
         }
 
     def _process_item(
-        self, item: dict, answer_parser: callable, dataset_id: int, id_modelo: int
+        self,
+        item: dict,
+        answer_parser: callable,
+        dataset_id: int,
+        id_modelo: int,
+        usou_rag: bool = False,
     ) -> dict | None:
         parsed = answer_parser(item)
         if not parsed:
@@ -60,6 +65,7 @@ class ReinanExtractor(BaseExtractor):
                 "texto_resposta": texto_resposta,
                 "justificativa": justificativa,
                 "tempo_inferencia_ms": None,
+                "usou_rag": usou_rag,
             }
         print(
             f"[Info] Pergunta {id_pergunta} ou modelo {id_modelo} não encontrado: {id_externo}"
@@ -72,33 +78,39 @@ class ReinanExtractor(BaseExtractor):
         dataset_name: str,
         dataset_id: int,
         answer_parser: callable,
+        usou_rag: bool = False,
     ) -> list:
         """Busca e processa as respostas de um único modelo."""
         db_model_name = self.get_db_model_name(model_filename)
         model_data = self.modelo_repo.get_by_name(db_model_name)
         id_modelo = model_data["id_modelo"] if model_data else None
 
-        url = f"{self.base_raw_url}/results/{dataset_name}/model_answer/{model_filename}.json"
+        if usou_rag:
+            base_url = "https://raw.githubusercontent.com/ReinanHS/Topicos_Avancados_2026_1_Equipe_JUD_3_atividade1/refs/heads/results-3"
+            url = f"{base_url}/results/{dataset_name}/model_answer/rag/{model_filename}.json"
+        else:
+            url = f"{self.base_raw_url}/results/{dataset_name}/model_answer/{model_filename}.json"
+
         results = []
         try:
             data = self.fetch_json(url)
             for item in data:
                 processed = self._process_item(
-                    item, answer_parser, dataset_id, id_modelo
+                    item, answer_parser, dataset_id, id_modelo, usou_rag=usou_rag
                 )
                 if processed:
                     results.append(processed)
         except Exception as e:
             print(
-                f"Aviso: Não foi possível processar respostas de {model_filename} para {dataset_name}: {e}"
+                f"Aviso: Não foi possível processar respostas {'RAG ' if usou_rag else ''}de {model_filename} para {dataset_name}: {e}"
             )
         return results
 
     def _process_dataset_answers(
-        self, dataset_name: str, answer_parser: callable
+        self, dataset_name: str, answer_parser: callable, usou_rag: bool = False
     ) -> list:
         print(
-            f"[{self.__class__.__name__}] Extraindo respostas do dataset: {dataset_name}"
+            f"[{self.__class__.__name__}] Extraindo respostas {'RAG ' if usou_rag else ''}do dataset: {dataset_name}"
         )
         dataset_id = self.find_dataset_id(dataset_name)
 
@@ -112,7 +124,11 @@ class ReinanExtractor(BaseExtractor):
         for model_filename in models_filenames:
             answers.extend(
                 self._process_model_answers(
-                    model_filename, dataset_name, dataset_id, answer_parser
+                    model_filename,
+                    dataset_name,
+                    dataset_id,
+                    answer_parser,
+                    usou_rag=usou_rag,
                 )
             )
 
@@ -126,7 +142,7 @@ class ReinanExtractor(BaseExtractor):
             turns = choices[0].get("turns", [])
             return "\n\n".join([t.get("content", "") for t in turns])
 
-        return self._process_dataset_answers("oab_bench", parser)
+        return self._process_dataset_answers("oab_bench", parser, usou_rag=False)
 
     def extract_answers_oab_exams(self) -> list:
         def parser(item):
@@ -139,10 +155,39 @@ class ReinanExtractor(BaseExtractor):
 
             return objective_answer, justification
 
-        return self._process_dataset_answers("oab_exams", parser)
+        return self._process_dataset_answers("oab_exams", parser, usou_rag=False)
+
+    def extract_answers_oab_bench_rag(self) -> list:
+        def parser(item):
+            choices = item.get("choices", [])
+            if not choices:
+                return ""
+            turns = choices[0].get("turns", [])
+            return "\n\n".join([t.get("content", "") for t in turns])
+
+        return self._process_dataset_answers("oab_bench", parser, usou_rag=True)
+
+    def extract_answers_oab_exams_rag(self) -> list:
+        def parser(item):
+            choices = item.get("choices", [])
+            if not choices:
+                return ""
+
+            objective_answer = str(choices[0].get("objective_answer", ""))
+            justification = str(choices[0].get("justification", ""))
+
+            return objective_answer, justification
+
+        return self._process_dataset_answers("oab_exams", parser, usou_rag=True)
 
     def extract_answers(self) -> list:
         answers = []
         answers.extend(self.extract_answers_oab_bench())
         answers.extend(self.extract_answers_oab_exams())
+        return answers
+
+    def extract_answers_rag(self) -> list:
+        answers = []
+        answers.extend(self.extract_answers_oab_bench_rag())
+        answers.extend(self.extract_answers_oab_exams_rag())
         return answers

@@ -294,3 +294,24 @@ class BaseExtractor(ABC):
         Pode ser sobrescrito nas classes filhas.
         """
         return []
+
+    def extract_answers_rag(self) -> list:
+        """
+        Extrai as respostas com RAG de todos os datasets suportados.
+        Pode ser sobrescrito nas classes filhas.
+        """
+        return []
+
+    def extract_answers_oab_exams_rag(self) -> list:
+        """
+        Extrai as respostas RAG específicas para o dataset OAB Exams.
+        Pode ser sobrescrito nas classes filhas.
+        """
+        return []
+
+    def extract_answers_oab_bench_rag(self) -> list:
+        """
+        Extrai as respostas RAG específicas para o dataset OAB Bench.
+        Pode ser sobrescrito nas classes filhas.
+        """
+        return []
