@@ -41,6 +41,18 @@ As buscas e coletas dos documentos foram realizadas em fontes jurídicas oficiai
 | `43_direito_empresarial_questao_2`         | Direito Empresarial    | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
 | `43_direito_empresarial_questao_3`         | Direito Empresarial    | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
 | `43_direito_empresarial_questao_4`         | Direito Empresarial    | `L11101` — Lei nº 11.101/2005                        | Documento presente na base                                                       |
+| `43_direito_administrativo_questao_1`      | Direito Administrativo | `L9784` — Lei nº 9.784/1999                          | Documento presente na base                                                       |
+| `43_direito_administrativo_questao_2`      | Direito Administrativo | `L8112compilado` — Lei nº 8.112/1990                 | Documento presente na base                                                       |
+| `43_direito_administrativo_questao_3`      | Direito Administrativo | `L12846` — Lei nº 12.846/2013                        | Documento presente na base                                                       |
+| `43_direito_administrativo_questao_4`      | Direito Administrativo | `L11107` — Lei nº 11.107/2005 + `L14133` — Lei nº 14.133/2021 | Documento presente na base                                              |
+| `43_direito_civil_peca_profissional`       | Direito Civil          | `L8245` — Lei nº 8.245/1991                          | Documento presente na base                                                       |
+| `43_direito_civil_questao_1`               | Direito Civil          | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_civil_questao_2`               | Direito Civil          | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_civil_questao_3`               | Direito Civil          | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_civil_questao_4`               | Direito Civil          | `L10406compilada` — Código Civil de 2002             | Documento presente na base                                                       |
+| `43_direito_do_trabalho_peca_profissional` | Direito do Trabalho    | `L8009` — Lei nº 8.009/1990 + `DEL5452` — CLT        | Documento presente na base                                                       |
+| `43_direito_do_trabalho_questao_1`         | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
+| `43_direito_do_trabalho_questao_2`         | Direito do Trabalho    | `DEL5452` — Consolidação das Leis do Trabalho        | Documento presente na base                                                       |
 
 ## Fontes utilizadas na curadoria dos documentos externos
 
@@ -411,3 +423,165 @@ O arquivo `L11101` foi incluído porque a questão `43_direito_empresarial_quest
 A Lei nº 11.101/2005 é de 09/02/2005 e foi considerada em sua versão alterada pela Lei nº 14.112/2020; ambas as normas são anteriores ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
 
 Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora a resposta na regra de ausência de sucessão na alienação de unidade produtiva isolada, evitando que o modelo conclua erroneamente pela transferência das obrigações do devedor ao arrematante.
+
+## Lei nº 9.784/1999 - Processo Administrativo Federal — curadoria de Fernanda
+
+**Arquivo:** `L9784`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/l9784.htm
+**Questão relacionada:** `43_direito_administrativo_questao_1`
+
+### Justificativa de inclusão
+
+O arquivo `L9784` foi incluído porque a questão `43_direito_administrativo_questao_1` trata do procedimento de decisão coordenada entre quatro órgãos federais, com dissenso quanto ao seu cabimento, pois o órgão B alega que o processo envolve autoridades de Poderes distintos e o órgão C apresenta matéria estranha à convocação. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 49-A (incluído pela Lei nº 14.210/2021):** define a decisão coordenada como instrumento de simplificação do processo administrativo, com a participação concomitante das autoridades e dos responsáveis pela orientação técnico-jurídica. Fundamenta os contornos do instituto invocado no enunciado.
+* **Art. 49-A, § 6º:** estabelece as hipóteses em que a decisão coordenada não se aplica, entre elas a dos processos que envolvam autoridades de Poderes distintos. Esse dispositivo fundamenta o acolhimento do argumento do órgão B.
+* **Art. 49-A e parágrafos (convocação):** a decisão coordenada vincula-se ao objeto da convocação, de modo que o órgão C não pode apresentar, na reunião, matéria distinta daquela que a motivou.
+
+### Temporalidade
+
+A decisão coordenada foi introduzida na Lei nº 9.784/1999 pela Lei nº 14.210/2021, instituto recente e de baixa presença no conhecimento interno dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Nesse caso, além do apoio fático, o RAG cumpre função de atualização, fornecendo aos modelos um procedimento administrativo novo (de 2021) que dificilmente está bem representado em seus pesos, reduzindo o risco de alucinação sobre um instituto pouco difundido.
+
+## Lei nº 8.112/1990 - Regime Jurídico dos Servidores — curadoria de Fernanda
+
+**Arquivo:** `L8112compilado`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/l8112compilado.htm
+**Questão relacionada:** `43_direito_administrativo_questao_2`
+
+### Justificativa de inclusão
+
+O arquivo `L8112compilado` foi incluído porque a questão `43_direito_administrativo_questao_2` trata da demissão de servidor público federal estável por abandono de cargo (ausência intencional por 22 dias) e da autoridade competente para aplicá-la. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 138:** define o abandono de cargo como a ausência intencional do servidor por mais de trinta dias consecutivos. Como João se ausentou por 22 dias, não se configura o abandono, o que torna ilegal a demissão.
+* **Art. 132, II:** prevê o abandono de cargo como hipótese de demissão, sempre condicionado ao prazo do Art. 138.
+* **Art. 141, I:** estabelece que a demissão é aplicada pela autoridade máxima do respectivo Poder; no âmbito do Executivo federal, a competência é do Presidente da República, admitida a delegação.
+
+### Temporalidade
+
+A Lei nº 8.112/1990 é de 11/12/1990, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora a resposta no prazo correto de configuração do abandono de cargo e na autoridade competente para a demissão.
+
+## Lei nº 12.846/2013 - Lei Anticorrupção — curadoria de Fernanda
+
+**Arquivo:** `L12846`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12846.htm
+**Questão relacionada:** `43_direito_administrativo_questao_3`
+
+### Justificativa de inclusão
+
+O arquivo `L12846` foi incluído porque a questão `43_direito_administrativo_questao_3` trata de processo administrativo de responsabilização (PAR) de pessoa jurídica, com perguntas sobre o prazo de defesa e a possibilidade de dissolução compulsória. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 11:** concede à pessoa jurídica o prazo de 30 dias para defesa no processo administrativo de responsabilização, contados a partir da intimação.
+* **Art. 6º:** lista as sanções aplicáveis na esfera administrativa (multa e publicação extraordinária da decisão condenatória), entre as quais não se inclui a dissolução compulsória.
+* **Art. 19:** dispõe que a dissolução compulsória da pessoa jurídica é sanção de natureza judicial, aplicada em ação proposta pela União, pelos demais entes ou pelo Ministério Público, cabível quando a personalidade jurídica tiver sido usada para dissimular interesses ilícitos. Por isso, o PAR, de caráter administrativo, não pode resultar nessa penalidade.
+
+### Temporalidade
+
+A Lei nº 12.846/2013 é de 01/08/2013 (regulamentada pelo Decreto nº 11.129/2022), portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois separa com clareza as sanções administrativas das judiciais, evitando que o modelo conclua pela dissolução compulsória no âmbito do PAR.
+
+## Lei nº 11.107/2005 - Consórcios Públicos — curadoria de Fernanda
+
+**Arquivo:** `L11107`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2005/lei/l11107.htm
+**Questão relacionada:** `43_direito_administrativo_questao_4`
+
+### Justificativa de inclusão
+
+O arquivo `L11107` foi incluído porque a questão `43_direito_administrativo_questao_4` trata de consórcio público, constituído como associação pública, que realizou credenciamento sem licitação e teve o contrato de rateio inadimplido por dois Municípios. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 8º:** disciplina o contrato de rateio, instrumento pelo qual os entes consorciados entregam recursos ao consórcio. Esse dispositivo fundamenta a análise sobre a legitimidade, pois o vínculo do rateio é interno ao consórcio e não confere a um terceiro contratado a legitimidade para exigir diretamente dos Municípios o seu cumprimento.
+
+A análise se completa com a Lei nº 14.133/2021 (arquivo `L14133`, já presente na base), cujo Art. 79 prevê o credenciamento como hipótese de contratação direta, paralela e não excludente, dispensando a licitação para o caso narrado.
+
+### Temporalidade
+
+A Lei nº 11.107/2005 é de 06/04/2005, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora a resposta nas regras específicas dos consórcios públicos e do contrato de rateio, evitando confusão com o regime geral de contratações.
+
+## Lei nº 8.245/1991 - Locações — curadoria de Fernanda
+
+**Arquivo:** `L8245`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/l8245.htm
+**Questão relacionada:** `43_direito_civil_peca_profissional`
+
+### Justificativa de inclusão
+
+O arquivo `L8245` foi incluído porque a peça `43_direito_civil_peca_profissional` trata de ação de despejo proposta contra Gabriela, locatária, exigindo a contestação como peça de defesa. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 47, III:** condiciona a retomada do imóvel para uso residencial de descendente à circunstância de este não dispor de imóvel residencial próprio; como o filho de Ricardo já possui vários imóveis, a denúncia para uso é descabida.
+* **Art. 40:** trata da exoneração do fiador e da garantia locatícia; como Gabriela ofereceu seguro-fiança em substituição, recusado pelo locador, afasta-se a alegação de falta de garantia.
+* **Art. 59, § 1º:** enumera as hipóteses de concessão de liminar de despejo; ausentes os requisitos e a prova, pois a inicial veio sem documentos e os aluguéis estavam quitados conforme os comprovantes guardados por Gabriela, não cabe a liminar de retomada.
+
+### Temporalidade
+
+A Lei nº 8.245/1991 é de 18/10/1991, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora a defesa nas regras específicas da locação predial urbana sobre retomada, garantia e liminar de despejo.
+
+## Código Civil de 2002 — curadoria de Fernanda
+
+**Arquivo:** `L10406compilada`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm
+**Questões relacionadas:** `43_direito_civil_questao_1`, `43_direito_civil_questao_2`, `43_direito_civil_questao_3` e `43_direito_civil_questao_4`
+
+### Justificativa de inclusão
+
+O arquivo `L10406compilada` foi incluído porque quatro questões de Direito Civil sob esta curadoria têm base no Código Civil. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 496 e Art. 179:** fundamentam a `questao_1`. A venda de ascendente a descendente, sem o consentimento dos demais descendentes e do cônjuge, é anulável (Art. 496); na falta de prazo específico, a anulação deve ser pleiteada em 2 anos (Art. 179). Assim, Camila e os demais filhos podem requerer a anulação nesse prazo.
+* **Art. 462 a 464 e Art. 259:** fundamentam a `questao_2`. Tratando-se de contrato preliminar irretratável sobre bem indivisível, a recusa de Flávio não impede que Tiago e Tereza obtenham a adjudicação compulsória mediante suprimento judicial da vontade (Art. 463 e 464), respondendo os promitentes vendedores pela obrigação assumida, de caráter indivisível (Art. 259).
+* **Art. 1.216:** fundamenta a `questao_3`. O possuidor de má-fé responde pelos frutos colhidos e percebidos; logo, Valdir tem direito aos valores auferidos por Renato com a venda da produção. A cumulação do pedido possessório com o de indenização é admitida pelo Art. 555 do CPC.
+* **Art. 928:** fundamenta a `questao_4`. O incapaz responde pelos prejuízos que causar, de forma subsidiária e equitativa, quando os responsáveis não dispuserem de meios; como os pais de Joaquim têm patrimônio insuficiente e ele possui bens próprios, pode responder subsidiariamente. O meio cabível contra a exclusão de ofício do menor é o agravo de instrumento (CPC, Art. 1.015, VII), por se tratar de decisão interlocutória.
+
+### Temporalidade
+
+O Código Civil é de 10/01/2002, portanto anterior ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora as respostas nas regras corretas sobre venda de ascendente a descendente, execução do contrato preliminar, frutos do possuidor de má-fé e responsabilidade civil do incapaz.
+
+## Consolidação das Leis do Trabalho — curadoria de Fernanda
+
+**Arquivo:** `DEL5452`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm
+**Questões relacionadas:** `43_direito_do_trabalho_peca_profissional`, `43_direito_do_trabalho_questao_1` e `43_direito_do_trabalho_questao_2`
+
+### Justificativa de inclusão
+
+O arquivo `DEL5452` foi incluído porque três questões de Direito do Trabalho sob esta curadoria dependem de dispositivos da CLT. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 841 e Art. 884:** fundamentam a peça. A defesa na execução trabalhista, em regra, depende de garantia do juízo (Art. 884); como Celina não tem condições de garantir a execução, a via adequada é a exceção de pré-executividade, que dispensa garantia e veicula matérias de ordem pública, como a nulidade da citação por edital (irregular, pois o endereço estava correto) e a impenhorabilidade de bens.
+* **Art. 224, caput e § 2º, e Art. 62, II:** fundamentam a `questao_1`. O bancário tem jornada de 6 horas (Art. 224, caput), salvo os que exercem cargo de confiança com gratificação não inferior a 1/3 (Art. 224, § 2º), cuja jornada é de 8 horas; Jorge, gerente com gratificação de 100%, enquadra-se nessa exceção. Sônia, gerente-geral, enquadra-se no Art. 62, II (cargo de gestão, excluído do controle de jornada), nos termos das Súmulas 102 e 287 do TST.
+* **Art. 473 e Art. 130, § 1º:** fundamentam a `questao_2`. Apenas a ausência para obtenção do título de eleitor é abonada pelo Art. 473, e não as faltas de Pedro (exame de direção) e José (passaporte); além disso, é vedado descontar as faltas do período de férias (Art. 130, § 1º), de modo que não se pode reduzir as férias de Rosa para 29 dias.
+
+### Temporalidade
+
+A CLT é de 01/05/1943, considerada em sua versão compilada (já alcançada pela Reforma Trabalhista, Lei nº 13.467/2017); ambas as normas são anteriores ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Assim, o ganho do RAG neste caso não é temporal, mas fático e anti-alucinação, pois ancora as respostas nas regras corretas sobre defesa na execução, jornada do bancário, cargo de confiança, faltas justificadas e férias.
+
+## Lei nº 8.009/1990 - Bem de Família — curadoria de Fernanda
+
+**Arquivo:** `L8009`
+**Fonte:** https://www.planalto.gov.br/ccivil_03/leis/l8009.htm
+**Questão relacionada:** `43_direito_do_trabalho_peca_profissional`
+
+### Justificativa de inclusão
+
+O arquivo `L8009` foi incluído porque a peça `43_direito_do_trabalho_peca_profissional` envolve a penhora do único imóvel residencial de Celina (recebido por herança e onde reside com cinco filhos menores) e o bloqueio de sua aposentadoria. Os dispositivos selecionados oferecem a base legal necessária:
+
+* **Art. 1º:** estabelece a impenhorabilidade do imóvel residencial próprio da entidade familiar, que não responde por qualquer tipo de dívida, salvo as exceções legais. Fundamenta a defesa contra a penhora do imóvel de Celina.
+* **Art. 3º:** lista as exceções à impenhorabilidade. A exceção relativa aos créditos de trabalhadores da própria residência (inciso I), que poderia alcançar o débito da empregada doméstica Ana Lucena, foi revogada pela Lei Complementar nº 150/2015, de modo que o imóvel permanece impenhorável.
+
+A impenhorabilidade da aposentadoria de Celina, por sua vez, decorre do Art. 833, IV, do CPC, reforçando a defesa veiculada na exceção de pré-executividade.
+
+### Temporalidade
+
+A Lei nº 8.009/1990 é de 29/03/1990, mas a exceção do Art. 3º, I (crédito do trabalhador da própria residência) foi revogada pela Lei Complementar nº 150/2015. Tanto a norma quanto a revogação são anteriores ao lançamento dos modelos Gemma 2 2B, Qwen 2.5 3B e Llama 3.2 3B, todos de 2024.
+
+Aqui, além do apoio fático, o RAG ajuda a refletir a revogação de 2015, evitando que o modelo aplique uma exceção que já não existe e conclua, equivocadamente, pela penhorabilidade do imóvel.
