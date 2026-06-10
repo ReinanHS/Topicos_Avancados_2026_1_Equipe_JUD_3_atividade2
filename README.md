@@ -70,13 +70,12 @@ O projeto dá continuidade à [Atividade 1](https://github.com/ReinanHS/Topicos_
 
 ## Apresentação
 
-> **Em breve.** O link do vídeo de apresentação (10–20 min) será adicionado aqui após a gravação.
-
 O vídeo a seguir mostra os resultados coletados pela equipe para a segunda atividade avaliativa:
 
 [![Vídeo no YouTube](https://gitlab.com/reinanhs/repo-slide-presentation/-/wikis/uploads/7cc03556931898d62b45b84b5006d119/image.png)](https://youtu.be/YiBB6kJq82w)
 
-- **Assista ao vídeo completo:** [https://youtu.be/YiBB6kJq82w](https://youtu.be/YiBB6kJq82w)
+- **Assista ao vídeo completo da atividade 2:** [https://youtu.be/YiBB6kJq82w](https://youtu.be/YiBB6kJq82w)
+- **Assista ao vídeo completo da atividade 3:** [https://youtu.be/VmmJo2UQWmQ](https://youtu.be/VmmJo2UQWmQ)
 
 ## Colaboradores
 
