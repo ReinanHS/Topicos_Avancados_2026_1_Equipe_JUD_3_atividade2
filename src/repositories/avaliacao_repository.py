@@ -178,31 +178,101 @@ class AvaliacaoRepository:
             print(f"Erro ao recuperar resumo agregado: {e}")
             raise e
 
-    def fetch_judge_vs_gold(self, judge_name: str) -> list[dict]:
+    def summary_by_rag(self, source_file: str | None = None) -> list[dict]:
         """
-        Retorna pares (nota_atribuida, texto_resposta, metadados, tipo_pergunta)
-        para um determinado juiz. Usado para o cálculo de Spearman contra o
-        gabarito humano (especialmente em múltipla escolha).
+        Retorna estatísticas agregadas por (dataset, candidato, juiz, usou_rag),
+        usando a flag da RESPOSTA (r.usou_rag) — isto é, se a resposta avaliada
+        foi gerada com ou sem RAG. Base para o comparativo "antes e depois".
+
+        `source_file` (opcional) restringe às perguntas extraídas por um aluno,
+        comparando com p.metadados->>'source_file' (ex.: 'EriclesExtractor').
         """
         try:
             with self._get_connection() as conn:
                 with conn.cursor() as cur:
+                    filtro = ""
+                    params: list = []
+                    if source_file is not None:
+                        filtro = "WHERE p.metadados->>'source_file' = %s"
+                        params.append(source_file)
+
                     cur.execute(
-                        """
+                        f"""
+                        SELECT
+                            d.nome AS dataset,
+                            m_cand.nome_modelo AS candidato,
+                            m_juiz.nome_modelo AS juiz,
+                            r.usou_rag,
+                            ROUND(AVG(a.nota_atribuida)::numeric, 3) AS media,
+                            ROUND(STDDEV_SAMP(a.nota_atribuida)::numeric, 3) AS desvio,
+                            COUNT(a.id_avaliacao) AS total
+                        FROM avaliacoes_juiz a
+                        JOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1
+                        JOIN perguntas p ON p.id_pergunta = r.id_pergunta
+                        JOIN datasets d ON d.id_dataset = p.id_dataset
+                        JOIN modelos m_cand ON m_cand.id_modelo = r.id_modelo
+                        JOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz
+                        {filtro}
+                        GROUP BY d.nome, m_cand.nome_modelo, m_juiz.nome_modelo, r.usou_rag
+                        ORDER BY d.nome, m_juiz.nome_modelo, m_cand.nome_modelo, r.usou_rag;
+                        """,
+                        tuple(params),
+                    )
+                    rows = cur.fetchall()
+                    return [
+                        {
+                            "dataset": row[0],
+                            "candidato": row[1],
+                            "juiz": row[2],
+                            "usou_rag": bool(row[3]),
+                            "media": float(row[4]) if row[4] is not None else None,
+                            "desvio": float(row[5]) if row[5] is not None else None,
+                            "total": int(row[6]),
+                        }
+                        for row in rows
+                    ]
+        except Exception as e:
+            print(f"Erro ao recuperar resumo agregado por RAG: {e}")
+            raise e
+
+    def fetch_judge_vs_gold(
+        self, judge_name: str, source_file: str | None = None
+    ) -> list[dict]:
+        """
+        Retorna pares (nota_atribuida, texto_resposta, metadados, tipo_pergunta)
+        para um determinado juiz. Usado para o cálculo de Spearman contra o
+        gabarito humano (especialmente em múltipla escolha).
+
+        `source_file` (opcional) restringe às perguntas de um aluno via
+        p.metadados->>'source_file'.
+        """
+        try:
+            with self._get_connection() as conn:
+                with conn.cursor() as cur:
+                    filtro = ""
+                    params: list = [judge_name]
+                    if source_file is not None:
+                        filtro = "AND p.metadados->>'source_file' = %s"
+                        params.append(source_file)
+
+                    cur.execute(
+                        f"""
                         SELECT
                             a.nota_atribuida,
                             r.texto_resposta,
                             p.metadados,
                             p.tipo_pergunta,
-                            d.nome AS dataset
+                            d.nome AS dataset,
+                            r.usou_rag
                         FROM avaliacoes_juiz a
                         JOIN respostas_atividade_1 r ON r.id_resposta = a.id_resposta_ativa1
                         JOIN perguntas p ON p.id_pergunta = r.id_pergunta
                         JOIN datasets d ON d.id_dataset = p.id_dataset
                         JOIN modelos m_juiz ON m_juiz.id_modelo = a.id_modelo_juiz
-                        WHERE m_juiz.nome_modelo = %s;
+                        WHERE m_juiz.nome_modelo = %s
+                        {filtro};
                         """,
-                        (judge_name,),
+                        tuple(params),
                     )
                     rows = cur.fetchall()
                     return [
@@ -212,6 +282,7 @@ class AvaliacaoRepository:
                             "metadados": row[2] or {},
                             "tipo_pergunta": row[3],
                             "dataset": row[4],
+                            "usou_rag": bool(row[5]),
                         }
                         for row in rows
                     ]
