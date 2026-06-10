@@ -196,8 +196,6 @@ class ChartService:
 
         gerados: list[Path] = []
         for judge, judge_rows in self._group_by_judge(rows).items():
-            gerados.append(
-                self._plot_judge(judge, judge_rows, destino, prefix, label)
-            )
+            gerados.append(self._plot_judge(judge, judge_rows, destino, prefix, label))
         gerados.append(self._plot_overall(rows, destino, prefix, label))
         return gerados

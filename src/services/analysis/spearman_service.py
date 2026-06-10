@@ -46,9 +46,7 @@ class SpearmanAnalysisService:
             return True
         return bool(re.search(rf"\b{letter}\b|\b{letter}\)", normalized))
 
-    def _spearman_judge_vs_gold(
-        self, judge_name: str, rows: list[dict]
-    ) -> dict:
+    def _spearman_judge_vs_gold(self, judge_name: str, rows: list[dict]) -> dict:
         """Calcula Spearman juiz × gabarito para um conjunto de avaliações."""
         notas_humanas: list[int] = []
         notas_juiz: list[int] = []

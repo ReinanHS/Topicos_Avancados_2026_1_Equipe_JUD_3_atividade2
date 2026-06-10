@@ -105,6 +105,27 @@ class AnalysisController:
     def _fmt(value: float | None, casas: int = 3) -> str:
         return "—" if value is None else f"{value:.{casas}f}"
 
+    @staticmethod
+    def _fmt_ganho(ganho: float | None) -> str:
+        if ganho is None:
+            return "-"
+        seta = "^" if ganho > 0 else ("v" if ganho < 0 else "=")
+        return f"{ganho:+.3f}{seta}"
+
+    @staticmethod
+    def _fmt_total(bucket: dict) -> str:
+        return str(bucket.get("total")) if bucket else "—"
+
+    def _print_rag_row(self, row: dict) -> None:
+        sem = row["sem_rag"] or {}
+        com = row["com_rag"] or {}
+        print(
+            f"{row['dataset']:<12} {row['candidato']:<20} {row['juiz']:<20} "
+            f"{self._fmt(sem.get('media')):>12} {self._fmt(com.get('media')):>12} "
+            f"{self._fmt_ganho(row['ganho']):>8} "
+            f"{self._fmt_total(sem):>8} {self._fmt_total(com):>8}"
+        )
+
     def _print_rag_comparison(
         self, source_file: str | None = None, owner: str | None = None
     ) -> None:
@@ -125,21 +146,7 @@ class AnalysisController:
         print(header)
         print("-" * len(header))
         for row in rows:
-            sem = row["sem_rag"] or {}
-            com = row["com_rag"] or {}
-            ganho = row["ganho"]
-            if ganho is None:
-                ganho_str = "-"
-            else:
-                seta = "^" if ganho > 0 else ("v" if ganho < 0 else "=")
-                ganho_str = f"{ganho:+.3f}{seta}"
-            print(
-                f"{row['dataset']:<12} {row['candidato']:<20} {row['juiz']:<20} "
-                f"{self._fmt(sem.get('media')):>12} {self._fmt(com.get('media')):>12} "
-                f"{ganho_str:>8} "
-                f"{(sem.get('total') if sem else '—')!s:>8} "
-                f"{(com.get('total') if com else '—')!s:>8}"
-            )
+            self._print_rag_row(row)
 
         self._print_rag_overall(rows)
 
@@ -165,7 +172,10 @@ class AnalysisController:
         )
 
     def _print_judge_vs_gold_by_rag(
-        self, judges: list[str], source_file: str | None = None, owner: str | None = None
+        self,
+        judges: list[str],
+        source_file: str | None = None,
+        owner: str | None = None,
     ) -> None:
         escopo = f" — aluno: {owner}" if owner else ""
         print(
