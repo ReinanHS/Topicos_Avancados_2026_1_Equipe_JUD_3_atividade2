@@ -255,6 +255,51 @@ def analysis_run():
     AnalysisController().run()
 
 
+@analysis_app.command("rag")
+def analysis_rag(
+    charts: bool = typer.Option(
+        False,
+        "--charts",
+        help="Também gera os gráficos PNG do comparativo em database/charts/.",
+    ),
+    output: Path = typer.Option(
+        None,
+        "--output",
+        help="Pasta de saída dos gráficos (default: database/charts).",
+    ),
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por aluno: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+):
+    """Mostra o comparativo sem RAG × com RAG (nota média, ganho e Spearman)."""
+    try:
+        AnalysisController().run_rag(charts=charts, output=output, owner=owner)
+    except ValueError as e:
+        raise typer.BadParameter(str(e))
+
+
+@analysis_app.command("charts")
+def analysis_charts(
+    output: Path = typer.Option(
+        None,
+        "--output",
+        help="Pasta de saída dos gráficos (default: database/charts).",
+    ),
+    owner: str = typer.Option(
+        None,
+        "--owner",
+        help="Filtra por aluno: ericles|julia|mikaela|fernanda|reinan|victor.",
+    ),
+):
+    """Gera apenas os gráficos PNG do comparativo sem RAG × com RAG."""
+    try:
+        AnalysisController().generate_charts(output=output, owner=owner)
+    except ValueError as e:
+        raise typer.BadParameter(str(e))
+
+
 @app.callback()
 def main_callback():
     """

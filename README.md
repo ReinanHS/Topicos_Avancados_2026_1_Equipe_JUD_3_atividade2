@@ -518,6 +518,70 @@ uv run python main.py db migrate    # recria as tabelas
 uv run python main.py db seed all   # recaptura tudo com o answerKey já presente
 ```
 
+### Comparativo Sem RAG × Com RAG ("antes e depois")
+
+Além da correlação, o módulo de análise responde à pergunta central da Atividade
+3: **o RAG melhorou as respostas dos modelos?** Para isso, separa as avaliações
+pela flag `usou_rag` da resposta avaliada e calcula, para cada combinação
+`(dataset, candidato, juiz)`, o **ganho** na nota média (`média com RAG − média
+sem RAG`).
+
+```bash
+# Comparativo no terminal (tabela com média s/RAG, média c/RAG, ganho e N)
+uv run python main.py db analysis rag
+```
+
+A saída traz a tabela por `(dataset, candidato, juiz)` (ordenada do maior ganho
+para o menor, com `^`/`v` indicando subida/descida), uma linha **GERAL** com a
+média ponderada consolidada e o **Spearman juiz × gabarito** calculado
+separadamente para cada cenário (sem RAG e com RAG).
+
+> A query agregada por trás está em
+> [avaliacao_repository.py](src/repositories/avaliacao_repository.py) no método
+> `summary_by_rag`, e o pivot + cálculo do ganho em
+> [spearman_service.py](src/services/analysis/spearman_service.py) (`rag_comparison`).
+
+#### Gráficos do comparativo
+
+Para uma análise mais visual, é possível gerar gráficos PNG (barras agrupadas
+Sem RAG × Com RAG + barras de ganho por candidato, mais um consolidado por juiz):
+
+```bash
+# Apenas os gráficos (salvos em database/charts/)
+uv run python main.py db analysis charts
+
+# Comparativo no terminal + gráficos de uma vez
+uv run python main.py db analysis rag --charts
+
+# Mudando a pasta de saída
+uv run python main.py db analysis charts --output docs/assets/charts
+```
+
+A geração fica em [chart_service.py](src/services/analysis/chart_service.py) e
+usa `matplotlib` (backend `Agg`, funciona em ambiente headless). A pasta
+`database/charts/` está no `.gitignore` por conter artefatos gerados.
+
+#### Filtrando por aluno (`--owner`)
+
+Os comandos de comparativo aceitam `--owner` para restringir a análise às
+questões de um único integrante da equipe (mesmos valores dos comandos de seed:
+`ericles`, `julia`, `mikaela`, `fernanda`, `reinan`, `victor`). O filtro casa com
+o campo `metadados->>'source_file'` gravado em cada pergunta na extração.
+
+```bash
+# Tabela só com as questões do Ericles
+uv run python main.py db analysis rag --owner ericles
+
+# Gráficos só do Ericles (arquivos prefixados: ericles-comparativo-rag-*.png)
+uv run python main.py db analysis charts --owner ericles
+
+# Tabela + gráficos de um aluno de uma vez
+uv run python main.py db analysis rag --charts --owner reinan
+```
+
+> Há também um roteiro passo a passo para gravar a execução em
+> [docs/roteiro-gravacao-comparativo-rag.md](docs/roteiro-gravacao-comparativo-rag.md).
+
 ### Referência
 
 - [SciPy: scipy.stats.spearmanr](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html) — implementação usada.

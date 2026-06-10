@@ -1,6 +1,25 @@
 from itertools import combinations
+from pathlib import Path
 
-from src.services.analysis import SpearmanAnalysisService
+from src.controllers.seed_controller import EXTRACTORS
+from src.services.analysis import ChartService, SpearmanAnalysisService
+
+# owner (ex.: 'ericles') -> source_file gravado em perguntas.metadados
+# (ex.: 'EriclesExtractor'). Mantém-se em sincronia com EXTRACTORS.
+OWNER_TO_SOURCE_FILE = {owner: cls.__name__ for owner, cls in EXTRACTORS.items()}
+
+
+def _resolve_source_file(owner: str | None) -> str | None:
+    """Valida o --owner e devolve o source_file correspondente (ou None)."""
+    if owner is None:
+        return None
+    owner = owner.strip().lower()
+    if owner not in OWNER_TO_SOURCE_FILE:
+        raise ValueError(
+            f"--owner inválido: '{owner}'. Use um de: "
+            f"{', '.join(OWNER_TO_SOURCE_FILE)}."
+        )
+    return OWNER_TO_SOURCE_FILE[owner]
 
 
 def _interpret_rho(rho: float | None) -> str:
@@ -24,6 +43,7 @@ class AnalysisController:
 
     def __init__(self):
         self.service = SpearmanAnalysisService()
+        self.chart_service = ChartService()
 
     def _print_summary(self) -> None:
         rows = self.service.summary()
@@ -81,6 +101,130 @@ class AnalysisController:
                 f"n = {result['n']} | {_interpret_rho(rho)}"
             )
 
+    @staticmethod
+    def _fmt(value: float | None, casas: int = 3) -> str:
+        return "—" if value is None else f"{value:.{casas}f}"
+
+    def _print_rag_comparison(
+        self, source_file: str | None = None, owner: str | None = None
+    ) -> None:
+        rows = self.service.rag_comparison(source_file)
+        escopo = f" — aluno: {owner}" if owner else ""
+        if not rows:
+            print(f"\n=== Comparativo SEM RAG × COM RAG{escopo} ===")
+            filtro_msg = f" para o aluno '{owner}'" if owner else ""
+            print(f"Nenhuma avaliação encontrada no banco{filtro_msg}.")
+            return
+
+        print(f"\n=== Comparativo SEM RAG × COM RAG (nota média do juiz){escopo} ===")
+        header = (
+            f"{'Dataset':<12} {'Candidato':<20} {'Juiz':<20} "
+            f"{'Média s/RAG':>12} {'Média c/RAG':>12} {'Ganho':>8} "
+            f"{'N s/RAG':>8} {'N c/RAG':>8}"
+        )
+        print(header)
+        print("-" * len(header))
+        for row in rows:
+            sem = row["sem_rag"] or {}
+            com = row["com_rag"] or {}
+            ganho = row["ganho"]
+            if ganho is None:
+                ganho_str = "-"
+            else:
+                seta = "^" if ganho > 0 else ("v" if ganho < 0 else "=")
+                ganho_str = f"{ganho:+.3f}{seta}"
+            print(
+                f"{row['dataset']:<12} {row['candidato']:<20} {row['juiz']:<20} "
+                f"{self._fmt(sem.get('media')):>12} {self._fmt(com.get('media')):>12} "
+                f"{ganho_str:>8} "
+                f"{(sem.get('total') if sem else '—')!s:>8} "
+                f"{(com.get('total') if com else '—')!s:>8}"
+            )
+
+        self._print_rag_overall(rows)
+
+    def _print_rag_overall(self, rows: list[dict]) -> None:
+        """Média ponderada geral sem/com RAG (visão consolidada)."""
+
+        def weighted(bucket: str) -> tuple[float | None, int]:
+            soma, n = 0.0, 0
+            for row in rows:
+                b = row[bucket]
+                if b and b["media"] is not None:
+                    soma += b["media"] * b["total"]
+                    n += b["total"]
+            return (soma / n if n else None, n)
+
+        media_sem, n_sem = weighted("sem_rag")
+        media_com, n_com = weighted("com_rag")
+        print("-" * 12)
+        print(
+            f"GERAL (média ponderada): s/RAG = {self._fmt(media_sem)} (n={n_sem}) | "
+            f"c/RAG = {self._fmt(media_com)} (n={n_com}) | "
+            f"ganho = {self._fmt((media_com - media_sem) if (media_sem is not None and media_com is not None) else None)}"
+        )
+
+    def _print_judge_vs_gold_by_rag(
+        self, judges: list[str], source_file: str | None = None, owner: str | None = None
+    ) -> None:
+        escopo = f" — aluno: {owner}" if owner else ""
+        print(
+            f"\n=== Spearman: Juiz vs Gabarito Humano — SEM RAG × COM RAG{escopo} ==="
+        )
+        for judge in judges:
+            result = self.service.judge_vs_gold_by_rag(judge, source_file)
+            for label, key in (("s/RAG", "sem_rag"), ("c/RAG", "com_rag")):
+                cenario = result[key]
+                rho = cenario.get("rho")
+                if rho is None:
+                    print(
+                        f"- {judge} [{label}]: n={cenario['n']} | "
+                        f"skipped(sem gabarito)={cenario['skipped_sem_gabarito']} | "
+                        f"{cenario.get('motivo', '')}"
+                    )
+                    continue
+                print(
+                    f"- {judge} [{label}]: rho = {rho:+.3f} | p = {cenario['p_value']:.4f} | "
+                    f"n = {cenario['n']} | {_interpret_rho(rho)}"
+                )
+
+    def generate_charts(
+        self, output: Path | None = None, owner: str | None = None
+    ) -> None:
+        """Gera os gráficos PNG do comparativo sem RAG × com RAG."""
+        source_file = _resolve_source_file(owner)
+        escopo = f" (aluno: {owner})" if owner else ""
+        print(f"\n=== Gerando gráficos do comparativo RAG{escopo} ===")
+        paths = self.chart_service.generate(
+            output_dir=output, source_file=source_file, owner=owner
+        )
+        if not paths:
+            filtro_msg = f" para o aluno '{owner}'" if owner else ""
+            print(f"Nenhuma avaliação encontrada no banco{filtro_msg} — nada a plotar.")
+            return
+        for path in paths:
+            print(f"  - {path}")
+        print(f"{len(paths)} gráfico(s) gerado(s).")
+
+    def run_rag(
+        self,
+        charts: bool = False,
+        output: Path | None = None,
+        owner: str | None = None,
+    ) -> None:
+        """Executa somente o comparativo sem RAG × com RAG."""
+        source_file = _resolve_source_file(owner)
+        judges = self.service.list_judges()
+        if not judges:
+            print("Nenhuma avaliação encontrada. Rode `db judge evaluate` antes.")
+            return
+        print(f"Juízes com avaliações no banco: {', '.join(judges)}")
+        self._print_rag_comparison(source_file, owner)
+        self._print_judge_vs_gold_by_rag(judges, source_file, owner)
+        if charts:
+            self.generate_charts(output, owner)
+        print("\nComparativo RAG concluído.")
+
     def run(self) -> None:
         """Executa todas as análises e imprime o relatório."""
         judges = self.service.list_judges()
@@ -92,4 +236,6 @@ class AnalysisController:
         self._print_summary()
         self._print_judge_vs_gold(judges)
         self._print_inter_judge(judges)
+        self._print_rag_comparison()
+        self._print_judge_vs_gold_by_rag(judges)
         print("\nAnálise concluída.")

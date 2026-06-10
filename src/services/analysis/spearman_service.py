@@ -46,14 +46,10 @@ class SpearmanAnalysisService:
             return True
         return bool(re.search(rf"\b{letter}\b|\b{letter}\)", normalized))
 
-    def judge_vs_gold(self, judge_name: str) -> dict:
-        """
-        Correlação Spearman entre nota_humana (binarizada) e nota_atribuida,
-        considerando apenas as questões de múltipla escolha que possuem o
-        gabarito disponível nos metadados.
-        """
-        rows = self.avaliacao_repo.fetch_judge_vs_gold(judge_name)
-
+    def _spearman_judge_vs_gold(
+        self, judge_name: str, rows: list[dict]
+    ) -> dict:
+        """Calcula Spearman juiz × gabarito para um conjunto de avaliações."""
         notas_humanas: list[int] = []
         notas_juiz: list[int] = []
         skipped = 0
@@ -88,6 +84,34 @@ class SpearmanAnalysisService:
             "skipped_sem_gabarito": skipped,
             "rho": float(rho),
             "p_value": float(p_value),
+        }
+
+    def judge_vs_gold(self, judge_name: str) -> dict:
+        """
+        Correlação Spearman entre nota_humana (binarizada) e nota_atribuida,
+        considerando apenas as questões de múltipla escolha que possuem o
+        gabarito disponível nos metadados.
+        """
+        rows = self.avaliacao_repo.fetch_judge_vs_gold(judge_name)
+        return self._spearman_judge_vs_gold(judge_name, rows)
+
+    def judge_vs_gold_by_rag(
+        self, judge_name: str, source_file: str | None = None
+    ) -> dict:
+        """
+        Mesmo cálculo de Spearman juiz × gabarito, mas separando as respostas
+        geradas SEM RAG das geradas COM RAG, para comparar o alinhamento do
+        juiz com o gabarito humano em cada cenário.
+
+        `source_file` (opcional) restringe às perguntas de um aluno.
+        """
+        rows = self.avaliacao_repo.fetch_judge_vs_gold(judge_name, source_file)
+        sem_rag = [r for r in rows if not r["usou_rag"]]
+        com_rag = [r for r in rows if r["usou_rag"]]
+        return {
+            "judge": judge_name,
+            "sem_rag": self._spearman_judge_vs_gold(judge_name, sem_rag),
+            "com_rag": self._spearman_judge_vs_gold(judge_name, com_rag),
         }
 
     def inter_judge(self, judge_a: str, judge_b: str) -> dict:
@@ -128,6 +152,60 @@ class SpearmanAnalysisService:
     def summary(self) -> list[dict]:
         """Relatório agregado por (dataset, candidato, juiz)."""
         return self.avaliacao_repo.summary_by_dataset_candidate_judge()
+
+    def rag_comparison(self, source_file: str | None = None) -> list[dict]:
+        """
+        Comparativo "sem RAG × com RAG" por (dataset, candidato, juiz).
+
+        Pivota o agregado por usou_rag em duas colunas (sem/com) e calcula o
+        ganho na nota média (media_com - media_sem) quando ambos os cenários
+        existem. Ordenado pelo maior ganho primeiro.
+
+        `source_file` (opcional) restringe às perguntas de um aluno.
+        """
+        rows = self.avaliacao_repo.summary_by_rag(source_file)
+
+        pivot: dict[tuple[str, str, str], dict] = {}
+        for row in rows:
+            key = (row["dataset"], row["candidato"], row["juiz"])
+            entry = pivot.setdefault(
+                key,
+                {
+                    "dataset": row["dataset"],
+                    "candidato": row["candidato"],
+                    "juiz": row["juiz"],
+                    "sem_rag": None,
+                    "com_rag": None,
+                },
+            )
+            bucket = "com_rag" if row["usou_rag"] else "sem_rag"
+            entry[bucket] = {
+                "media": row["media"],
+                "desvio": row["desvio"],
+                "total": row["total"],
+            }
+
+        resultado = []
+        for entry in pivot.values():
+            sem = entry["sem_rag"]
+            com = entry["com_rag"]
+            if sem and com and sem["media"] is not None and com["media"] is not None:
+                entry["ganho"] = round(com["media"] - sem["media"], 3)
+            else:
+                entry["ganho"] = None
+            resultado.append(entry)
+
+        # Ganho desc (None por último), depois dataset/juiz/candidato para estabilidade.
+        resultado.sort(
+            key=lambda e: (
+                e["ganho"] is None,
+                -(e["ganho"] if e["ganho"] is not None else 0.0),
+                e["dataset"],
+                e["juiz"],
+                e["candidato"],
+            )
+        )
+        return resultado
 
     def list_judges(self) -> list[str]:
         """Lista juízes que já têm avaliações registradas no banco."""
